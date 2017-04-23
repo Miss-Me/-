@@ -84,12 +84,13 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="Miss Me">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="表单提交类型与ajax">
+<meta property="og:url" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/index.html">
 <meta property="og:site_name" content="Miss Me">
+<meta property="og:updated_time" content="2017-04-23T11:53:07.370Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Miss Me">
+<meta name="twitter:title" content="表单提交类型与ajax">
 
 
 
@@ -107,7 +108,7 @@
   };
 </script>
 
-  <title> Miss Me </title>
+  <title> 表单提交类型与ajax | Miss Me </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -128,9 +129,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -250,9 +249,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -272,10 +271,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2017/04/23/表单提交类型与ajax/" itemprop="url">
-                  表单提交类型与ajax
-                </a>
+                表单提交类型与ajax
               
             
           </h1>
@@ -316,18 +312,19 @@
 
       
         
-          
-            
-          
+      
+    </div>
+
+    <div>
+      
         
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
@@ -335,256 +332,32 @@
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/02/20/MongoDB/MongoDB的安装与配置/" rel="next" title="MongoDB的安装与配置">
+                <i class="fa fa-chevron-left"></i> MongoDB的安装与配置
+              </a>
             
-              
-                
-                <a class="post-title-link" href="/2017/02/20/MongoDB/MongoDB的安装与配置/" itemprop="url">
-                  MongoDB的安装与配置
-                </a>
-              
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">Veröffentlicht am</span>
-            <time itemprop="dateCreated" datetime="2017-02-20T09:52:56+08:00" content="2017-02-20">
-              2017-02-20
-            </time>
-          </span>
-
-          
-
-          
-            
-          
-
-          
-
-          
-          
-
-          
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h3 id="一、mongodb的安装与配置"><a href="#一、mongodb的安装与配置" class="headerlink" title="一、mongodb的安装与配置"></a>一、mongodb的安装与配置</h3><blockquote>
-<p>1.在mongodb的官网<a href="https://www.mongodb.com/download-center#community" target="_blank" rel="external">https://www.mongodb.com/download-center#community</a> 下载安装文件。</p>
-</blockquote>
-<pre><code>进入官网，直接点击donwnload即可。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/1.PNG" alt="Alt text"><br>2.双击.msi文件安装<br><img src="http://oloaybpun.bkt.clouddn.com/2.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/3.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/4.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/5.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/6.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/7.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/8.png" alt="Alt text"></p>
-<p>3.创建数据目录</p>
-</blockquote>
-<pre><code>进入mongodb的安装包，创建数据目录
-
-
-D:\software\mongodb\mkdir data
-
-
-D:\software\mongodb\cd  data
-
-
-D:\software\mongodb\data\cd db
-
-
-D:\software\mongodb\data\db\
-</code></pre><blockquote>
-<p>4.命令行下运行mongodb服务器</p>
-</blockquote>
-<pre><code>进入mongodb安装目录下的bin文件夹
-
-
-D:\software\mongodb\bin\mongod.exe --dbpath D:\software\mongodb\data\db
-
-
-出现下面的内容就表示正确运行了。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/9.png" alt="Alt text"></p>
-</blockquote>
-<pre><code>当然这一步也有可能出现问题，比如我就遇到了“mongod不是内部或外部命令,也不是可运行的程序”这个问题。
-最开始我在环境变量中加入了bin文件夹的路径，但是问题没有解决。
-
-
-
-解决方法：直接在bin文件夹中双击打开mongod.exe文件。同样会出现以上的内容。
-
-
-
-然后在浏览器中打开http://localhost:27017进行测试。出现下面的内容表示mongodb的服务器正确运行了。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/10.png" alt="Alt text"><br>5.将mongodb安装为windows服务（命令行要有管理员权限）</p>
-</blockquote>
-<pre><code>D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data --install
-
-
-但是出现了下面的提示，表明安装失败。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/11.png" alt="Alt text">    </p>
-<p>按照提示，需要指定log目录。因此重新切换到bin目录下，新建logs文件。并在logs文件夹下新建mongodb.log文件。</p>
-</blockquote>
-<pre><code>创建日志目录：
-
-
-    D:\software\mongodb\mkdir logs
-
-
-    D:\software\mongodb\cd logs
-
-
-    D:\software\mongodb\logs
-
-
-    然后重新进入bin文件夹，输入命令：
-
-
-    D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data  --logpath=D:\software\mongodb\logs\mongodb.log --logappend.
-
-
-    没有出现错误提示。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/12.png" alt="Alt text"></p>
-<p>也能够正常启动：<br><img src="http://oloaybpun.bkt.clouddn.com/13.png" alt="Alt text"><br>6.MongoDB后台管理shell（命令行要有管理员权限）</p>
-</blockquote>
-<pre><code>打开 MongoDB shell，失败。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/14.png" alt="Alt text"></p>
-<p>   连接失败，net start  MongoDB服务，服务不能正常打开，mongo的服务没有被正确创建。</p>
-</blockquote>
-<pre><code>使用sc命令创建mongodb服务，需要注意的是，这一步的cmd必须要以管理员权限打开。
-
-
-D:\software\mongodb\bin\sc create MongDB binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend 服务创建成功
-
-
-net start MongoDB 服务也可以正常启动
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/15.png" alt="Alt text"></p>
-</blockquote>
-<p> MongoDB Shell是MongoDB自带的交互式Javascript shell,用来对MongoDB进行操作和管理的交互式环境。可以运行一些简单的算术运算</p>
-<blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/16.png" alt="Alt text"></p>
-</blockquote>
-<p>7.设置环境变量</p>
-<pre><code>进入电脑上的环境变量，在系统变量下的path中加入mongodb目录下的bin文件的路径。
-
-
-这样命令行就可以在任何位置使用mongodb命令，不需要每次使用mongo和mongod命令的时候都进入
-bin文件夹下。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/18.PNG" alt="Alt text">     </p>
-</blockquote>
-<h3 id="二、配置过程中一些命令的总结"><a href="#二、配置过程中一些命令的总结" class="headerlink" title="二、配置过程中一些命令的总结"></a>二、配置过程中一些命令的总结</h3><blockquote>
-<p>在配置过程中，出现问题最多的是将mongodb安装为windows服务，和mongodb后台管理shell这两步骤。在解决这两步的问题时，尝试了不同的命令，在这里做一个总结。</p>
-</blockquote>
-<h5 id="尝试过的命令："><a href="#尝试过的命令：" class="headerlink" title="尝试过的命令："></a>尝试过的命令：</h5><blockquote>
-<p>1.进入bin文件夹下</p>
-</blockquote>
-<pre><code>mongod.exe --bind_ip yourIPadress --logpath &quot;C:\data\dbConf\mongodb.log&quot; --logappend --dbpath &quot;C:\data\db&quot; --port yourPortNumber --serviceName &quot;YourServiceName&quot; --serviceDisplayName &quot;YourServiceName&quot; --install
-</code></pre><blockquote>
-<p>2.打开具有管理员身份的cmd</p>
-</blockquote>
-<pre><code>如果已经有某个服务名了，比如MongoDB，那么先把这个服务删了，
-
-
-sc delete MongoDB
-
-
-然后进入mongodb安装目录下的bin文件
-
-
-mongod --logpath d:\data\log\MongoDB.log --logappend --dbpath d:\data\db --serviceName MongoDB --install
-</code></pre><blockquote>
-<p>3.同样是进入mongodb安装目录下的bin文件下</p>
-</blockquote>
-<pre><code>mongod --logpath &quot;D:\software\mongodb\data\mongodb.log&quot; --logappend 
---dbpath &quot;D:\software\mongodb\data&quot; --serviceName &quot;MongoDB&quot; --serviceDisplayName &quot;MongoDB&quot; --install
-
-
-在解决这部分问题之后，觉得使用这些命令没有成功的原因可能是命令行没有获取管理员权限，还有就是mongdb
-的服务没有被正确创建。最正确的创建mongodb服务的方法是使用sc命令进行创建。
-D:\software\mongodb\bin\sc create MongDB
-binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data 
---logpath=D:\software\mongodb\logs\mongodb.log --logappend
-</code></pre>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -592,6 +365,10 @@ binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mo
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -611,8 +388,17 @@ binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mo
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -648,6 +434,17 @@ binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mo
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <p class="post-toc-empty">Dieser Artikel hat kein Inhaltsverzeichnis</p>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -744,6 +541,10 @@ binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mo
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
