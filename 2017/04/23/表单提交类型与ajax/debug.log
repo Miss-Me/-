@@ -1,0 +1,5 @@
+{"name":"hexo","hostname":"DESKTOP-4DJ955V","pid":7656,"level":20,"msg":"Hexo version: 3.2.2","time":"2017-04-23T12:21:47.502Z","v":0}
+{"name":"hexo","hostname":"DESKTOP-4DJ955V","pid":7656,"level":20,"msg":"Working directory: D:\\blog\\","time":"2017-04-23T12:21:47.504Z","v":0}
+{"name":"hexo","hostname":"DESKTOP-4DJ955V","pid":7656,"level":20,"msg":"Config loaded: D:\\blog\\_config.yml","time":"2017-04-23T12:21:47.622Z","v":0}
+{"name":"hexo","hostname":"DESKTOP-4DJ955V","pid":7656,"level":20,"msg":"Plugin loaded: hexo-asset-image","time":"2017-04-23T12:21:47.732Z","v":0}
+{"name":"hexo","hostname":"DESKTOP-4DJ955V","pid":7656,"level":20,"msg":"Plugin loaded: hexo-generator-archive","time":"2017-04-23T12:21:47.737Z","v":0}
