@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://yoursite.com/2017/12/13/test/</loc>
+    
+    <lastmod>2017-12-13T12:23:09.061Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2017/07/26/mongoDB%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</loc>
+    
+    <lastmod>2017-07-26T06:50:31.836Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2017/04/23/%E8%A1%A8%E5%8D%95%E6%8F%90%E4%BA%A4%E7%B1%BB%E5%9E%8B%E4%B8%8Eajax/</loc>
+    
+    <lastmod>2017-04-23T12:40:59.981Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/tags/index.html</loc>
+    
+    <lastmod>2017-02-20T12:38:03.224Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/categories/index.html</loc>
+    
+    <lastmod>2017-02-20T12:37:59.719Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/about/index.html</loc>
+    
+    <lastmod>2017-02-20T10:00:58.418Z</lastmod>
+    
+  </url>
+  
+</urlset>
