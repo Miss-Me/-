@@ -88,36 +88,24 @@
 
 <meta name="description" content="00x1 问题描述
 
-在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。
-
-00x2 问题分析及解决
-
-数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明">
+在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="表单提交类型与ajax">
 <meta property="og:url" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/index.html">
 <meta property="og:site_name" content="Miss Me">
 <meta property="og:description" content="00x1 问题描述
 
-在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。
-
-00x2 问题分析及解决
-
-数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明">
+在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。">
 <meta property="og:image" content="http://oloaybpun.bkt.clouddn.com/%E5%9C%B0%E5%9D%80.PNG">
 <meta property="og:image" content="http://oloaybpun.bkt.clouddn.com/submit.PNG">
 <meta property="og:image" content="http://oloaybpun.bkt.clouddn.com/clipboard.png">
 <meta property="og:image" content="http://oloaybpun.bkt.clouddn.com/clipboard1.png">
-<meta property="og:updated_time" content="2017-04-23T12:40:59.981Z">
+<meta property="og:updated_time" content="2017-12-14T07:45:12.527Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="表单提交类型与ajax">
 <meta name="twitter:description" content="00x1 问题描述
 
-在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。
-
-00x2 问题分析及解决
-
-数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明">
+在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。">
 <meta name="twitter:image" content="http://oloaybpun.bkt.clouddn.com/%E5%9C%B0%E5%9D%80.PNG">
 
 
@@ -341,11 +329,7 @@
       
         <p>00x1 问题描述</p>
 <blockquote>
-<p>在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，<br>1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。<br><img src="http://oloaybpun.bkt.clouddn.com/%E5%9C%B0%E5%9D%80.PNG" alt="Alt text"><br>2.数据库中数据成功入库，但是回调函数不显示。</p>
-</blockquote>
-<p>00x2 问题分析及解决</p>
-<blockquote>
-<p>数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明表单中的数据应该是被提交了两次，第一次以POST方式（ajax中type设置成“POST”）提交，然后再以GET方式提交。</p>
+<p>在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，<br>1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。<br><img src="http://oloaybpun.bkt.clouddn.com/%E5%9C%B0%E5%9D%80.PNG" alt="Alt text"><br>2.数据库中数据成功入库，但是回调函数不显示。<br><a id="more"></a><br>00x2 问题分析及解决<br>数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明表单中的数据应该是被提交了两次，第一次以POST方式（ajax中type设置成“POST”）提交，然后再以GET方式提交。</p>
 <p>通过查找资料发现，代码中将button的type设置成了“submit”，将提交按钮的type属性修改成“button”，问题就会解决。<br><img src="http://oloaybpun.bkt.clouddn.com/submit.PNG" alt="Alt text"><br>submit默认为以GET方式进行表单提交（form）。<br>button则响应用户自定义的事件，如果不指定onclick等事件处理函数，它不做任何事情。<br>以ajax方式提交时，jQuery给提交按钮绑定了click事件，ajax中设定了以POST方式提交。而在button中，type被设置成submit，默认以GET方式提交。就引出了关于click和submit执行先后顺序的问题。</p>
 </blockquote>
 <p>00x3 click和submit执行的先后顺序</p>
