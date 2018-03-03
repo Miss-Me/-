@@ -90,10 +90,7 @@
 
 
 生成随机数据
-拦截Ajax请求
-
-
-00x2 在vue-cli项目中安装配置mockjs&amp;emsp;首先确保安装并成功引入axios；&amp;emsp;然后安装mockjs  npm install mockjs –save-dev；&amp;emsp;在main.js文件中引入mockjs并配置axios跨">
+拦截Ajax请求">
 <meta property="og:type" content="article">
 <meta property="og:title" content="在Vue项目中使用Mock.js构造模拟数据">
 <meta property="og:url" content="http://yoursite.com/2018/03/03/在Vue项目中使用Mock-js构造模拟数据/index.html">
@@ -102,22 +99,16 @@
 
 
 生成随机数据
-拦截Ajax请求
-
-
-00x2 在vue-cli项目中安装配置mockjs&amp;emsp;首先确保安装并成功引入axios；&amp;emsp;然后安装mockjs  npm install mockjs –save-dev；&amp;emsp;在main.js文件中引入mockjs并配置axios跨">
+拦截Ajax请求">
 <meta property="og:image" content="http://yoursite.com/2018/03/03/在Vue项目中使用Mock-js构造模拟数据/mockjs.PNG">
-<meta property="og:updated_time" content="2018-03-03T10:46:16.184Z">
+<meta property="og:updated_time" content="2018-03-03T10:54:07.097Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在Vue项目中使用Mock.js构造模拟数据">
 <meta name="twitter:description" content="00x1 mockjs简介&amp;emsp;mock.js是一款开发前端虚拟接口的插件，主要有两个功能
 
 
 生成随机数据
-拦截Ajax请求
-
-
-00x2 在vue-cli项目中安装配置mockjs&amp;emsp;首先确保安装并成功引入axios；&amp;emsp;然后安装mockjs  npm install mockjs –save-dev；&amp;emsp;在main.js文件中引入mockjs并配置axios跨">
+拦截Ajax请求">
 <meta name="twitter:image" content="http://yoursite.com/2018/03/03/在Vue项目中使用Mock-js构造模拟数据/mockjs.PNG">
 
 
@@ -344,10 +335,11 @@
 <blockquote>
 <ul>
 <li>生成随机数据</li>
-<li>拦截Ajax请求</li>
+<li>拦截Ajax请求<a id="more"></a>
+<h5 id="00x2-在vue-cli项目中安装配置mockjs"><a href="#00x2-在vue-cli项目中安装配置mockjs" class="headerlink" title="00x2 在vue-cli项目中安装配置mockjs"></a>00x2 在vue-cli项目中安装配置mockjs</h5>&emsp;首先确保安装并成功引入axios；<br>&emsp;然后安装mockjs  npm install mockjs –save-dev；<br>&emsp;在main.js文件中引入mockjs并配置axios跨域信息：    <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">require(&apos;./mock.js&apos;)  </div><div class="line">//配置axios跨域请求头部</div><div class="line">axios.defaults.headers.post[&apos;Content-Type&apos;] = &apos;application/x-www-form-urlencoded;charset=UTF-8&apos;</div><div class="line">//配置axios请求拦截器</div><div class="line">axios.interceptors.request.use(function(config) &#123;</div><div class="line">    return config;</div><div class="line">  &#125;, function(error) &#123;</div><div class="line">    return Promise.reject(error);</div><div class="line">  &#125;)</div><div class="line">//配置axios响应拦截器</div><div class="line">axios.interceptors.response.use(function(response) &#123;</div><div class="line">  return response;</div><div class="line">&#125;, function(error) &#123;</div><div class="line">  return Promise.reject(error);</div><div class="line">&#125;)</div><div class="line">//封装axios的post请求</div><div class="line">export function fetch(url, params) &#123;</div><div class="line">  return new Promise((resolve, reject) =&gt; &#123;</div><div class="line">    axios.post(url, params).then(response =&gt; &#123;</div><div class="line">        resolve(response.data);</div><div class="line">      &#125;).catch((error) =&gt; &#123;</div><div class="line">        reject(error);</div><div class="line">      &#125;)</div><div class="line">  &#125;)</div><div class="line">&#125;</div><div class="line">//封装接口信息</div><div class="line">export default &#123;</div><div class="line">  http(url, params) &#123;</div><div class="line">    return fetch(url, params);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
 </ul>
 </blockquote>
-<h5 id="00x2-在vue-cli项目中安装配置mockjs"><a href="#00x2-在vue-cli项目中安装配置mockjs" class="headerlink" title="00x2 在vue-cli项目中安装配置mockjs"></a>00x2 在vue-cli项目中安装配置mockjs</h5><p>&emsp;首先确保安装并成功引入axios；<br>&emsp;然后安装mockjs  npm install mockjs –save-dev；<br>&emsp;在main.js文件中引入mockjs并配置axios跨域信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">require(&apos;./mock.js&apos;)  </div><div class="line">//配置axios跨域请求头部</div><div class="line">axios.defaults.headers.post[&apos;Content-Type&apos;] = &apos;application/x-www-form-urlencoded;charset=UTF-8&apos;</div><div class="line">//配置axios请求拦截器</div><div class="line">axios.interceptors.request.use(function(config) &#123;</div><div class="line">    return config;</div><div class="line">  &#125;, function(error) &#123;</div><div class="line">    return Promise.reject(error);</div><div class="line">  &#125;)</div><div class="line">//配置axios响应拦截器</div><div class="line">axios.interceptors.response.use(function(response) &#123;</div><div class="line">  return response;</div><div class="line">&#125;, function(error) &#123;</div><div class="line">  return Promise.reject(error);</div><div class="line">&#125;)</div><div class="line">//封装axios的post请求</div><div class="line">export function fetch(url, params) &#123;</div><div class="line">  return new Promise((resolve, reject) =&gt; &#123;</div><div class="line">    axios.post(url, params).then(response =&gt; &#123;</div><div class="line">        resolve(response.data);</div><div class="line">      &#125;).catch((error) =&gt; &#123;</div><div class="line">        reject(error);</div><div class="line">      &#125;)</div><div class="line">  &#125;)</div><div class="line">&#125;</div><div class="line">//封装接口信息</div><div class="line">export default &#123;</div><div class="line">  http(url, params) &#123;</div><div class="line">    return fetch(url, params);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h5 id="00x3-Mock-js语法"><a href="#00x3-Mock-js语法" class="headerlink" title="00x3 Mock.js语法"></a>00x3 Mock.js语法</h5><p>&emsp;mock.js语法分为两种，数据模板定义和数据占位符定义     </p>
 <blockquote>
 <ul>
