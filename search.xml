@@ -1,452 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search> 
+<search>
   
     
     <entry>
       <title><![CDATA[用setTimeout实现for循环中的计时器]]></title>
-      <url>/2018/09/01/%E7%94%A8setTimeout%E5%AE%9E%E7%8E%B0for%E5%BE%AA%E7%8E%AF%E4%B8%AD%E7%9A%84%E8%AE%A1%E6%97%B6%E5%99%A8/</url>
-      <content type="html"><![CDATA[<h5 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h5><p>&emsp;&emsp;要实现的功能：在for循环中写一个计时器，先隔2000毫秒打印1，再隔2000毫秒打印2….依次每间隔2000毫秒打印出0到9.</p>
-<a id="more"></a>
-<h5 id="00x1-基本思路"><a href="#00x1-基本思路" class="headerlink" title="00x1 基本思路"></a>00x1 基本思路</h5><p>&emsp;&emsp;要实现分别输出数组中的所有值，通过简单的for循环就能实现。要实现间隔一段时间输出，则使用setTimeout函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">	for (var i = 0; i &lt; 10; i++) &#123;</div><div class="line">	// setTimeout(function()&#123;</div><div class="line">		console.log(i);//分别输出i的值</div><div class="line">	// &#125;,2000)			</div><div class="line">	&#125;	</div><div class="line">&#125;;</div><div class="line">test();</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;可以在控制台看到紧跟着分别输出了小于10的i的值。但是在加上setTimeout函数后，控制台的内容却都变成了10。<br>&emsp;&emsp;解释造成这种差别的原因，我们要从JavaScript的执行机制开始说起。</p>
-<h5 id="00x2-js执行机制与作用域链"><a href="#00x2-js执行机制与作用域链" class="headerlink" title="00x2 js执行机制与作用域链"></a>00x2 js执行机制与作用域链</h5><p>&emsp;&emsp;首先，JavaScript是单线程环境，代码从上到下依次执行。这种执行方这也被称作是“同步执行”。（同一时间JavaScript只能执行一段代码，如果这段代码要执行很长时间，那么之后的代码只能尽情地等待它执行完才能有机会执行）。<br>&emsp;&emsp;但JavaScript中引进了异步机制。于是，所有任务可以分成两种，一种是同步任务（synchronous），另一种是异步任务（asynchronous）。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队列”通知主线程，某个异步任务可以执行了，该任务才会进入主线程执行。</p>
-<p>&emsp;&emsp;在上面的代码中，for循环是同步代码，setTimeout是异步代码。遇到这种既包含同步又包含异步的情况，JavaScript依旧按照从上到下的顺序执行同步代码，并将异步代码插入任务队列。setTimeout的第二个参数则是在执行代码前需等待的毫秒数，但等待的时间是相对主程序完毕的时间计算的，也就是说，在执行到setTimeout函数时会将它插入任务队列，在主程序结束之后开启计时器。<br>&emsp;&emsp;最后，当执行完同步代码，js引擎就会去执行任务队列中的异步代码。这时候任务队列中就会有十个console.log(i)。我们知道，在每次循环中将setTimeout里面的代码“console.log(i)”放入任务队列时，i的值都是不一样的。但JavaScript引擎开始执行任务队列中的代码时，会开始在当前的作用域中开始找变量i，但是当前作用域中并没有对变量i进行定义。这个时候就会在创造该函数的作用域中寻找i。创建该函数的作用域就是全局作用域，这个时候就找到了for循环中的变量i，这时的i是全局变量，并且值已经确定：10。十个console.log“共享”i的值。这就是作用域链的问题。<br>&emsp;&emsp;为了解决以上两个问题，可以使用let或者闭包。</p>
-<h5 id="00x3-解决方案一——闭包"><a href="#00x3-解决方案一——闭包" class="headerlink" title="00x3 解决方案一——闭包"></a>00x3 解决方案一——闭包</h5><p>&emsp;&emsp;终于来到了本文中最重要的一部分。什么是闭包？！<br>&emsp;&emsp;闭包是指有权访问另一个函数作用域中的变量的函数。或者说，将函数作为参数或者返回值。创建闭包的常见方式，就是在一个函数内部创建另一个函数。以下面的代码为例。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">    for (var i = 0; i &lt; 10; i++) &#123;</div><div class="line">    	(function(j)&#123;//闭包</div><div class="line">    		setTimeout(function()&#123;</div><div class="line">    			console.log(j);//分别输出i的值</div><div class="line">    		&#125;,4000)		</div><div class="line">    	&#125;)(i);//闭包</div><div class="line">    &#125;;	</div><div class="line">&#125;;</div><div class="line"></div><div class="line">test();</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;代码中注释为“闭包”的两行代码就是一个典型的闭包。我们在函数内部创建了一个函数，并将变量i以函数参数形式传递给内层函数中变量j，j就是这个函数中的局部变量，每次i传入的值不同，局部变量j的值也不同。</p>
-<h5 id="00x4-解决方案二——let"><a href="#00x4-解决方案二——let" class="headerlink" title="00x4 解决方案二——let"></a>00x4 解决方案二——let</h5><p>&emsp;&emsp;如下面的代码所示，使用let替换var，也能输出0-9的值。这是因为，当for循环中的i是通过var定义的变量时，作用域是一整个封闭函数，是全局作用域；当i是通过let定义的变量时，作用域在代码块中，叫做块级作用域，在for循环这个子块中。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">	for (let i = 0; i &lt; 10; i++) &#123;</div><div class="line">		setTimeout(function()&#123;</div><div class="line">			console.log(i);//分别输出i的值</div><div class="line">		&#125;,2000)		</div><div class="line">	&#125;;</div><div class="line">&#125;;</div><div class="line">test();</div></pre></td></tr></table></figure></p>
-<h5 id="00x5-间隔输出"><a href="#00x5-间隔输出" class="headerlink" title="00x5 间隔输出"></a>00x5 间隔输出</h5><p>&emsp;&emsp;在实际查看时，控制台并不是一开始就输出i的值，但是也并没有按照预期每隔一段时间输出i的值，问题就出现setTimeout等待的时间上，每次都是2000ms。在任务队列里，setTimeout按照异步的顺序执行，按照放入任务队列的顺序依次开始计时，时间到了就打印值。也就是说，在异步的情况下，开始计时的时间差很小很小，没有明显的时间差。可以利用传入的i的值来设置这种时间差。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">	for (var i = 0; i &lt; 10; i++) &#123;</div><div class="line">		(function(j)&#123;//闭包</div><div class="line">			setTimeout(function()&#123;</div><div class="line">				console.log(j);//分别输出i的值</div><div class="line">			&#125;,2000*j)		</div><div class="line">		&#125;)(i);//闭包</div><div class="line">	&#125;;</div><div class="line">&#125;;</div><div class="line">test();</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;这样等待的时间就会分别变成2000<em>1,2000</em>2,2000*3……每次打印都会有2000ms的时间差。</p>
-]]></content>
-      
-        
-        <tags>
-            
-            <tag> JavaScript、setTimeout、闭包 </tag>
-            
-        </tags>
-        
+      <url>%2F2018%2F09%2F01%2F%E7%94%A8setTimeout%E5%AE%9E%E7%8E%B0for%E5%BE%AA%E7%8E%AF%E4%B8%AD%E7%9A%84%E8%AE%A1%E6%97%B6%E5%99%A8%2F</url>
+      <content type="text"><![CDATA[写在前面&emsp;&emsp;要实现的功能：在for循环中写一个计时器，先隔2000毫秒打印1，再隔2000毫秒打印2….依次每间隔2000毫秒打印出0到9. 00x1 基本思路&emsp;&emsp;要实现分别输出数组中的所有值，通过简单的for循环就能实现。要实现间隔一段时间输出，则使用setTimeout函数。12345678function test()&#123; for (var i = 0; i &lt; 10; i++) &#123; // setTimeout(function()&#123; console.log(i);//分别输出i的值 // &#125;,2000) &#125; &#125;;test(); &emsp;&emsp;可以在控制台看到紧跟着分别输出了小于10的i的值。但是在加上setTimeout函数后，控制台的内容却都变成了10。&emsp;&emsp;解释造成这种差别的原因，我们要从JavaScript的执行机制开始说起。 00x2 js执行机制与作用域链&emsp;&emsp;首先，JavaScript是单线程环境，代码从上到下依次执行。这种执行方这也被称作是“同步执行”。（同一时间JavaScript只能执行一段代码，如果这段代码要执行很长时间，那么之后的代码只能尽情地等待它执行完才能有机会执行）。&emsp;&emsp;但JavaScript中引进了异步机制。于是，所有任务可以分成两种，一种是同步任务（synchronous），另一种是异步任务（asynchronous）。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有”任务队列”通知主线程，某个异步任务可以执行了，该任务才会进入主线程执行。 &emsp;&emsp;在上面的代码中，for循环是同步代码，setTimeout是异步代码。遇到这种既包含同步又包含异步的情况，JavaScript依旧按照从上到下的顺序执行同步代码，并将异步代码插入任务队列。setTimeout的第二个参数则是在执行代码前需等待的毫秒数，但等待的时间是相对主程序完毕的时间计算的，也就是说，在执行到setTimeout函数时会将它插入任务队列，在主程序结束之后开启计时器。&emsp;&emsp;最后，当执行完同步代码，js引擎就会去执行任务队列中的异步代码。这时候任务队列中就会有十个console.log(i)。我们知道，在每次循环中将setTimeout里面的代码“console.log(i)”放入任务队列时，i的值都是不一样的。但JavaScript引擎开始执行任务队列中的代码时，会开始在当前的作用域中开始找变量i，但是当前作用域中并没有对变量i进行定义。这个时候就会在创造该函数的作用域中寻找i。创建该函数的作用域就是全局作用域，这个时候就找到了for循环中的变量i，这时的i是全局变量，并且值已经确定：10。十个console.log“共享”i的值。这就是作用域链的问题。&emsp;&emsp;为了解决以上两个问题，可以使用let或者闭包。 00x3 解决方案一——闭包&emsp;&emsp;终于来到了本文中最重要的一部分。什么是闭包？！&emsp;&emsp;闭包是指有权访问另一个函数作用域中的变量的函数。或者说，将函数作为参数或者返回值。创建闭包的常见方式，就是在一个函数内部创建另一个函数。以下面的代码为例。1234567891011function test()&#123; for (var i = 0; i &lt; 10; i++) &#123; (function(j)&#123;//闭包 setTimeout(function()&#123; console.log(j);//分别输出i的值 &#125;,4000) &#125;)(i);//闭包 &#125;; &#125;;test(); &emsp;&emsp;代码中注释为“闭包”的两行代码就是一个典型的闭包。我们在函数内部创建了一个函数，并将变量i以函数参数形式传递给内层函数中变量j，j就是这个函数中的局部变量，每次i传入的值不同，局部变量j的值也不同。 00x4 解决方案二——let&emsp;&emsp;如下面的代码所示，使用let替换var，也能输出0-9的值。这是因为，当for循环中的i是通过var定义的变量时，作用域是一整个封闭函数，是全局作用域；当i是通过let定义的变量时，作用域在代码块中，叫做块级作用域，在for循环这个子块中。12345678function test()&#123; for (let i = 0; i &lt; 10; i++) &#123; setTimeout(function()&#123; console.log(i);//分别输出i的值 &#125;,2000) &#125;;&#125;;test(); 00x5 间隔输出&emsp;&emsp;在实际查看时，控制台并不是一开始就输出i的值，但是也并没有按照预期每隔一段时间输出i的值，问题就出现setTimeout等待的时间上，每次都是2000ms。在任务队列里，setTimeout按照异步的顺序执行，按照放入任务队列的顺序依次开始计时，时间到了就打印值。也就是说，在异步的情况下，开始计时的时间差很小很小，没有明显的时间差。可以利用传入的i的值来设置这种时间差。12345678910function test()&#123; for (var i = 0; i &lt; 10; i++) &#123; (function(j)&#123;//闭包 setTimeout(function()&#123; console.log(j);//分别输出i的值 &#125;,2000*j) &#125;)(i);//闭包 &#125;;&#125;;test(); &emsp;&emsp;这样等待的时间就会分别变成20001,20002,2000*3……每次打印都会有2000ms的时间差。]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[electron与vue实践初体验]]></title>
-      <url>/2018/05/24/electron%E4%B8%8Evue%E5%AE%9E%E8%B7%B5%E5%88%9D%E4%BD%93%E9%AA%8C/</url>
-      <content type="html"><![CDATA[<p><img src="/2018/05/24/electron与vue实践初体验/electron.png" alt="mockjs"></p>
-<h5 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h5><p>&emsp;&emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。<br><a id="more"></a></p>
-<p>&emsp;&emsp;使用下面的命令来安装cnpm。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org//安装cnpm</div></pre></td></tr></table></figure></p>
-<h5 id="00x1-构建electron"><a href="#00x1-构建electron" class="headerlink" title="00x1 构建electron"></a>00x1 构建electron</h5><ul>
-<li>首先，打开命令行，使用cnpm安装electron。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cnpm install -g electron//在全局安装</div><div class="line">cnpm install --save-dev electron//在当前目录安装</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>&emsp;&emsp;这里使用了全局安装方式：<br><img src="/2018/05/24/electron与vue实践初体验/cnpm-install-g-electron.PNG" alt="mockjs"></p>
-<ul>
-<li>打开git，在github上下载electron-quick-start。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/electron/electron-quick-start</div><div class="line">cd electron-quick-start</div><div class="line">cnpm install //安装各种依赖</div><div class="line">cnpm run start //打开桌面应用</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>&emsp;&emsp;可以看到一个桌面应用被打开。<br><img src="/2018/05/24/electron与vue实践初体验/helloword.PNG" alt="mockjs"></p>
-<h5 id="00x2-在electron中引入vue"><a href="#00x2-在electron中引入vue" class="headerlink" title="00x2 在electron中引入vue"></a>00x2 在electron中引入vue</h5><ul>
-<li><p>新建一个vue项目</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cnpm install -g vue-cli//全局安装vue-cli脚手架</div><div class="line">vue init webpack my-vue(项目名字)//初始化一个项目</div><div class="line">cd my-vue</div><div class="line">cnpm install //安装各种依赖</div><div class="line">npm run dev //打开这个项目</div></pre></td></tr></table></figure>
-</li>
-<li><p>vue打包<br>&emsp;&emsp;打开vue项目中config文件夹下的index.js文件，确认其中的assetsPublicPath修改为相对路径 ./。注意是build配置下的assetsPublicPath。</p>
-</li>
-</ul>
-<p>&emsp;&emsp;运行npm run build对vue项目进行打包，在dist文件夹中生成打包文件。将dist文件夹中生成的static文件夹和index.html放入electron-quick-start下，替换掉electron-quick-start的index.html。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm run build</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;再次在electron-quick-start目录中运行npm run start</p>
-<h5 id="00x3-打包"><a href="#00x3-打包" class="headerlink" title="00x3 打包"></a>00x3 打包</h5><ul>
-<li><p>在electron-quick-start下安装打包插件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cnpm install -g electron-packager//采用全局安装</div></pre></td></tr></table></figure>
-</li>
-<li><p>打开package.json文件，在script文件下加上一段代码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&quot;electron_build&quot;: &quot;electron-packager ./ --platform=win32 --arch=x64 --icon=./app/img/electron.ico --overwrite&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>打包</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm run electron_build</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>&emsp;&emsp;运行打包命令就会生成一个文件夹，在里面就能找到打包生成的.exe文件。双击就能运行</p>
-]]></content>
-      
-        
+      <url>%2F2018%2F05%2F24%2Felectron%E4%B8%8Evue%E5%AE%9E%E8%B7%B5%E5%88%9D%E4%BD%93%E9%AA%8C%2F</url>
+      <content type="text"><![CDATA[写在前面&emsp;&emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。 &emsp;&emsp;使用下面的命令来安装cnpm。1npm install -g cnpm --registry=https://registry.npm.taobao.org//安装cnpm 00x1 构建electron 首先，打开命令行，使用cnpm安装electron。12cnpm install -g electron//在全局安装cnpm install --save-dev electron//在当前目录安装 &emsp;&emsp;这里使用了全局安装方式： 打开git，在github上下载electron-quick-start。1234git clone https://github.com/electron/electron-quick-startcd electron-quick-startcnpm install //安装各种依赖cnpm run start //打开桌面应用 &emsp;&emsp;可以看到一个桌面应用被打开。 00x2 在electron中引入vue 新建一个vue项目 12345cnpm install -g vue-cli//全局安装vue-cli脚手架vue init webpack my-vue(项目名字)//初始化一个项目cd my-vuecnpm install //安装各种依赖npm run dev //打开这个项目 vue打包&emsp;&emsp;打开vue项目中config文件夹下的index.js文件，确认其中的assetsPublicPath修改为相对路径 ./。注意是build配置下的assetsPublicPath。 &emsp;&emsp;运行npm run build对vue项目进行打包，在dist文件夹中生成打包文件。将dist文件夹中生成的static文件夹和index.html放入electron-quick-start下，替换掉electron-quick-start的index.html。1npm run build &emsp;&emsp;再次在electron-quick-start目录中运行npm run start 00x3 打包 在electron-quick-start下安装打包插件 1cnpm install -g electron-packager//采用全局安装 打开package.json文件，在script文件下加上一段代码 1&quot;electron_build&quot;: &quot;electron-packager ./ --platform=win32 --arch=x64 --icon=./app/img/electron.ico --overwrite&quot; 打包 1npm run electron_build &emsp;&emsp;运行打包命令就会生成一个文件夹，在里面就能找到打包生成的.exe文件。双击就能运行]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[mongoDB-数据聚合的三种方式]]></title>
-      <url>/2018/03/03/mongoDB-%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
-      <content type="html"><![CDATA[<h5 id="00x1-group"><a href="#00x1-group" class="headerlink" title="00x1 group"></a>00x1 group</h5><p>&emsp;&emsp;使用group可以执行相对复杂的聚合，先选定分组所依据的键，而后mongoDB就会将集合依据选定键进行分组，然后对每一个分组内的文档进行聚合，以得到结果文档。<br>（1）group结构<br><a id="more"></a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">db.test.group(&#123;</div><div class="line">    key:&#123;field:true&#125;  //key为分组依据，相当于aggregate中的$group</div><div class="line">    initial:&#123;count:0&#125;   //在分组前对变量初始化，这里声明的变量在下面回调函数中作为result的属性使用。</div><div class="line">    condition://过滤条件，相当于aggregate中的$match。</div><div class="line">    reduce:function ( curr, result ) &#123;&#125;     //第一个参数为当前分组中此时迭代到的文档对象，第二个参数为当前分组</div><div class="line">    &quot;$keyf&quot;:function() &#123;return &#125;  //定义分组函数</div><div class="line">    finalize:function(result)&#123;&#125; //这里的result为reduce的result，代表当前分组。此函数对完成当前分组后回调。</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
-<p>&emsp;&emsp;Group有传入的命令中共有六个参数，其中三个是JavaScript函数，因此每次查询到匹配的数据，都会被转换为对象传入函数。从运行效率上来说，Group比Aggregate差一大截。</p>
-<p>（2）使用场景<br>&emsp;&emsp;对返回数据最多只包含20000个元素，最多支持20000独立分组。</p>
-<h5 id="00x2-aggregate"><a href="#00x2-aggregate" class="headerlink" title="00x2 aggregate"></a>00x2 aggregate</h5><p>&emsp;&emsp;aggregate是mongoDB中经常提起的“管道”。主要用于处理数据（如求和，统计平均值等），并返回计算后的数据结构。<br>&emsp;&emsp;aggreagte是一个数组，其中包含多个对象（命令），通过遍历Pipleline数组对collection中的数据进行操作。<br>&emsp;&emsp;下面介绍一下aggregate的聚合管道比较常用的几种操作：<br>（1）$project<br>&emsp;&emsp;修改输入文档的结构。可以用来重命名、增加或删除域，也可以用于创建计算结果以及嵌套文档。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $project:&#123;</div><div class="line">        &quot;_id&quot;:1,</div><div class="line">        &quot;name&quot;:1</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
-<p>（2）$match<br>&emsp;&emsp;用于过滤数据，只输出符合条件的文档。$match使用MongoDB的标准查询操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $match:&#123;</div><div class="line">        &quot;count&quot;:&quot;3&quot;,</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>（3）$limit<br>&emsp;&emsp;用来限制MongoDB聚合管道返回的文档数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $limit:5</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>（4）$skip<br>&emsp;&emsp;在聚合管道中跳过指定数量的文档，并返回余下的文档。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $skip:8</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>（5）$unwind<br>&emsp;&emsp;将文档中的某一个数组类型字段拆分成多条，每条包含数组中的一个值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">	$unwind:&quot;$identlist&quot;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>（6）$group<br>&emsp;&emsp;将集合中的文档分组，可用于统计结果。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $group:&#123;&quot;_id&quot;:&quot;$count&quot;&#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>（7）$sort<br>&emsp;&emsp;将输入文档排序后输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $sort:&#123;&quot;count&quot;:1&#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<p>（8）使用场景<br>&emsp;&emsp;应用于常用的聚合操作；对聚合响应性能有一定要求时（索引及组合优化）；管道操作在中完成，由于内存有大小限制，处理的数据集大小有限。    </p>
-<h5 id="00x3-MapReduce"><a href="#00x3-MapReduce" class="headerlink" title="00x3 MapReduce"></a>00x3 MapReduce</h5><p>（1）MapReduce结构<br>&emsp;&emsp;mapreduce是mongoDB中提供的用于数据聚合的一种方式。通过对集合中的各个满足条件的文档进行预处理，整理出想要的数据然后统计得到最终的统计结果。<br>&emsp;&emsp;mapreduce的结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">db.runCommand(&#123;  </div><div class="line">    mapreduce:&lt;collection&gt;,  //需要进行处理的集合名</div><div class="line">    map:&lt;mapfunction&gt;,  //映射函数（分组）</div><div class="line">    reduce:&lt;reducefunction&gt;,  //统计函数</div><div class="line">    [,query:&lt;query filter object&gt;]  //，在发往map函数之前，对文档进行过滤 </div><div class="line">    [,sort:&lt;sorts the input objects using this key.Useful for optimization,like sorting by the emit key for fewer reduces&gt;]  //在发往map函数之前，对文档进行排序</div><div class="line">    [,limit:&lt;number of objects to return from collection&gt;]  //限制发往map函数的文档数量</div><div class="line">    [,out:&lt;see output options below&gt;]  //新建集合，用于存放统计结果</div><div class="line">    [,keeptemp:&lt;true|false&gt;]  //是否保存统计结果为临时集合</div><div class="line">    [,finalize:&lt;finalizefunction&gt;]  //最终处理函数，对reduce返回结果（存入out之前）进行最终处理</div><div class="line">    [,scope:&lt;object where fields go into javascript global scope&gt;] //向map、reduce、finalize导入外部变量</div><div class="line">    [,verbose:true]  //详细的统计信息，用于调试</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;使用MapReduce主要需要实现两个函数：Map函数和Reduce函数。接下来详细介绍这两个函数。<br>（2）Map函数<br>&emsp;&emsp;可以将Map函数理解为分组，调用emit（key，values），遍历collection中所有的记录。其中，emit中的key为分组依据；values为分组后需要保留的数据，为1时则统计该分组的值的个数。<br>&emsp;&emsp;key对应最后结果集中的_id。经过Map函数处理的集合，每条数据中只有”key”和”values”两个字段。</p>
-<p>（3）Reduce函数<br>&emsp;&emsp;Reduce为统计函数，接受Map函数处理后返回的key和values作为参数，将key-values变成key-value，也就是把values数组变成一个个单一的value。当key-values中的values数组过大时，会被再切分成很多个小的key-values，再对这些小的key-values分别执行Reduce，再将多个块的结果组合成一个新的数组，作为Reduce函数的第二个参数，继续Reduce操作。这个类似于多阶的归并排序。<br>（4）out和keeptemp<br>&emsp;&emsp;out:<br>&emsp;&emsp;在文档输出时，output是可选的，一般结构为{ “out”: option }。<br>&emsp;&emsp;option可以有以下几个选项。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123; replace : &quot;collection name&quot; &#125; – mapReduce的输出结果会替换掉原来的collection，collection不存在则创建。</div><div class="line">&#123; merge : &quot;collection name&quot; &#125; – 将新老数据进行合并，新的替换旧的，没有的添加进去。</div><div class="line">&#123; reduce : &quot;collection name&quot; &#125; – 存在老数据时，在原来基础上加新数据(即 new value = old value + mapReduce value)。</div><div class="line">&#123; inline : 1 &#125; – 不会创建collection，结果保存在内存里，只限于结果小于16MB的情况。</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;通常结构为{“out”:”collection name”}，如果collection不存在，就新建一个集合。</p>
-<p>&emsp;&emsp;keeptemp<br>&emsp;&emsp;值只能为true或者false，表明输出到的collection是否是临时的，如果想在连接关闭后任然保留这个集合，则需要指定keeptemp的值为”true”。在使用output的情况下，不必指定keeptemp为true。</p>
-<p>（5）使用场景<br>&emsp;&emsp;聚合要求复杂；大型数据集            </p>
-<h5 id="00x4-三者比较"><a href="#00x4-三者比较" class="headerlink" title="00x4 三者比较"></a>00x4 三者比较</h5><table>
-<thead>
-<tr>
-<th>&emsp;</th>
-<th>group</th>
-<th>aggregate</th>
-<th>MapReduce</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>是否使用JavaScript引擎</td>
-<td>是，定制reduce函数</td>
-<td>是，不能编写自定义函数</td>
-<td>是，MapReduce函数是用JavaScript编写的</td>
-</tr>
-<tr>
-<td>返回结果集保存位置</td>
-<td>内联,结果必须符合BSON文档的限制(当前是16Mb)</td>
-<td>内联，服务器支持的最大文档大小(16Mb)，超过时会报错</td>
-<td>内联、新集合、合并、替换、减少</td>
-</tr>
-<tr>
-<td>处理数据集大小</td>
-<td>将不会分组到一个超过10,000个键的结果集</td>
-<td>操作在内存中完成，有内存大小限制，处理数据集大小有限</td>
-<td>大型数据集，超过20000的独立分组建议采用MapReduce</td>
-</tr>
-<tr>
-<td>处理性能</td>
-<td>低于aggregate</td>
-<td>较高，管道可重复使用</td>
-<td>低于aggregate</td>
-</tr>
-<tr>
-<td>灵活度</td>
-<td>低于MapReduce</td>
-<td>低于MapRduce</td>
-<td>较高，能使用JavaScript</td>
-</tr>
-</tbody>
-</table>
-<p>00x5  从一个小例子具体分析<br>&emsp; &emsp; 为公司的每个用户分配一张卡（有唯一的卡号”_id”）；持有该卡的用户可以使用这张卡在不同的超市消费，每个超市都有一个标识码，用”identlist”存放用户消费过的超市标识码；持有该卡的用户名字用”name”表示，默认在该公司中，每个人的姓名都是唯一的，与”_id”一一对应；”eventline”列举用户每次消费购买的物品；”timeline”记录每次消费的时间;”newtimeline”为用户最近一次消费的时间。<br>&emsp; &emsp;示例数据如下：<br><img src="/2018/03/03/mongoDB-数据聚合的三种方式/mongoDB数据.PNG" alt="mockjs"><br>&emsp; &emsp;知道最近有几家超市做促销（数组A），要求（1）获取在A中任意一家或多家超市消费过的卡的持有者；（2）这些卡的最新消费时间；（3）这些卡的累积消费次数；（4）根据最新消费时间/累积消费次数对获取到的这些卡的数据进行排序；对排序后的数据进行分页。<br>&emsp; &emsp;分析：要求中最难的是第一步：遍历数组A，将A中的每一条数据，作为分组依据（可能将原来的一条数据拆分成几条）；再对分组后的数据以”_id”进行聚合。<br>（1）使用MapReduce实现以上要求。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">var map = function()&#123;</div><div class="line">    emit(this.name,this.timeline);</div><div class="line">    &#125;;</div><div class="line">var reduce = function(key,values)&#123;</div><div class="line">    return Array.sum(values);</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">db.testtest.mapReduce(</div><div class="line">    map,</div><div class="line">    reduce,</div><div class="line">    &#123;</div><div class="line">        query:&#123;$where:function()&#123;</div><div class="line">        var arr = new Array(&quot;Jk3Nx5-YUxBJZ-Zklt&quot;,&quot;LMuHW7-JtnwQC-OBIh&quot;);</div><div class="line">            for(var index in arr)&#123;               </div><div class="line">                for(var current in this.identlist)&#123;</div><div class="line">                    if(this.identlist[current] == arr[index])&#123;</div><div class="line">                        return true;</div><div class="line">                    &#125;</div><div class="line">                    return false;</div><div class="line">                &#125;</div><div class="line">               </div><div class="line">              &#125;             </div><div class="line">        &#125;&#125;,</div><div class="line">        sort:&#123;&quot;count&quot;:1&#125;,</div><div class="line">        finalize:function(key,value)&#123;return &#123;count:value.length,time:value[0]&#125;;&#125;,</div><div class="line">        out:&quot;bbb_result&quot;        </div><div class="line">     &#125;</div><div class="line">)</div><div class="line">db.bbb_result.find().skip(1).limit(5)</div></pre></td></tr></table></figure>
-<p>（2）使用aggregate<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var arr = new Array(&quot;wdeVyU-YVutsF-CEza&quot;,&quot;Jk3Nx5-YUxBJZ-Zklt&quot;);</div><div class="line">db.getCollection(&apos;testtest&apos;).aggregate([</div><div class="line">    &#123;&apos;$unwind&apos;:&quot;$identlist&quot;&#125;,</div><div class="line">    &#123;&quot;$match&quot;:&#123;&quot;identlist&quot;:&#123;&quot;$in&quot;:arr&#125;&#125;&#125;,</div><div class="line">    &#123;$group:&#123;_id:&quot;$name&quot;,timeline:&#123;$addToSet:&quot;$timeline&quot;&#125;&#125;&#125;,</div><div class="line">    &#123;&apos;$unwind&apos;:&quot;$timeline&quot;&#125;,</div><div class="line">    &#123;&apos;$unwind&apos;:&quot;$timeline&quot;&#125;,</div><div class="line">    &#123;$group:&#123;_id:&quot;$_id&quot;,time:&#123;$first:&quot;$timeline&quot;&#125;,count:&#123;&quot;$sum&quot;:1&#125;&#125;&#125;,</div><div class="line">    &#123;$sort:&#123;&quot;count&quot;:-1&#125;&#125;,</div><div class="line">    &#123;$skip:0&#125;,</div><div class="line">    &#123;$limit:5&#125;</div><div class="line">])</div></pre></td></tr></table></figure></p>
-<p>&emsp; &emsp;以上两个小例子经测试后均能实现要求，这里不做详细解释，需要的请自取~</p>
-]]></content>
-      
-        
-        <tags>
-            
-            <tag> mongoDB </tag>
-            
-        </tags>
-        
+      <url>%2F2018%2F03%2F03%2FmongoDB-%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F%2F</url>
+      <content type="text"><![CDATA[00x1 group&emsp;&emsp;使用group可以执行相对复杂的聚合，先选定分组所依据的键，而后mongoDB就会将集合依据选定键进行分组，然后对每一个分组内的文档进行聚合，以得到结果文档。（1）group结构 12345678db.test.group(&#123; key:&#123;field:true&#125; //key为分组依据，相当于aggregate中的$group initial:&#123;count:0&#125; //在分组前对变量初始化，这里声明的变量在下面回调函数中作为result的属性使用。 condition://过滤条件，相当于aggregate中的$match。 reduce:function ( curr, result ) &#123;&#125; //第一个参数为当前分组中此时迭代到的文档对象，第二个参数为当前分组 &quot;$keyf&quot;:function() &#123;return &#125; //定义分组函数 finalize:function(result)&#123;&#125; //这里的result为reduce的result，代表当前分组。此函数对完成当前分组后回调。&#125;) &emsp;&emsp;Group有传入的命令中共有六个参数，其中三个是JavaScript函数，因此每次查询到匹配的数据，都会被转换为对象传入函数。从运行效率上来说，Group比Aggregate差一大截。 （2）使用场景&emsp;&emsp;对返回数据最多只包含20000个元素，最多支持20000独立分组。 00x2 aggregate&emsp;&emsp;aggregate是mongoDB中经常提起的“管道”。主要用于处理数据（如求和，统计平均值等），并返回计算后的数据结构。&emsp;&emsp;aggreagte是一个数组，其中包含多个对象（命令），通过遍历Pipleline数组对collection中的数据进行操作。&emsp;&emsp;下面介绍一下aggregate的聚合管道比较常用的几种操作：（1）$project&emsp;&emsp;修改输入文档的结构。可以用来重命名、增加或删除域，也可以用于创建计算结果以及嵌套文档。 123456db.testtest.aggregate(&#123; $project:&#123; &quot;_id&quot;:1, &quot;name&quot;:1 &#125;&#125;) （2）$match&emsp;&emsp;用于过滤数据，只输出符合条件的文档。$match使用MongoDB的标准查询操作。12345db.testtest.aggregate(&#123; $match:&#123; &quot;count&quot;:&quot;3&quot;, &#125;&#125;) （3）$limit&emsp;&emsp;用来限制MongoDB聚合管道返回的文档数。123db.testtest.aggregate(&#123; $limit:5&#125;) （4）$skip&emsp;&emsp;在聚合管道中跳过指定数量的文档，并返回余下的文档。123db.testtest.aggregate(&#123; $skip:8&#125;) （5）$unwind&emsp;&emsp;将文档中的某一个数组类型字段拆分成多条，每条包含数组中的一个值。123db.testtest.aggregate(&#123; $unwind:&quot;$identlist&quot;&#125;) （6）$group&emsp;&emsp;将集合中的文档分组，可用于统计结果。123db.testtest.aggregate(&#123; $group:&#123;&quot;_id&quot;:&quot;$count&quot;&#125;&#125;) （7）$sort&emsp;&emsp;将输入文档排序后输出123db.testtest.aggregate(&#123; $sort:&#123;&quot;count&quot;:1&#125;&#125;) （8）使用场景&emsp;&emsp;应用于常用的聚合操作；对聚合响应性能有一定要求时（索引及组合优化）；管道操作在中完成，由于内存有大小限制，处理的数据集大小有限。 00x3 MapReduce（1）MapReduce结构&emsp;&emsp;mapreduce是mongoDB中提供的用于数据聚合的一种方式。通过对集合中的各个满足条件的文档进行预处理，整理出想要的数据然后统计得到最终的统计结果。&emsp;&emsp;mapreduce的结构如下：12345678910111213db.runCommand(&#123; mapreduce:&lt;collection&gt;, //需要进行处理的集合名 map:&lt;mapfunction&gt;, //映射函数（分组） reduce:&lt;reducefunction&gt;, //统计函数 [,query:&lt;query filter object&gt;] //，在发往map函数之前，对文档进行过滤 [,sort:&lt;sorts the input objects using this key.Useful for optimization,like sorting by the emit key for fewer reduces&gt;] //在发往map函数之前，对文档进行排序 [,limit:&lt;number of objects to return from collection&gt;] //限制发往map函数的文档数量 [,out:&lt;see output options below&gt;] //新建集合，用于存放统计结果 [,keeptemp:&lt;true|false&gt;] //是否保存统计结果为临时集合 [,finalize:&lt;finalizefunction&gt;] //最终处理函数，对reduce返回结果（存入out之前）进行最终处理 [,scope:&lt;object where fields go into javascript global scope&gt;] //向map、reduce、finalize导入外部变量 [,verbose:true] //详细的统计信息，用于调试&#125;); &emsp;&emsp;使用MapReduce主要需要实现两个函数：Map函数和Reduce函数。接下来详细介绍这两个函数。（2）Map函数&emsp;&emsp;可以将Map函数理解为分组，调用emit（key，values），遍历collection中所有的记录。其中，emit中的key为分组依据；values为分组后需要保留的数据，为1时则统计该分组的值的个数。&emsp;&emsp;key对应最后结果集中的_id。经过Map函数处理的集合，每条数据中只有”key”和”values”两个字段。 （3）Reduce函数&emsp;&emsp;Reduce为统计函数，接受Map函数处理后返回的key和values作为参数，将key-values变成key-value，也就是把values数组变成一个个单一的value。当key-values中的values数组过大时，会被再切分成很多个小的key-values，再对这些小的key-values分别执行Reduce，再将多个块的结果组合成一个新的数组，作为Reduce函数的第二个参数，继续Reduce操作。这个类似于多阶的归并排序。（4）out和keeptemp&emsp;&emsp;out:&emsp;&emsp;在文档输出时，output是可选的，一般结构为{ “out”: option }。&emsp;&emsp;option可以有以下几个选项。1234&#123; replace : &quot;collection name&quot; &#125; – mapReduce的输出结果会替换掉原来的collection，collection不存在则创建。&#123; merge : &quot;collection name&quot; &#125; – 将新老数据进行合并，新的替换旧的，没有的添加进去。&#123; reduce : &quot;collection name&quot; &#125; – 存在老数据时，在原来基础上加新数据(即 new value = old value + mapReduce value)。&#123; inline : 1 &#125; – 不会创建collection，结果保存在内存里，只限于结果小于16MB的情况。 &emsp;&emsp;通常结构为{“out”:”collection name”}，如果collection不存在，就新建一个集合。 &emsp;&emsp;keeptemp&emsp;&emsp;值只能为true或者false，表明输出到的collection是否是临时的，如果想在连接关闭后任然保留这个集合，则需要指定keeptemp的值为”true”。在使用output的情况下，不必指定keeptemp为true。 （5）使用场景&emsp;&emsp;聚合要求复杂；大型数据集 00x4 三者比较 &emsp; group aggregate MapReduce 是否使用JavaScript引擎 是，定制reduce函数 是，不能编写自定义函数 是，MapReduce函数是用JavaScript编写的 返回结果集保存位置 内联,结果必须符合BSON文档的限制(当前是16Mb) 内联，服务器支持的最大文档大小(16Mb)，超过时会报错 内联、新集合、合并、替换、减少 处理数据集大小 将不会分组到一个超过10,000个键的结果集 操作在内存中完成，有内存大小限制，处理数据集大小有限 大型数据集，超过20000的独立分组建议采用MapReduce 处理性能 低于aggregate 较高，管道可重复使用 低于aggregate 灵活度 低于MapReduce 低于MapRduce 较高，能使用JavaScript 00x5 从一个小例子具体分析&emsp; &emsp; 为公司的每个用户分配一张卡（有唯一的卡号”_id”）；持有该卡的用户可以使用这张卡在不同的超市消费，每个超市都有一个标识码，用”identlist”存放用户消费过的超市标识码；持有该卡的用户名字用”name”表示，默认在该公司中，每个人的姓名都是唯一的，与”_id”一一对应；”eventline”列举用户每次消费购买的物品；”timeline”记录每次消费的时间;”newtimeline”为用户最近一次消费的时间。&emsp; &emsp;示例数据如下：&emsp; &emsp;知道最近有几家超市做促销（数组A），要求（1）获取在A中任意一家或多家超市消费过的卡的持有者；（2）这些卡的最新消费时间；（3）这些卡的累积消费次数；（4）根据最新消费时间/累积消费次数对获取到的这些卡的数据进行排序；对排序后的数据进行分页。&emsp; &emsp;分析：要求中最难的是第一步：遍历数组A，将A中的每一条数据，作为分组依据（可能将原来的一条数据拆分成几条）；再对分组后的数据以”_id”进行聚合。（1）使用MapReduce实现以上要求。 1234567891011121314151617181920212223242526272829var map = function()&#123; emit(this.name,this.timeline); &#125;;var reduce = function(key,values)&#123; return Array.sum(values); &#125;;db.testtest.mapReduce( map, reduce, &#123; query:&#123;$where:function()&#123; var arr = new Array(&quot;Jk3Nx5-YUxBJZ-Zklt&quot;,&quot;LMuHW7-JtnwQC-OBIh&quot;); for(var index in arr)&#123; for(var current in this.identlist)&#123; if(this.identlist[current] == arr[index])&#123; return true; &#125; return false; &#125; &#125; &#125;&#125;, sort:&#123;&quot;count&quot;:1&#125;, finalize:function(key,value)&#123;return &#123;count:value.length,time:value[0]&#125;;&#125;, out:&quot;bbb_result&quot; &#125;)db.bbb_result.find().skip(1).limit(5) （2）使用aggregate123456789101112var arr = new Array(&quot;wdeVyU-YVutsF-CEza&quot;,&quot;Jk3Nx5-YUxBJZ-Zklt&quot;);db.getCollection(&apos;testtest&apos;).aggregate([ &#123;&apos;$unwind&apos;:&quot;$identlist&quot;&#125;, &#123;&quot;$match&quot;:&#123;&quot;identlist&quot;:&#123;&quot;$in&quot;:arr&#125;&#125;&#125;, &#123;$group:&#123;_id:&quot;$name&quot;,timeline:&#123;$addToSet:&quot;$timeline&quot;&#125;&#125;&#125;, &#123;&apos;$unwind&apos;:&quot;$timeline&quot;&#125;, &#123;&apos;$unwind&apos;:&quot;$timeline&quot;&#125;, &#123;$group:&#123;_id:&quot;$_id&quot;,time:&#123;$first:&quot;$timeline&quot;&#125;,count:&#123;&quot;$sum&quot;:1&#125;&#125;&#125;, &#123;$sort:&#123;&quot;count&quot;:-1&#125;&#125;, &#123;$skip:0&#125;, &#123;$limit:5&#125;]) &emsp; &emsp;以上两个小例子经测试后均能实现要求，这里不做详细解释，需要的请自取~]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[在Vue项目中使用Mock.js构造模拟数据]]></title>
-      <url>/2018/03/03/%E5%9C%A8Vue%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Mock-js%E6%9E%84%E9%80%A0%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE/</url>
-      <content type="html"><![CDATA[<p><img src="/2018/03/03/在Vue项目中使用Mock-js构造模拟数据/mockjs.PNG" alt="mockjs"></p>
-<h5 id="00x1-mockjs简介"><a href="#00x1-mockjs简介" class="headerlink" title="00x1 mockjs简介"></a>00x1 mockjs简介</h5><p>&emsp;&emsp;mock.js是一款开发前端虚拟接口的插件，主要有两个功能<br><a id="more"></a></p>
-<blockquote>
-<ul>
-<li>生成随机数据</li>
-<li>拦截Ajax请求<h5 id="00x2-在vue-cli项目中安装配置mockjs"><a href="#00x2-在vue-cli项目中安装配置mockjs" class="headerlink" title="00x2 在vue-cli项目中安装配置mockjs"></a>00x2 在vue-cli项目中安装配置mockjs</h5></li>
-</ul>
-</blockquote>
-<p>&emsp;&emsp;首先确保安装并成功引入axios；<br>&emsp;&emsp;然后安装mockjs  npm install mockjs –save-dev；<br>&emsp;&emsp;在main.js文件中引入mockjs并配置axios跨域信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">require(&apos;./mock.js&apos;)  </div><div class="line">//配置axios跨域请求头部</div><div class="line">axios.defaults.headers.post[&apos;Content-Type&apos;] = &apos;application/x-www-form-urlencoded;charset=UTF-8&apos;</div><div class="line">//配置axios请求拦截器</div><div class="line">axios.interceptors.request.use(function(config) &#123;</div><div class="line">    return config;</div><div class="line">  &#125;, function(error) &#123;</div><div class="line">    return Promise.reject(error);</div><div class="line">  &#125;)</div><div class="line">//配置axios响应拦截器</div><div class="line">axios.interceptors.response.use(function(response) &#123;</div><div class="line">  return response;</div><div class="line">&#125;, function(error) &#123;</div><div class="line">  return Promise.reject(error);</div><div class="line">&#125;)</div><div class="line">//封装axios的post请求</div><div class="line">export function fetch(url, params) &#123;</div><div class="line">  return new Promise((resolve, reject) =&gt; &#123;</div><div class="line">    axios.post(url, params).then(response =&gt; &#123;</div><div class="line">        resolve(response.data);</div><div class="line">      &#125;).catch((error) =&gt; &#123;</div><div class="line">        reject(error);</div><div class="line">      &#125;)</div><div class="line">  &#125;)</div><div class="line">&#125;</div><div class="line">//封装接口信息</div><div class="line">export default &#123;</div><div class="line">  http(url, params) &#123;</div><div class="line">    return fetch(url, params);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h5 id="00x3-Mock-js语法"><a href="#00x3-Mock-js语法" class="headerlink" title="00x3 Mock.js语法"></a>00x3 Mock.js语法</h5><p>&emsp;&emsp;mock.js语法分为两种，数据模板定义和数据占位符定义     </p>
-<blockquote>
-<ul>
-<li>数据模板定义<br>基本结构：属性名|生成规则:属性值<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">（1）&apos;name|min-max&apos;: value</div><div class="line">（2）&apos;name|count&apos;: value</div><div class="line">（3）&apos;name|min-max.dmin-dmax&apos;: value</div><div class="line">（4）&apos;name|min-max.dcount&apos;: value</div><div class="line">（5）&apos;name|count.dmin-dmax&apos;: value</div><div class="line">（6）&apos;name|count.dcount&apos;: value</div><div class="line">（7）&apos;name|+step&apos;: value</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</blockquote>
-<p>(1)属性值是字符串String<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1. name|min-max: string</div><div class="line">通过重复string生成一个字符串，重复次数大于等于min，小于等于max。这里的重复是指对初始化string的重复次数。</div><div class="line"></div><div class="line">2. name|count: string</div><div class="line">通过重复string生成一个字符串，重复次数等于count。</div></pre></td></tr></table></figure></p>
-<p>(2)属性值是数字Number<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">1. name|+1 : number</div><div class="line">属性值自动加1， 初始值为number</div><div class="line"></div><div class="line">2. name|min-max: number</div><div class="line">生成一个大于等于min，小于等于max的整数。</div><div class="line"></div><div class="line">3. name|min-max.dmin-dmax: number</div><div class="line">生成一个浮点数，整数部分大于等于min，小于等于max，小数部分保留dmin到dmax位。</div></pre></td></tr></table></figure></p>
-<p>（3）属性值是布尔类型Boolean<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1. name|1: boolean</div><div class="line">随机生成一个布尔值，值为true的概率为1/2， 值为false的概率为1/2。</div><div class="line"></div><div class="line">2. name|min-max: value</div><div class="line">随机生成一个布尔值，值为 value 的概率是 min / (min + max)，值为 !value 的概率是 max / (min + max)。</div></pre></td></tr></table></figure></p>
-<p>（4）属性值是对象Object<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1. name|count: object</div><div class="line">从属性值object中随机选取count个属性</div><div class="line"></div><div class="line">2. name|min-max: object</div><div class="line">从属性值object中随机选取min到max个属性</div></pre></td></tr></table></figure></p>
-<p>(5) 属性值是数组Array<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">1. name|1: array</div><div class="line">从属性值array中随机选取一个元素，作为最终值</div><div class="line"></div><div class="line">2. name|+1: array</div><div class="line">从属性值array中顺序选取一个元素，作为最终值</div><div class="line"></div><div class="line">3. name|min-max: array</div><div class="line">通过重复属性值array生成一个新数组，重复次数大于等于min，小于等于max。</div><div class="line"></div><div class="line">4. name|count: array</div><div class="line">通过重复属性值array生成一个新数组，重复次数为count。</div></pre></td></tr></table></figure></p>
-<p>(6) 属性值是函数Function<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&apos;name&apos;: function</div><div class="line"></div><div class="line">执行函数 function，取其返回值作为最终的属性值，函数的上下文为属性 &apos;name&apos; 所在的对象。</div></pre></td></tr></table></figure></p>
-<p>(7) 属性值是正则表达式RegExp<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">1. name: regexp</div><div class="line">根据正则表达式regexp反向生成可以匹配他的字符串。用于生成自定义格式的字符串。</div></pre></td></tr></table></figure></p>
-<blockquote>
-<ul>
-<li>数据占位符定义<br>基本结构：属性名：占位符<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;name|&apos;:&apos;@占位符()&apos;</div></pre></td></tr></table></figure>
-</li>
-</ul>
-</blockquote>
-<p>&emsp;&emsp;占位符也可以引用数据模板中的属性；占位符会有限引用数据模板中的属性；占位符支持相对路径和绝对路径。</p>
-<h5 id="00x4-Mock-mock"><a href="#00x4-Mock-mock" class="headerlink" title="00x4 Mock.mock()"></a>00x4 Mock.mock()</h5><ul>
-<li><p>Mock.mock(rurl?, rtype?, template|function(options))    </p>
-<blockquote>
-<p>根据数据模板生成模拟数据</p>
-</blockquote>
-</li>
-<li><p>Mock.mock(template)</p>
-<blockquote>
-<p>根据数据模板生成模拟数据。</p>
-</blockquote>
-</li>
-<li><p>Mock.mock(rurl, template)</p>
-<blockquote>
-<p>记录数据模板，当拦截到匹配rurl的ajax请求时，根据数据模板生成模拟数据，并作为响应数据返回。</p>
-</blockquote>
-</li>
-<li><p>Mock.mock(rurl, function(options))</p>
-<blockquote>
-<p>记录用于生成响应数据的函数。当拦截到匹配rurl的ajax请求时，函数function执行，并把执行结果作为响应数据返回。</p>
-</blockquote>
-</li>
-<li><p>Mock.mock(rurl, rtype, template)</p>
-<blockquote>
-<p>记录数据模板，当拦截到匹配rurl和rtype的ajax请求时，将根据数据模板生成模拟数据，并作为响应数据返回。</p>
-</blockquote>
-</li>
-<li><p>Mock.mock(rurl, rtype, function(options))</p>
-<blockquote>
-<p>记录用于生成响应数据的函数。当拦截到匹配rurl和rtype的ajax请求时，函数function(options)将被执行，并把执行结果作为响应数据返回。</p>
-</blockquote>
-</li>
-<li><p>rurl</p>
-<blockquote>
-<p>标识需要拦截的url，可以是url字符串或者url正则：</p>
-</blockquote>
-</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/\/domain\/list\.json/、&apos;/domian/list.json&apos;。</div></pre></td></tr></table></figure>
-<ul>
-<li><p>rtype</p>
-<blockquote>
-<p>可选，标识需要拦截的ajax请求类型。例如GET, POST, PUT, DELETE等。</p>
-</blockquote>
-</li>
-<li><p>template</p>
-<blockquote>
-<p>可选，标识数据模板，可以是对象或字符串。</p>
-</blockquote>
-</li>
-<li><p>function(options)</p>
-<blockquote>
-<p>可选，表示用于生成响应数据的函数。</p>
-</blockquote>
-</li>
-<li><p>options</p>
-<blockquote>
-<p>指向本次请求的ajax选项集，含有url， type和body三个属性。</p>
-<h5 id="00x5-构造模拟数据"><a href="#00x5-构造模拟数据" class="headerlink" title="00x5 构造模拟数据"></a>00x5 构造模拟数据</h5></blockquote>
-</li>
-</ul>
-<p>&emsp;&emsp;新建一个mock.js文件，在mock.js文件中引入mockjs<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">const Mock = require(&apos;mockjs&apos;);</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;根据mock.js语法格式构造模拟数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">export default Mock.mock(&apos;http://test.com&apos;, &#123;</div><div class="line">    &apos;cur_ip&apos;:&#123;</div><div class="line">        &apos;data&apos;:&apos;@date&apos;,</div><div class="line">        &apos;ip&apos;:&apos;@ip&apos;,</div><div class="line">        &apos;number|1-100&apos;:10000, </div><div class="line">        &apos;rank|1-100&apos;:20,</div><div class="line">        &apos;info&apos;:&apos;@title(3)&apos;,</div><div class="line">    &#125;,</div><div class="line">    &apos;cur_whois&apos;:[&#123;</div><div class="line">        &apos;alexa|1-300&apos;:100,</div><div class="line">        &quot;cdate&quot;:&apos;@datetime&apos;,</div><div class="line">        &quot;edate&quot;:&apos;@datetime&apos;,</div><div class="line">        &quot;name_server&quot;:&apos;@domain&apos;,</div><div class="line">        &quot;registrant_address&quot;:&apos;@county(true)&apos;,</div><div class="line">        &quot;registrant_company&quot;:&apos;@ctitle(3, 5)&apos;,</div><div class="line">        &quot;registrant_email&quot;:&apos;@email&apos;,</div><div class="line">        &quot;registrant_name&quot;:&apos;@name(true)&apos;,</div><div class="line">        &quot;registrant_phone&quot;:/^1[0-9]&#123;10&#125;$/,</div><div class="line">        &quot;registrar_name&quot;:&apos;@name(true)&apos;,</div><div class="line">        &quot;udate&quot;:&apos;@datetime&apos;,</div><div class="line"></div><div class="line">     &#125;],</div><div class="line">    &apos;history_ip|20&apos;:[&#123;</div><div class="line">        &quot;date&quot;:&apos;@datetime&apos;,</div><div class="line">        &quot;ip&quot;:&apos;@ip&apos;,</div><div class="line">        &quot;info&quot;:&apos;@title(3)&apos;,</div><div class="line">    &#125;],</div><div class="line">&#125;）</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;mock.js也支持模拟ajax请求响应时间，自定义的响应时间可以是绝对值，也可以是区间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Mock.setup(&#123;</div><div class="line">    timeout: 40000//40秒后再响应</div><div class="line">&#125;)</div><div class="line">Mock.setup(&#123;</div><div class="line">    timeout: &apos;10000-40000&apos;//在10秒和40秒之间响应</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
-<h5 id="00x6-请求获取数据"><a href="#00x6-请求获取数据" class="headerlink" title="00x6 请求获取数据"></a>00x6 请求获取数据</h5><p>&emsp;&emsp;在需要数据的页面中引入构造的mock的api<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import mock from &apos;../main.js&apos;</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;请求获取数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mock.http(&apos;http://test.com&apos;, &apos;type=top&amp;key=123456&apos;).then(res =&gt; &#123;</div><div class="line">  console.log(res);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;完成到这一步后，打开项目就可以看到已经生成的模拟数据，亲测可用。如果只是想了解mockjs语法，可以在打开官网，直接使用示例语法在浏览器控制台上进行测试。</p>
-<blockquote>
-<p>参考：<br><a href="http://mockjs.com/examples.html" target="_blank" rel="external">http://mockjs.com/examples.html</a></p>
-</blockquote>
-]]></content>
-      
-        
-        <tags>
-            
-            <tag> Mockjs </tag>
-            
-        </tags>
-        
+      <url>%2F2018%2F03%2F03%2F%E5%9C%A8Vue%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Mock-js%E6%9E%84%E9%80%A0%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE%2F</url>
+      <content type="text"><![CDATA[00x1 mockjs简介&emsp;&emsp;mock.js是一款开发前端虚拟接口的插件，主要有两个功能 生成随机数据 拦截Ajax请求00x2 在vue-cli项目中安装配置mockjs &emsp;&emsp;首先确保安装并成功引入axios；&emsp;&emsp;然后安装mockjs npm install mockjs –save-dev；&emsp;&emsp;在main.js文件中引入mockjs并配置axios跨域信息：12345678910111213141516171819202122232425262728293031require(&apos;./mock.js&apos;) //配置axios跨域请求头部axios.defaults.headers.post[&apos;Content-Type&apos;] = &apos;application/x-www-form-urlencoded;charset=UTF-8&apos;//配置axios请求拦截器axios.interceptors.request.use(function(config) &#123; return config; &#125;, function(error) &#123; return Promise.reject(error); &#125;)//配置axios响应拦截器axios.interceptors.response.use(function(response) &#123; return response;&#125;, function(error) &#123; return Promise.reject(error);&#125;)//封装axios的post请求export function fetch(url, params) &#123; return new Promise((resolve, reject) =&gt; &#123; axios.post(url, params).then(response =&gt; &#123; resolve(response.data); &#125;).catch((error) =&gt; &#123; reject(error); &#125;) &#125;)&#125;//封装接口信息export default &#123; http(url, params) &#123; return fetch(url, params); &#125;&#125; 00x3 Mock.js语法&emsp;&emsp;mock.js语法分为两种，数据模板定义和数据占位符定义 数据模板定义基本结构：属性名|生成规则:属性值1234567（1）&apos;name|min-max&apos;: value（2）&apos;name|count&apos;: value（3）&apos;name|min-max.dmin-dmax&apos;: value（4）&apos;name|min-max.dcount&apos;: value（5）&apos;name|count.dmin-dmax&apos;: value（6）&apos;name|count.dcount&apos;: value（7）&apos;name|+step&apos;: value (1)属性值是字符串String123451. name|min-max: string通过重复string生成一个字符串，重复次数大于等于min，小于等于max。这里的重复是指对初始化string的重复次数。2. name|count: string通过重复string生成一个字符串，重复次数等于count。 (2)属性值是数字Number123456781. name|+1 : number属性值自动加1， 初始值为number2. name|min-max: number生成一个大于等于min，小于等于max的整数。3. name|min-max.dmin-dmax: number生成一个浮点数，整数部分大于等于min，小于等于max，小数部分保留dmin到dmax位。 （3）属性值是布尔类型Boolean123451. name|1: boolean随机生成一个布尔值，值为true的概率为1/2， 值为false的概率为1/2。2. name|min-max: value随机生成一个布尔值，值为 value 的概率是 min / (min + max)，值为 !value 的概率是 max / (min + max)。 （4）属性值是对象Object123451. name|count: object从属性值object中随机选取count个属性2. name|min-max: object从属性值object中随机选取min到max个属性 (5) 属性值是数组Array12345678910111. name|1: array从属性值array中随机选取一个元素，作为最终值2. name|+1: array从属性值array中顺序选取一个元素，作为最终值3. name|min-max: array通过重复属性值array生成一个新数组，重复次数大于等于min，小于等于max。4. name|count: array通过重复属性值array生成一个新数组，重复次数为count。 (6) 属性值是函数Function123&apos;name&apos;: function执行函数 function，取其返回值作为最终的属性值，函数的上下文为属性 &apos;name&apos; 所在的对象。 (7) 属性值是正则表达式RegExp121. name: regexp根据正则表达式regexp反向生成可以匹配他的字符串。用于生成自定义格式的字符串。 数据占位符定义基本结构：属性名：占位符1&apos;name|&apos;:&apos;@占位符()&apos; &emsp;&emsp;占位符也可以引用数据模板中的属性；占位符会有限引用数据模板中的属性；占位符支持相对路径和绝对路径。 00x4 Mock.mock() Mock.mock(rurl?, rtype?, template|function(options)) 根据数据模板生成模拟数据 Mock.mock(template) 根据数据模板生成模拟数据。 Mock.mock(rurl, template) 记录数据模板，当拦截到匹配rurl的ajax请求时，根据数据模板生成模拟数据，并作为响应数据返回。 Mock.mock(rurl, function(options)) 记录用于生成响应数据的函数。当拦截到匹配rurl的ajax请求时，函数function执行，并把执行结果作为响应数据返回。 Mock.mock(rurl, rtype, template) 记录数据模板，当拦截到匹配rurl和rtype的ajax请求时，将根据数据模板生成模拟数据，并作为响应数据返回。 Mock.mock(rurl, rtype, function(options)) 记录用于生成响应数据的函数。当拦截到匹配rurl和rtype的ajax请求时，函数function(options)将被执行，并把执行结果作为响应数据返回。 rurl 标识需要拦截的url，可以是url字符串或者url正则： 1/\/domain\/list\.json/、&apos;/domian/list.json&apos;。 rtype 可选，标识需要拦截的ajax请求类型。例如GET, POST, PUT, DELETE等。 template 可选，标识数据模板，可以是对象或字符串。 function(options) 可选，表示用于生成响应数据的函数。 options 指向本次请求的ajax选项集，含有url， type和body三个属性。 00x5 构造模拟数据 &emsp;&emsp;新建一个mock.js文件，在mock.js文件中引入mockjs1const Mock = require(&apos;mockjs&apos;); &emsp;&emsp;根据mock.js语法格式构造模拟数据12345678910111213141516171819202122232425262728export default Mock.mock(&apos;http://test.com&apos;, &#123; &apos;cur_ip&apos;:&#123; &apos;data&apos;:&apos;@date&apos;, &apos;ip&apos;:&apos;@ip&apos;, &apos;number|1-100&apos;:10000, &apos;rank|1-100&apos;:20, &apos;info&apos;:&apos;@title(3)&apos;, &#125;, &apos;cur_whois&apos;:[&#123; &apos;alexa|1-300&apos;:100, &quot;cdate&quot;:&apos;@datetime&apos;, &quot;edate&quot;:&apos;@datetime&apos;, &quot;name_server&quot;:&apos;@domain&apos;, &quot;registrant_address&quot;:&apos;@county(true)&apos;, &quot;registrant_company&quot;:&apos;@ctitle(3, 5)&apos;, &quot;registrant_email&quot;:&apos;@email&apos;, &quot;registrant_name&quot;:&apos;@name(true)&apos;, &quot;registrant_phone&quot;:/^1[0-9]&#123;10&#125;$/, &quot;registrar_name&quot;:&apos;@name(true)&apos;, &quot;udate&quot;:&apos;@datetime&apos;, &#125;], &apos;history_ip|20&apos;:[&#123; &quot;date&quot;:&apos;@datetime&apos;, &quot;ip&quot;:&apos;@ip&apos;, &quot;info&quot;:&apos;@title(3)&apos;, &#125;],&#125;） &emsp;&emsp;mock.js也支持模拟ajax请求响应时间，自定义的响应时间可以是绝对值，也可以是区间。123456Mock.setup(&#123; timeout: 40000//40秒后再响应&#125;)Mock.setup(&#123; timeout: &apos;10000-40000&apos;//在10秒和40秒之间响应&#125;) 00x6 请求获取数据&emsp;&emsp;在需要数据的页面中引入构造的mock的api1import mock from &apos;../main.js&apos; &emsp;&emsp;请求获取数据123mock.http(&apos;http://test.com&apos;, &apos;type=top&amp;key=123456&apos;).then(res =&gt; &#123; console.log(res);&#125;); &emsp;&emsp;完成到这一步后，打开项目就可以看到已经生成的模拟数据，亲测可用。如果只是想了解mockjs语法，可以在打开官网，直接使用示例语法在浏览器控制台上进行测试。 参考：http://mockjs.com/examples.html]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[mongoDB安装与配置]]></title>
-      <url>/2017/07/26/mongoDB%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</url>
-      <content type="html"><![CDATA[<h5 id="00x1-mongodb的安装与配置"><a href="#00x1-mongodb的安装与配置" class="headerlink" title="00x1 mongodb的安装与配置"></a>00x1 mongodb的安装与配置</h5><blockquote>
-<p>(1)在mongodb的官网<a href="https://www.mongodb.com/download-center#community" target="_blank" rel="external">https://www.mongodb.com/download-center#community</a> 下载安装文件。</p>
-</blockquote>
-<a id="more"></a>
-<pre><code>进入官网，直接点击donwnload即可。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/1.PNG" alt="Alt text"><br>(2)双击.msi文件安装<br><img src="http://oloaybpun.bkt.clouddn.com/2.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/3.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/4.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/5.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/6.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/7.png" alt="Alt text"></p>
-<p><img src="http://oloaybpun.bkt.clouddn.com/8.png" alt="Alt text"></p>
-<p>(3)创建数据目录</p>
-</blockquote>
-<pre><code>进入mongodb的安装包，创建数据目录
-
-
-D:\software\mongodb\mkdir data
-
-
-D:\software\mongodb\cd  data
-
-
-D:\software\mongodb\data\cd db
-
-
-D:\software\mongodb\data\db\
-</code></pre><blockquote>
-<p>(4)命令行下运行mongodb服务器</p>
-</blockquote>
-<pre><code>进入mongodb安装目录下的bin文件夹
-
-
-D:\software\mongodb\bin\mongod.exe --dbpath D:\software\mongodb\data\db
-
-
-出现下面的内容就表示正确运行了。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/9.png" alt="Alt text"></p>
-</blockquote>
-<pre><code>当然这一步也有可能出现问题，比如我就遇到了“mongod不是内部或外部命令,也不是可运行的程序”这个问题。
-最开始我在环境变量中加入了bin文件夹的路径，但是问题没有解决。
-
-
-
-解决方法：直接在bin文件夹中双击打开mongod.exe文件。同样会出现以上的内容。
-
-
-
-然后在浏览器中打开http://localhost:27017进行测试。出现下面的内容表示mongodb的服务器正确运行了。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/10.png" alt="Alt text"><br>(5)将mongodb安装为windows服务（命令行要有管理员权限）</p>
-</blockquote>
-<pre><code>D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data --install
-
-
-但是出现了下面的提示，表明安装失败。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/11.png" alt="Alt text"></p>
-<p>按照提示，需要指定log目录。因此重新切换到bin目录下，新建logs文件。并在logs文件夹下新建mongodb.log文件。</p>
-</blockquote>
-<pre><code>创建日志目录：
-
-
-    D:\software\mongodb\mkdir logs
-
-
-    D:\software\mongodb\cd logs
-
-
-    D:\software\mongodb\logs
-
-
-    然后重新进入bin文件夹，输入命令：
-
-
-    D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data  --logpath=D:\software\mongodb\logs\mongodb.log --logappend.
-
-
-    没有出现错误提示。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/12.png" alt="Alt text"></p>
-<p>也能够正常启动：<br><img src="http://oloaybpun.bkt.clouddn.com/13.png" alt="Alt text"><br>6.MongoDB后台管理shell（命令行要有管理员权限）</p>
-</blockquote>
-<pre><code>打开 MongoDB shell，失败。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/14.png" alt="Alt text"></p>
-<p>   连接失败，net start  MongoDB服务，服务不能正常打开，mongo的服务没有被正确创建。</p>
-</blockquote>
-<pre><code>使用sc命令创建mongodb服务，需要注意的是，这一步的cmd必须要以管理员权限打开。
-
-
-D:\software\mongodb\bin\sc create MongDB binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend 服务创建成功
-
-
-net start MongoDB 服务也可以正常启动
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/15.png" alt="Alt text"></p>
-</blockquote>
-<p> MongoDB Shell是MongoDB自带的交互式Javascript shell,用来对MongoDB进行操作和管理的交互式环境。可以运行一些简单的算术运算</p>
-<blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/16.png" alt="Alt text"></p>
-</blockquote>
-<p>(7)设置环境变量</p>
-<pre><code>进入电脑上的环境变量，在系统变量下的path中加入mongodb目录下的bin文件的路径。
-
-
-这样命令行就可以在任何位置使用mongodb命令，不需要每次使用mongo和mongod命令的时候都进入
-bin文件夹下。
-</code></pre><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/18.PNG" alt="Alt text"></p>
-</blockquote>
-<h5 id="00x2-配置过程中一些命令的总结"><a href="#00x2-配置过程中一些命令的总结" class="headerlink" title="00x2 配置过程中一些命令的总结"></a>00x2 配置过程中一些命令的总结</h5><blockquote>
-<p>在配置过程中，出现问题最多的是将mongodb安装为windows服务，和mongodb后台管理shell这两步骤。在解决这两步的问题时，尝试了不同的命令，在这里做一个总结。</p>
-<p>(1)进入bin文件夹下</p>
-</blockquote>
-<pre><code>mongod.exe --bind_ip yourIPadress --logpath &quot;C:\data\dbConf\mongodb.log&quot; --logappend --dbpath &quot;C:\data\db&quot; --port yourPortNumber --serviceName &quot;YourServiceName&quot; --serviceDisplayName &quot;YourServiceName&quot; --install
-</code></pre><blockquote>
-<p>(2)打开具有管理员身份的cmd</p>
-</blockquote>
-<pre><code>如果已经有某个服务名了，比如MongoDB，那么先把这个服务删了，
-
-
-sc delete MongoDB
-
-
-然后进入mongodb安装目录下的bin文件
-
-
-mongod --logpath d:\data\log\MongoDB.log --logappend --dbpath d:\data\db --serviceName MongoDB --install
-</code></pre><blockquote>
-<p>(3)同样是进入mongodb安装目录下的bin文件下</p>
-</blockquote>
-<pre><code>mongod --logpath &quot;D:\software\mongodb\data\mongodb.log&quot; --logappend
---dbpath &quot;D:\software\mongodb\data&quot; --serviceName &quot;MongoDB&quot; --serviceDisplayName &quot;MongoDB&quot; --install
-
-
-在解决这部分问题之后，觉得使用这些命令没有成功的原因可能是命令行没有获取管理员权限，还有就是mongdb
-的服务没有被正确创建。最正确的创建mongodb服务的方法是使用sc命令进行创建。
-D:\software\mongodb\bin\sc create MongDB
-binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data
---logpath=D:\software\mongodb\logs\mongodb.log --logappend
-</code></pre>]]></content>
-      
-        
-        <tags>
-            
-            <tag> mongoDB </tag>
-            
-        </tags>
-        
+      <url>%2F2017%2F07%2F26%2FmongoDB%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE%2F</url>
+      <content type="text"><![CDATA[00x1 mongodb的安装与配置 (1)在mongodb的官网https://www.mongodb.com/download-center#community 下载安装文件。 进入官网，直接点击donwnload即可。 (2)双击.msi文件安装 (3)创建数据目录 进入mongodb的安装包，创建数据目录 D:\software\mongodb\mkdir data D:\software\mongodb\cd data D:\software\mongodb\data\cd db D:\software\mongodb\data\db\ (4)命令行下运行mongodb服务器 进入mongodb安装目录下的bin文件夹 D:\software\mongodb\bin\mongod.exe --dbpath D:\software\mongodb\data\db 出现下面的内容就表示正确运行了。 当然这一步也有可能出现问题，比如我就遇到了“mongod不是内部或外部命令,也不是可运行的程序”这个问题。 最开始我在环境变量中加入了bin文件夹的路径，但是问题没有解决。 解决方法：直接在bin文件夹中双击打开mongod.exe文件。同样会出现以上的内容。 然后在浏览器中打开http://localhost:27017进行测试。出现下面的内容表示mongodb的服务器正确运行了。 (5)将mongodb安装为windows服务（命令行要有管理员权限） D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data --install 但是出现了下面的提示，表明安装失败。 按照提示，需要指定log目录。因此重新切换到bin目录下，新建logs文件。并在logs文件夹下新建mongodb.log文件。 创建日志目录： D:\software\mongodb\mkdir logs D:\software\mongodb\cd logs D:\software\mongodb\logs 然后重新进入bin文件夹，输入命令： D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend. 没有出现错误提示。 也能够正常启动：6.MongoDB后台管理shell（命令行要有管理员权限） 打开 MongoDB shell，失败。 连接失败，net start MongoDB服务，服务不能正常打开，mongo的服务没有被正确创建。 使用sc命令创建mongodb服务，需要注意的是，这一步的cmd必须要以管理员权限打开。 D:\software\mongodb\bin\sc create MongDB binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend 服务创建成功 net start MongoDB 服务也可以正常启动 MongoDB Shell是MongoDB自带的交互式Javascript shell,用来对MongoDB进行操作和管理的交互式环境。可以运行一些简单的算术运算 (7)设置环境变量 进入电脑上的环境变量，在系统变量下的path中加入mongodb目录下的bin文件的路径。 这样命令行就可以在任何位置使用mongodb命令，不需要每次使用mongo和mongod命令的时候都进入 bin文件夹下。 00x2 配置过程中一些命令的总结 在配置过程中，出现问题最多的是将mongodb安装为windows服务，和mongodb后台管理shell这两步骤。在解决这两步的问题时，尝试了不同的命令，在这里做一个总结。 (1)进入bin文件夹下 mongod.exe --bind_ip yourIPadress --logpath &quot;C:\data\dbConf\mongodb.log&quot; --logappend --dbpath &quot;C:\data\db&quot; --port yourPortNumber --serviceName &quot;YourServiceName&quot; --serviceDisplayName &quot;YourServiceName&quot; --install (2)打开具有管理员身份的cmd 如果已经有某个服务名了，比如MongoDB，那么先把这个服务删了， sc delete MongoDB 然后进入mongodb安装目录下的bin文件 mongod --logpath d:\data\log\MongoDB.log --logappend --dbpath d:\data\db --serviceName MongoDB --install (3)同样是进入mongodb安装目录下的bin文件下 mongod --logpath &quot;D:\software\mongodb\data\mongodb.log&quot; --logappend --dbpath &quot;D:\software\mongodb\data&quot; --serviceName &quot;MongoDB&quot; --serviceDisplayName &quot;MongoDB&quot; --install 在解决这部分问题之后，觉得使用这些命令没有成功的原因可能是命令行没有获取管理员权限，还有就是mongdb 的服务没有被正确创建。最正确的创建mongodb服务的方法是使用sc命令进行创建。 D:\software\mongodb\bin\sc create MongDB binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend]]></content>
     </entry>
+
     
     <entry>
       <title><![CDATA[表单提交类型与ajax]]></title>
-      <url>/2017/04/23/%E8%A1%A8%E5%8D%95%E6%8F%90%E4%BA%A4%E7%B1%BB%E5%9E%8B%E4%B8%8Eajax/</url>
-      <content type="html"><![CDATA[<h5 id="00x1-问题描述"><a href="#00x1-问题描述" class="headerlink" title="00x1 问题描述"></a>00x1 问题描述</h5><blockquote>
-<p>在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，<br>1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。<br><img src="http://oloaybpun.bkt.clouddn.com/%E5%9C%B0%E5%9D%80.PNG" alt="Alt text"><br>2.数据库中数据成功入库，但是回调函数不显示。<br><a id="more"></a></p>
-<h5 id="00x2-问题分析及解决"><a href="#00x2-问题分析及解决" class="headerlink" title="00x2 问题分析及解决"></a>00x2 问题分析及解决</h5><p>数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明表单中的数据应该是被提交了两次，第一次以POST方式（ajax中type设置成“POST”）提交，然后再以GET方式提交。</p>
-<p>通过查找资料发现，代码中将button的type设置成了“submit”，将提交按钮的type属性修改成“button”，问题就会解决。<br><img src="http://oloaybpun.bkt.clouddn.com/submit.PNG" alt="Alt text"><br>submit默认为以GET方式进行表单提交（form）。<br>button则响应用户自定义的事件，如果不指定onclick等事件处理函数，它不做任何事情。<br>以ajax方式提交时，jQuery给提交按钮绑定了click事件，ajax中设定了以POST方式提交。而在button中，type被设置成submit，默认以GET方式提交。就引出了关于click和submit执行先后顺序的问题。</p>
-</blockquote>
-<h5 id="00x3-click和submit执行的先后顺序"><a href="#00x3-click和submit执行的先后顺序" class="headerlink" title="00x3 click和submit执行的先后顺序"></a>00x3 click和submit执行的先后顺序</h5><blockquote>
-<p>点击提交按钮时，是先触发click事件，然后再触发submit事件。<br>这里主要说的是click的处理后续和submit的处理后续：click-&gt;click响应事件-&gt;submit响应事件-&gt;submit。click的处理事件完成后，然后轮到submit事件的处理以及处理后的submit。<br>到这一步，感觉问题就快解决了。但是如果ajax提交表单成功之后，再submit以get方式提交的话。过程中就肯定能看到数据入库后返回的回调函数。就说明，ajax提交并没有完全执行，应该是在向后台提交数据之后和在success返回回调信息之间出现了阻塞。</p>
-</blockquote>
-<h5 id="00x4-同步和异步的区别"><a href="#00x4-同步和异步的区别" class="headerlink" title="00x4 同步和异步的区别"></a>00x4 同步和异步的区别</h5><blockquote>
-<p>在JS中负责解释和执行JavaScript代码的线程只有一个。 这里我们叫做主线程。<br>实际上还存在其他的线程。例如：处理AJAX请求的线程、处理DOM事件的线程、定时器线程、读写文件的线程(例如在Node.js中)等等。这些线程可能存在于JS引擎之内，也可能存在于JS引擎之外。我们把它叫做工作线程。<br><img src="http://oloaybpun.bkt.clouddn.com/clipboard.png" alt="Alt text"><br>主线程发起一个异步请求（提交form表单），相应的工作线程接收请求并告知主线程已收到(异步函数返回)；主线程可以继续执行后面的代码，同时工作线程执行异步任务（提交form表单到数据库）；工作线程完成工作后，通知主线程（数据成功入库，返回执行结果，并将其放入消息队列）；主线程收到通知后（主线程通过事件循环从消息队列里取消息），执行一定的动作(调用回调函数来处理返回结果) ；触发submit响应（返回值不为FALSE），执行表单的submit事件。又因为给了action的地址，所以会出现跳转。并且在跳转地址中出现GET方式的提交。</p>
-<p>在同步情况下，主线程发起一个同步请求（提交form表单），相应的工作线程接收请求并立即开始执行同步任务（提交form表单到数据库）；主线程则一直等待，直到工作线程完工作通知主线程（数据成功入库，返回执行结果，回调函数处理返回结果）。因为返回结果不为FALSE，所以在出现提示之后，出现跳转。</p>
-</blockquote>
-<h5 id="00x5-submit阻止表单提交"><a href="#00x5-submit阻止表单提交" class="headerlink" title="00x5 submit阻止表单提交"></a>00x5 submit阻止表单提交</h5><blockquote>
-<p><img src="http://oloaybpun.bkt.clouddn.com/clipboard1.png" alt="Alt text"></p>
-<p>参考：<br>ajax同步和异步的区别：<a href="http://www.open-open.com/lib/view/open1453079994386.html" target="_blank" rel="external">http://www.open-open.com/lib/view/open1453079994386.html</a></p>
-</blockquote>
-]]></content>
-      
-        
-        <tags>
-            
-            <tag> ajax </tag>
-            
-        </tags>
-        
+      <url>%2F2017%2F04%2F23%2F%E8%A1%A8%E5%8D%95%E6%8F%90%E4%BA%A4%E7%B1%BB%E5%9E%8B%E4%B8%8Eajax%2F</url>
+      <content type="text"><![CDATA[00x1 问题描述 在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。 00x2 问题分析及解决数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明表单中的数据应该是被提交了两次，第一次以POST方式（ajax中type设置成“POST”）提交，然后再以GET方式提交。 通过查找资料发现，代码中将button的type设置成了“submit”，将提交按钮的type属性修改成“button”，问题就会解决。submit默认为以GET方式进行表单提交（form）。button则响应用户自定义的事件，如果不指定onclick等事件处理函数，它不做任何事情。以ajax方式提交时，jQuery给提交按钮绑定了click事件，ajax中设定了以POST方式提交。而在button中，type被设置成submit，默认以GET方式提交。就引出了关于click和submit执行先后顺序的问题。 00x3 click和submit执行的先后顺序 点击提交按钮时，是先触发click事件，然后再触发submit事件。这里主要说的是click的处理后续和submit的处理后续：click-&gt;click响应事件-&gt;submit响应事件-&gt;submit。click的处理事件完成后，然后轮到submit事件的处理以及处理后的submit。到这一步，感觉问题就快解决了。但是如果ajax提交表单成功之后，再submit以get方式提交的话。过程中就肯定能看到数据入库后返回的回调函数。就说明，ajax提交并没有完全执行，应该是在向后台提交数据之后和在success返回回调信息之间出现了阻塞。 00x4 同步和异步的区别 在JS中负责解释和执行JavaScript代码的线程只有一个。 这里我们叫做主线程。实际上还存在其他的线程。例如：处理AJAX请求的线程、处理DOM事件的线程、定时器线程、读写文件的线程(例如在Node.js中)等等。这些线程可能存在于JS引擎之内，也可能存在于JS引擎之外。我们把它叫做工作线程。主线程发起一个异步请求（提交form表单），相应的工作线程接收请求并告知主线程已收到(异步函数返回)；主线程可以继续执行后面的代码，同时工作线程执行异步任务（提交form表单到数据库）；工作线程完成工作后，通知主线程（数据成功入库，返回执行结果，并将其放入消息队列）；主线程收到通知后（主线程通过事件循环从消息队列里取消息），执行一定的动作(调用回调函数来处理返回结果) ；触发submit响应（返回值不为FALSE），执行表单的submit事件。又因为给了action的地址，所以会出现跳转。并且在跳转地址中出现GET方式的提交。 在同步情况下，主线程发起一个同步请求（提交form表单），相应的工作线程接收请求并立即开始执行同步任务（提交form表单到数据库）；主线程则一直等待，直到工作线程完工作通知主线程（数据成功入库，返回执行结果，回调函数处理返回结果）。因为返回结果不为FALSE，所以在出现提示之后，出现跳转。 00x5 submit阻止表单提交 参考：ajax同步和异步的区别：http://www.open-open.com/lib/view/open1453079994386.html]]></content>
     </entry>
+
     
   
   
