@@ -95,7 +95,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/05/24/electron与vue实践初体验/electron.png">
 <meta property="og:image" content="http://yoursite.com/2018/05/24/electron与vue实践初体验/cnpm-install-g-electron.PNG">
 <meta property="og:image" content="http://yoursite.com/2018/05/24/electron与vue实践初体验/helloword.PNG">
-<meta property="og:updated_time" content="2018-09-01T02:06:11.797Z">
+<meta property="og:updated_time" content="2018-10-22T06:34:46.974Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="electron与vue实践初体验">
 <meta name="twitter:description" content="写在前面&amp;emsp;&amp;emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。">
@@ -347,7 +347,22 @@
 <li><p>在electron-quick-start下安装打包插件</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cnpm install -g electron-packager//采用全局安装</div></pre></td></tr></table></figure>
 </li>
-<li><p>打开package.json文件，在script文件下加上一段代码</p>
+<li><p>使用electron-packager来进行打包，可以直接使用打包命令</p>
+</li>
+</ul>
+<p>electron-packager <location of="" project=""> <name of="" project=""> <platform> <architecture> <electronversion> <optional options=""></optional></electronversion></architecture></platform></name></location></p>
+<p>&emsp;&emsp;这里的参数:</p>
+<ul>
+<li>location of project：项目所在路径 </li>
+<li>name of project：打包的项目名字 </li>
+<li>platform：确定了你要构建哪个平台的应用（Windows、Mac 还是 Linux） </li>
+<li>architecture：决定了使用 x86 还是 x64 还是两个架构都用 </li>
+<li>electron version：electron 的版本 </li>
+<li>optional options：可选选项</li>
+</ul>
+<p>&emsp;&emsp;但是这个命令很长，每次都这样输入会比较麻烦；</p>
+<ul>
+<li><p>可以在package.json下的script下这样写</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&quot;electron_build&quot;: &quot;electron-packager ./ --platform=win32 --arch=x64 --icon=./app/img/electron.ico --overwrite&quot;</div></pre></td></tr></table></figure>
 </li>
 <li><p>打包</p>
