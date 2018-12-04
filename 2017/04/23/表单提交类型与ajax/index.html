@@ -94,16 +94,16 @@
 <meta property="og:site_name" content="Miss Me">
 <meta property="og:description" content="00x1 问题描述
 在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。">
-<meta property="og:image" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/地址.png">
+<meta property="og:image" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/地址.PNG">
 <meta property="og:image" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/submit.PNG">
 <meta property="og:image" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/clipboard.png">
 <meta property="og:image" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/clipboard1.png">
-<meta property="og:updated_time" content="2018-12-04T13:27:55.611Z">
+<meta property="og:updated_time" content="2018-12-04T13:30:25.362Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="表单提交类型与ajax">
 <meta name="twitter:description" content="00x1 问题描述
 在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。">
-<meta name="twitter:image" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/地址.png">
+<meta name="twitter:image" content="http://yoursite.com/2017/04/23/表单提交类型与ajax/地址.PNG">
 
 
 
@@ -325,7 +325,7 @@
 
       
         <h5 id="00x1-问题描述"><a href="#00x1-问题描述" class="headerlink" title="00x1 问题描述"></a>00x1 问题描述</h5><blockquote>
-<p>在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，<br>1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。<br><img src="/2017/04/23/表单提交类型与ajax/地址.png" alt="地址"><br>2.数据库中数据成功入库，但是回调函数不显示。<br><a id="more"></a></p>
+<p>在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，<br>1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。<br><img src="/2017/04/23/表单提交类型与ajax/地址.PNG" alt="地址"><br>2.数据库中数据成功入库，但是回调函数不显示。<br><a id="more"></a></p>
 <h5 id="00x2-问题分析及解决"><a href="#00x2-问题分析及解决" class="headerlink" title="00x2 问题分析及解决"></a>00x2 问题分析及解决</h5><p>数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明表单中的数据应该是被提交了两次，第一次以POST方式（ajax中type设置成“POST”）提交，然后再以GET方式提交。</p>
 <p>通过查找资料发现，代码中将button的type设置成了“submit”，将提交按钮的type属性修改成“button”，问题就会解决。<br><img src="/2017/04/23/表单提交类型与ajax/submit.PNG" alt="submit"><br>submit默认为以GET方式进行表单提交（form）。<br>button则响应用户自定义的事件，如果不指定onclick等事件处理函数，它不做任何事情。<br>以ajax方式提交时，jQuery给提交按钮绑定了click事件，ajax中设定了以POST方式提交。而在button中，type被设置成submit，默认以GET方式提交。就引出了关于click和submit执行先后顺序的问题。</p>
 </blockquote>
