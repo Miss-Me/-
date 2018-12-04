@@ -1,69 +1,791 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search>
+<search> 
   
     
     <entry>
       <title><![CDATA[浏览器存储的三种方式------Cookie、localStorage和SessionStorage]]></title>
-      <url>%2F2018%2F12%2F04%2F%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AD%98%E5%82%A8%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F-Cookie%E3%80%81localStorage%E5%92%8CSessionStorage%2F</url>
-      <content type="text"><![CDATA[0x00 写在前面&emsp;&emsp;这是不得不写的一篇。 0x01 Cookie&emsp;&emsp;当 web 服务器向浏览器发送 web 页面时，在连接关闭后，服务端不会记录用户的信息。Cookie 的作用就是用于解决 “如何记录客户端的用户信息”: 当用户访问 web 页面时，用户名可以记录在 cookie 中。 在用户下一次访问该页面时，可以在 cookie 中读取用户访问记录。 &emsp;&emsp;Cookie 以名/值对形式存储，当浏览器从服务器上请求 web 页面时， 属于该页面的 cookie 会被添加到该请求中。服务端通过这种方式来获取用户的信息。 1username=John Doe 创建Cookie 123document.cookie=&quot;username=John Doe&quot;;document.cookie=&quot;username=John Doe; expires=Thu, 18 Dec 2043 12:00:00 GMT&quot;;//为Cookie创建一个过期时间document.cookie=&quot;username=John Doe; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/&quot;;//使用path参数告诉浏览器Cookie的路径 读取Cookie 1var x = document.cookie;//以字符串的方式返回所有的cookie 修改Cookie 1document.cookie=&quot;username=John Smith; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/&quot;;//类似于创建Cookie，旧的Cookie将会被覆盖。 删除Cookie &emsp;&emsp;设置express参数为以前的时间。1document.cookie = &quot;username=; expires=Thu, 01 Jan 1970 00:00:00 GMT&quot;; 0x02 localStorage&emsp;&emsp;localStorage是HTML5中新加入的特性，用来作为本地存储的，解决了cookie存储空间不足的问题。localStorage 类似于sessionStorage。区别在于: localStorage - 没有时间限制的数据存储 sessionStorage - 针对一个 session 的数据存储,当页面被关闭时,数据存储在sessionStorage 会被清除 。 &emsp;&emsp;localStorage的使用: 清空localStorage 1localStorage.clear() 存储数据 12localStorage.setItem(&quot;name&quot;,&quot;Mark&quot;) localStorage.name = &quot;Mark&quot;; 读取数据 1234localStorage.getItem(&quot;Mark&quot;)//读取保存在localStorage对象里名为name的变量的值localStorage.name //&quot;Mark&quot;localStorage.valueOf()//读取存储在localStorage上的所有数据localStorage.key(0) // 读取第一条数据的变量名(键值) 删除某个变量 1localStorage.removeItem(&quot;name&quot;); //undefined 检查localStorage里是否保存某个变量 12localStorage.hasOwnProperty(&apos;name&apos;) // truelocalStorage.hasOwnProperty(&apos;sex&apos;) // false 将数组转为本地字符串 12345var arr = [&apos;aa&apos;,&apos;bb&apos;,&apos;cc&apos;]; // [&quot;aa&quot;,&quot;bb&quot;,&quot;cc&quot;]localStorage.arr = arr //[&quot;aa&quot;,&quot;bb&quot;,&quot;cc&quot;]localStorage.arr.toLocaleString(); // &quot;aa,bb,cc&quot; 将JSON存储到localStorage里 123456789101112131415161718192021222324var students = &#123; xiaomin: &#123; name: &quot;xiaoming&quot;, grade: 1 &#125;, teemo: &#123; name: &quot;teemo&quot;, grade: 3 &#125;&#125;students = JSON.stringify(students); //将JSON转为字符串存到变量里console.log(students);localStorage.setItem(&quot;students&quot;,students);//将变量存到localStorage里 var newStudents = localStorage.getItem(&quot;students&quot;);newStudents = JSON.parse(students); //转为JSONconsole.log(newStudents); // 打印出原先对象 0x03 SessionStorage&emsp;&emsp;sessionStorage 是HTML5新增的一个会话存储对象，用于临时保存同一窗口(或标签页)的数据，在关闭窗口或标签页之后将会删除这些数据。在JavaScript语言中可通过 window.sessionStorage 或 sessionStorage 调用此对象。 &emsp;&emsp;sessionStorage的使用： 存储数据 12sessionStorage.setItem(&apos;testKey&apos;,&apos;这是一个测试的value值&apos;);//采用setItem()方法存储sessionStorage[&apos;testKey&apos;] = &apos;这是一个测试的value值&apos;;//通过属性方式存储 读取数据 12sessionStorage.getItem(&apos;testKey&apos;); //通过getItem()方法取值、sessionStorage[&apos;testKey&apos;]; // 通过属性方式取值 存储Json对象 &emsp;&emsp;sessionStorage也可存储Json对象：存储时，通过JSON.stringify()将对象转换为文本格式；读取时，通过JSON.parse()将文本转换回对象。 123456789101112var userEntity = &#123; name: &apos;tom&apos;, age: 22&#125;; // 存储值：将对象转换为Json字符串sessionStorage.setItem(&apos;user&apos;, JSON.stringify(userEntity));// 取值时：把获取到的Json字符串转换回对象var userJsonStr = sessionStorage.getItem(&apos;user&apos;);userEntity = JSON.parse(userJsonStr);console.log(userEntity.name); // =&gt; tom 0x04 三者比较 特性 localstorage SessionStorage Cookie 存储空间 5M左右 5M左右 4k，不能超过20个 生命周期 永久 当前会话 在设置的过期时间之前一直有效 与服务器通信 仅在浏览器中保存，不参与和服务器的通话 仅在浏览器中保存，不参与和服务器的通话 携带在HTTP头中,使用过多会导致性能的问题 应用场景 常用于长期登录（判断用户是否已登录） 敏感账号的一次性登录 1.判断用户是否登陆过网站，以便下次登录时能够实现自动登录（记住密码）；2.保存上次登录的时间等信息；3.保存上次查看的页面；4.浏览计数 作用域 不同浏览器无法共享，相同浏览器的不同页面之间可以共享localStorage（页面属于相同域名和端口） 不同浏览器无法共享，不同页面或标签页间无法共享。（当一个标签页包含多个iframe标签且属于同源页面，可以共享） Cookie的作用域为当前设置的域名及其子域名 接口 可以接受原生接口，也可以封装来对Object和Array有更好支持 可以接受原生接口，也可以封装来对Object和Array有更好支持 原生的Cookie接口不友好，需要自己封装setCookie，getCookie &emsp;&emsp;这三者的共同点是：都是保存在浏览器端，且同源的。]]></content>
+      <url>/2018/12/04/%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AD%98%E5%82%A8%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F-Cookie%E3%80%81localStorage%E5%92%8CSessionStorage/</url>
+      <content type="html"><![CDATA[<h5 id="0x00-写在前面"><a href="#0x00-写在前面" class="headerlink" title="0x00 写在前面"></a>0x00 写在前面</h5><p>&emsp;&emsp;这是不得不写的一篇。</p>
+<a id="more"></a>
+<h5 id="0x01-Cookie"><a href="#0x01-Cookie" class="headerlink" title="0x01 Cookie"></a>0x01 Cookie</h5><p>&emsp;&emsp;当 web 服务器向浏览器发送 web 页面时，在连接关闭后，服务端不会记录用户的信息。<br>Cookie 的作用就是用于解决 “如何记录客户端的用户信息”:</p>
+<ul>
+<li>当用户访问 web 页面时，用户名可以记录在 cookie 中。</li>
+<li>在用户下一次访问该页面时，可以在 cookie 中读取用户访问记录。</li>
+</ul>
+<p>&emsp;&emsp;Cookie 以名/值对形式存储，<br>当浏览器从服务器上请求 web 页面时， 属于该页面的 cookie 会被添加到该请求中。服务端通过这种方式来获取用户的信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">username=John Doe</div></pre></td></tr></table></figure>
+<ol>
+<li><p>创建Cookie</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">document.cookie=&quot;username=John Doe&quot;;</div><div class="line">document.cookie=&quot;username=John Doe; expires=Thu, 18 Dec 2043 12:00:00 GMT&quot;;//为Cookie创建一个过期时间</div><div class="line">document.cookie=&quot;username=John Doe; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/&quot;;//使用path参数告诉浏览器Cookie的路径</div></pre></td></tr></table></figure>
+</li>
+<li><p>读取Cookie</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">var x = document.cookie;//以字符串的方式返回所有的cookie</div></pre></td></tr></table></figure>
+</li>
+<li><p>修改Cookie</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">document.cookie=&quot;username=John Smith; expires=Thu, 18 Dec 2043 12:00:00 GMT; path=/&quot;;//类似于创建Cookie，旧的Cookie将会被覆盖。</div></pre></td></tr></table></figure>
+</li>
+<li><p>删除Cookie</p>
+</li>
+</ol>
+<p>&emsp;&emsp;设置express参数为以前的时间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">document.cookie = &quot;username=; expires=Thu, 01 Jan 1970 00:00:00 GMT&quot;;</div></pre></td></tr></table></figure></p>
+<h5 id="0x02-localStorage"><a href="#0x02-localStorage" class="headerlink" title="0x02 localStorage"></a>0x02 localStorage</h5><p>&emsp;&emsp;localStorage是HTML5中新加入的特性，用来作为本地存储的，解决了cookie存储空间不足的问题。localStorage 类似于sessionStorage。区别在于:</p>
+<ul>
+<li>localStorage - 没有时间限制的数据存储</li>
+<li>sessionStorage - 针对一个 session 的数据存储,当页面被关闭时,数据存储在sessionStorage 会被清除 。</li>
+</ul>
+<p>&emsp;&emsp;localStorage的使用:</p>
+<ol>
+<li><p>清空localStorage</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">localStorage.clear()</div></pre></td></tr></table></figure>
+</li>
+<li><p>存储数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">localStorage.setItem(&quot;name&quot;,&quot;Mark&quot;) </div><div class="line">localStorage.name = &quot;Mark&quot;;</div></pre></td></tr></table></figure>
+</li>
+<li><p>读取数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">localStorage.getItem(&quot;Mark&quot;)//读取保存在localStorage对象里名为name的变量的值</div><div class="line">localStorage.name //&quot;Mark&quot;</div><div class="line">localStorage.valueOf()//读取存储在localStorage上的所有数据</div><div class="line">localStorage.key(0) // 读取第一条数据的变量名(键值)</div></pre></td></tr></table></figure>
+</li>
+<li><p>删除某个变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">localStorage.removeItem(&quot;name&quot;); //undefined</div></pre></td></tr></table></figure>
+</li>
+<li><p>检查localStorage里是否保存某个变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">localStorage.hasOwnProperty(&apos;name&apos;) // true</div><div class="line">localStorage.hasOwnProperty(&apos;sex&apos;) // false</div></pre></td></tr></table></figure>
+</li>
+<li><p>将数组转为本地字符串</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var arr = [&apos;aa&apos;,&apos;bb&apos;,&apos;cc&apos;]; // [&quot;aa&quot;,&quot;bb&quot;,&quot;cc&quot;]</div><div class="line"></div><div class="line">localStorage.arr = arr //[&quot;aa&quot;,&quot;bb&quot;,&quot;cc&quot;]</div><div class="line"></div><div class="line">localStorage.arr.toLocaleString(); // &quot;aa,bb,cc&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>将JSON存储到localStorage里</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">var students = &#123;</div><div class="line">    xiaomin: &#123;</div><div class="line">        name: &quot;xiaoming&quot;,</div><div class="line">        grade: 1</div><div class="line">    &#125;,</div><div class="line">    teemo: &#123;</div><div class="line">        name: &quot;teemo&quot;,</div><div class="line">        grade: 3</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">students = JSON.stringify(students); //将JSON转为字符串存到变量里</div><div class="line"></div><div class="line">console.log(students);</div><div class="line"></div><div class="line">localStorage.setItem(&quot;students&quot;,students);//将变量存到localStorage里</div><div class="line"></div><div class="line"> </div><div class="line"></div><div class="line">var newStudents = localStorage.getItem(&quot;students&quot;);</div><div class="line"></div><div class="line">newStudents = JSON.parse(students); //转为JSON</div><div class="line"></div><div class="line">console.log(newStudents); // 打印出原先对象</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<h5 id="0x03-SessionStorage"><a href="#0x03-SessionStorage" class="headerlink" title="0x03 SessionStorage"></a>0x03 SessionStorage</h5><p>&emsp;&emsp;sessionStorage 是HTML5新增的一个会话存储对象，用于临时保存同一窗口(或标签页)的数据，在关闭窗口或标签页之后将会删除这些数据。在JavaScript语言中可通过 window.sessionStorage 或 sessionStorage 调用此对象。</p>
+<p>&emsp;&emsp;sessionStorage的使用：</p>
+<ol>
+<li><p>存储数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sessionStorage.setItem(&apos;testKey&apos;,&apos;这是一个测试的value值&apos;);//采用setItem()方法存储</div><div class="line">sessionStorage[&apos;testKey&apos;] = &apos;这是一个测试的value值&apos;;//通过属性方式存储</div></pre></td></tr></table></figure>
+</li>
+<li><p>读取数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sessionStorage.getItem(&apos;testKey&apos;); //通过getItem()方法取值、</div><div class="line">sessionStorage[&apos;testKey&apos;]; // 通过属性方式取值</div></pre></td></tr></table></figure>
+</li>
+<li><p>存储Json对象</p>
+</li>
+</ol>
+<p>&emsp;&emsp;sessionStorage也可存储Json对象：存储时，通过JSON.stringify()将对象转换为文本格式；读取时，通过JSON.parse()将文本转换回对象。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var userEntity = &#123;</div><div class="line">    name: &apos;tom&apos;,</div><div class="line">    age: 22</div><div class="line">&#125;;</div><div class="line"> </div><div class="line">// 存储值：将对象转换为Json字符串</div><div class="line">sessionStorage.setItem(&apos;user&apos;, JSON.stringify(userEntity));</div><div class="line"></div><div class="line">// 取值时：把获取到的Json字符串转换回对象</div><div class="line">var userJsonStr = sessionStorage.getItem(&apos;user&apos;);</div><div class="line">userEntity = JSON.parse(userJsonStr);</div><div class="line">console.log(userEntity.name); // =&gt; tom</div></pre></td></tr></table></figure>
+<h5 id="0x04-三者比较"><a href="#0x04-三者比较" class="headerlink" title="0x04 三者比较"></a>0x04 三者比较</h5><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>localstorage</th>
+<th>SessionStorage</th>
+<th>Cookie</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存储空间</td>
+<td>5M左右</td>
+<td>5M左右</td>
+<td>4k，不能超过20个</td>
+</tr>
+<tr>
+<td>生命周期</td>
+<td>永久</td>
+<td>当前会话</td>
+<td>在设置的过期时间之前一直有效</td>
+</tr>
+<tr>
+<td>与服务器通信</td>
+<td>仅在浏览器中保存，不参与和服务器的通话</td>
+<td>仅在浏览器中保存，不参与和服务器的通话</td>
+<td>携带在HTTP头中,使用过多会导致性能的问题</td>
+</tr>
+<tr>
+<td>应用场景</td>
+<td>常用于长期登录（判断用户是否已登录）</td>
+<td>敏感账号的一次性登录</td>
+<td>1.判断用户是否登陆过网站，以便下次登录时能够实现自动登录（记住密码）；2.保存上次登录的时间等信息；3.保存上次查看的页面；4.浏览计数</td>
+</tr>
+<tr>
+<td>作用域</td>
+<td>不同浏览器无法共享，相同浏览器的不同页面之间可以共享localStorage（页面属于相同域名和端口）</td>
+<td>不同浏览器无法共享，不同页面或标签页间无法共享。（当一个标签页包含多个iframe标签且属于同源页面，可以共享）</td>
+<td>Cookie的作用域为当前设置的域名及其子域名</td>
+</tr>
+<tr>
+<td>接口</td>
+<td>可以接受原生接口，也可以封装来对Object和Array有更好支持</td>
+<td>可以接受原生接口，也可以封装来对Object和Array有更好支持</td>
+<td>原生的Cookie接口不友好，需要自己封装setCookie，getCookie</td>
+</tr>
+</tbody>
+</table>
+<p>&emsp;&emsp;这三者的共同点是：都是保存在浏览器端，且同源的。</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> JavaScript </tag>
+            
+        </tags>
+        
     </entry>
-
     
     <entry>
       <title><![CDATA[用vuex管理websocket推送的数据，实现全局提示]]></title>
-      <url>%2F2018%2F12%2F03%2F%E7%94%A8vuex%E7%AE%A1%E7%90%86websocket%E6%8E%A8%E9%80%81%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%8C%E5%AE%9E%E7%8E%B0%E5%85%A8%E5%B1%80%E6%8F%90%E7%A4%BA%2F</url>
-      <content type="text"><![CDATA[0x00 写在前面&emsp;&emsp;最近的项目中用到了websocket实现实时通信。遇到了一个问题：如何将websocket服务器端实时推送过来的数据全局实时推送。由于websocket通信的实时性和vue中的渲染机制。在查了很多资料之后，发现vuex是实现这个功能的最佳选择。 &emsp;&emsp;上图中展示了一个状态自管理应用中的单向数据流。由 state，驱动应用的数据源；view，以声明方式将 state 映射到视图；actions，响应在 view 上的用户输入导致的状态变化 三部分组成。当遇到多个组件共享状态时，单向数据流的简洁性很容易被破坏： 多个视图依赖于同一状态。 来自不同视图的行为需要变更同一状态。 &emsp;&emsp;这时，将组件的共享状态抽取出来，以一个全局单例模式管理。在这种模式下，组件树构成了一个巨大的“视图”，不管在树的哪个位置，任何组件都能获取状态或者触发行为！这就是vuex的设计思想。 0x01 什么是vuex？&emsp;&emsp;vue官方说法中，Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。&emsp;&emsp;如上图所示，Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的状态 (state)。Vuex 和单纯的全局对象有以下两点不同： Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。 不能直接改变 store 中的状态。改变 store 中的状态的唯一途径就是显式地提交 (commit) mutation。这样可以方便跟踪每一个状态的变化。 0x02 关于Sate&emsp;&emsp;Vuex 使用单一状态树：用一个对象包含全部的应用层级状态。由于 Vuex 的状态存储是响应式的，从 store 实例中读取状态最简单的方法就是在计算属性中返回某个状态： 123456789// 创建一个 Counter 组件const Counter = &#123; template: `&lt;div&gt;&#123;&#123; count &#125;&#125;&lt;/div&gt;`, computed: &#123; count () &#123; return store.state.count &#125; &#125;&#125; &emsp;&emsp;每当 store.state.count 变化的时候,都会重新求取计算属性，并且触发更新相关联的 DOM。这种模式导致组件依赖全局状态单例。在模块化的构建系统中，在每个需要使用 state 的组件中需要频繁地导入，并且在测试组件时需要模拟状态。 &emsp;&emsp;Vuex 通过 store 选项，提供了一种机制将状态从根组件“注入”到每一个子组件中（需调用 Vue.use(Vuex)）。通过在根实例中注册 store 选项，该 store 实例会注入到根组件下的所有子组件中，且子组件能通过 this.$store 访问到。 &emsp;&emsp;当一个组件需要获取多个状态时候，将这些状态都声明为计算属性会有些重复和冗余。这时可以使用 mapState 辅助函数帮助我们生成计算属性。 123456789101112131415161718// 在单独构建的版本中辅助函数为 Vuex.mapStateimport &#123; mapState &#125; from &apos;vuex&apos;export default &#123; // ... computed: mapState(&#123; // 箭头函数可使代码更简练 count: state =&gt; state.count, // 传字符串参数 &apos;count&apos; 等同于 `state =&gt; state.count` countAlias: &apos;count&apos;, // 为了能够使用 `this` 获取局部状态，必须使用常规函数 countPlusLocalState (state) &#123; return state.count + this.localCount &#125; &#125;)&#125; 0x03 关于Mutations&emsp;&emsp;提交 mutation是更改Vuex 的 store 中的状态的唯一方法。mutation 非常类似于事件：每个 mutation 都有一个字符串的 事件类型 (type) 和 一个 回调函数 (handler)。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数：1234567891011const store = new Vuex.Store(&#123; state: &#123; count: 1 &#125;, mutations: &#123; increment (state) &#123; // 变更状态 state.count++ &#125; &#125;&#125;) &emsp;&emsp;mutation handler不能直接被调用，Mutations以相应的type通过调用store.commit(‘increment’)触发 mutation handler 1store.commit(&apos;increment&apos;) 0x04 关于Actions&emsp;&emsp;Action 类似于 mutation，不同在于： Action 提交的是 mutation，而不是直接变更状态。 Action 可以包含任意异步操作。123456789101112131415const store = new Vuex.Store(&#123; state: &#123; count: 0 &#125;, mutations: &#123; increment (state) &#123; state.count++ &#125; &#125;, actions: &#123; increment (context) &#123; context.commit(&apos;increment&apos;) &#125; &#125;&#125;) &emsp;&emsp;Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此可以通过调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters。实践中，经常会用到 ES2015 的 参数解构 来简化代码（特别是需要多次调用 commit 的时候）：12345actions: &#123; increment (&#123; commit &#125;) &#123; commit(&apos;increment&apos;) &#125;&#125; &emsp;&emsp;Action 通过 store.dispatch 方法触发： 1store.dispatch(&apos;increment&apos;) &emsp;&emsp;这个方式就体现了action与mutation 的不同之处：mutation 必须同步执行，而Action 就不受约束！可以在 action 内部执行异步操作：1234567actions: &#123; incrementAsync (&#123; commit &#125;) &#123; setTimeout(() =&gt; &#123; commit(&apos;increment&apos;) &#125;, 1000) &#125;&#125; 0x05 项目中的思路&emsp;&emsp;项目结构如下所示：其中Web.vue是整个页面的根组件，于是我将websocket的实时通信写在了这里。&emsp;&emsp;在建立连接之后，当有用户上线，后端就向前端实时推送数据，并使用this.$store.dispatch将后端推送的数据保存为全局变量。 1、实时通信123456789101112131415161718192021222324252627282930313233343536373839404142434445464748methods:&#123; initWebSocket()&#123; // 打开一个 web socket this.ws = new WebSocket(&quot;ws://192.168.32.192:8282&quot;); this.ws.onopen = this.websocketsend; this.ws.onmessage = this.websocketonmessage; this.ws.onclose = this.websocketclose; &#125;, websocketsend(agentData)&#123;// Web Socket 已连接上，使用 send() 方法发送数据 this.ws.send(agentData); &#125;, websocketonmessage(evt) &#123; var data = eval(&quot;(&quot;+evt.data+&quot;)&quot;); var type =data.type || &apos;&apos;; var action = data.action; var id = data.client_id; // Events.php中返回的init类型的消息，将client_id发给后台进行uid绑定 // 利用jquery发起ajax请求，将client_id发给后端进行uid绑定 // console.log(evt); if(type == &apos;init&apos;)&#123; $.ajax(&#123; //这里使用了jQuery的同步通信来提交用户id，是根据后端websocket框架使用的websocket通信连接验证及建立的方式来的。 type: &apos;POST&apos;, url: &quot;http://192.168.32.192/rrxss/index.php/bind&quot;, //?client_id=&quot;+data.client_id+&quot;&amp;token=&quot;+sessionStorage.token async: false, dataType:&apos;json&apos;, data:&#123;client_id: id,token:sessionStorage.token&#125;, success: function(data)&#123; // console.log(data); //第一次连接建立之后，就启动一个dispatch将当前返回的cookie存到vuex的全局变量中去。 this.$store.dispatch(&apos;dataPush&apos;, data).then(() =&gt; &#123; &#125;) &#125; &#125;); // console.log(&quot;请求后&quot;); &#125;else if(action == &apos;ping&apos;)&#123; this.websocketsend(&quot;pong&quot;); &#125;else&#123; // console.log(evt.data); this.$store.dispatch(&apos;dataPush&apos;, evt.data).then(() =&gt; &#123; &#125;) &#125; &#125;, websocketclose(e)&#123; // 关闭 websocket console.log(e); &#125;,&#125; &emsp;&emsp;然后，在src文件夹下新建一个/store/index.js文件，引入vuex来进行全局状态管理。在state里面定义一个全局变量data。在mutations里面定义一个dataPush函数，更改state状态。当接收到新用户上线的数据推送时，就会触发store里面的dataPush函数，修改全局变量。123456789101112131415161718192021222324252627282930313233import Vue from &apos;vue&apos;import Vuex from &apos;vuex&apos;Vue.use(Vuex)const store = new Vuex.Store(&#123; // 全局变量 // state: &#123; // gloabalData: 1 // &#125;, state: &#123; data: undefined &#125;, // 修改全局变量必须通过mutations中的方法 // mutations只能采用同步方法 mutations: &#123; dataPush (state, payload) &#123; // console.log(&quot;3&quot;); state.data = payload; // console.log(state.user); &#125; &#125;, // 异步方法用actions // actions不能直接修改全局变量，需要调用commit方法来触发mutation中的方法 actions: &#123; dataPush (context, payload) &#123; context.commit(&apos;dataPush&apos;, payload) &#125; &#125;&#125;)export default store &emsp;&emsp;最后，在web.vue页面建立一个监听事件，监听$store.state.data这个全局变量是否有更新，如果有更新，就使用一个提示组件，展示新上线的用户信息。 123456789101112131415watch:&#123;//监听vuex中更新的data数据 &quot;$store.state.data&quot;:function () &#123; var data = JSON.parse(this.$store.state.data); // &quot;uid&quot;:&quot;15d7412429dddaac&quot;,&quot;attackid&quot;:&quot;90ff9be38524e4ae01cbfb4724551d71&quot;, // &quot;sessdate&quot;:&quot;2018-07-25 15:07:41&quot;,&quot;ip&quot;:&quot;127.0.0.1&quot;,&quot;browser&quot;:null,&quot;os&quot;:null,&quot;site&quot;:null,&quot;domain&quot;:null console.log(data); this.$Notice.warning(&#123; title: &apos;客户端上线&apos;, desc: &quot;ip:&quot;+data[&quot;ip&quot;]+&quot;&lt;br&gt;uid:&quot;+data[&quot;uid&quot;]+&quot;&lt;br&gt;attackid:&quot;+data[&quot;attackid&quot;]+&quot;&lt;br&gt;sessdate:&quot;+data[&quot;sessdate&quot;], duration: 0 &#125;); &#125;&#125;,]]></content>
+      <url>/2018/12/03/%E7%94%A8vuex%E7%AE%A1%E7%90%86websocket%E6%8E%A8%E9%80%81%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%8C%E5%AE%9E%E7%8E%B0%E5%85%A8%E5%B1%80%E6%8F%90%E7%A4%BA/</url>
+      <content type="html"><![CDATA[<p><img src="/2018/12/03/用vuex管理websocket推送的数据，实现全局提示/state.PNG" alt="state"></p>
+<h5 id="0x00-写在前面"><a href="#0x00-写在前面" class="headerlink" title="0x00 写在前面"></a>0x00 写在前面</h5><p>&emsp;&emsp;最近的项目中用到了websocket实现实时通信。遇到了一个问题：如何将websocket服务器端实时推送过来的数据全局实时推送。由于websocket通信的实时性和vue中的渲染机制。在查了很多资料之后，发现vuex是实现这个功能的最佳选择。</p>
+<a id="more"></a>
+<p>&emsp;&emsp;上图中展示了一个状态自管理应用中的单向数据流。由 state，驱动应用的数据源；view，以声明方式将 state 映射到视图；actions，响应在 view 上的用户输入导致的状态变化 三部分组成。当遇到多个组件共享状态时，单向数据流的简洁性很容易被破坏：</p>
+<ul>
+<li>多个视图依赖于同一状态。</li>
+<li>来自不同视图的行为需要变更同一状态。</li>
+</ul>
+<p>&emsp;&emsp;这时，将组件的共享状态抽取出来，以一个全局单例模式管理。在这种模式下，组件树构成了一个巨大的“视图”，不管在树的哪个位置，任何组件都能获取状态或者触发行为！这就是vuex的设计思想。</p>
+<h5 id="0x01-什么是vuex？"><a href="#0x01-什么是vuex？" class="headerlink" title="0x01 什么是vuex？"></a>0x01 什么是vuex？</h5><p>&emsp;&emsp;vue官方说法中，Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。<br><img src="/2018/12/03/用vuex管理websocket推送的数据，实现全局提示/vuex.PNG" alt="vuex"><br>&emsp;&emsp;如上图所示，Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的状态 (state)。Vuex 和单纯的全局对象有以下两点不同：</p>
+<ul>
+<li><p>Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。</p>
+</li>
+<li><p>不能直接改变 store 中的状态。改变 store 中的状态的唯一途径就是显式地提交 (commit) mutation。这样可以方便跟踪每一个状态的变化。</p>
+</li>
+</ul>
+<h5 id="0x02-关于Sate"><a href="#0x02-关于Sate" class="headerlink" title="0x02 关于Sate"></a>0x02 关于Sate</h5><p>&emsp;&emsp;Vuex 使用单一状态树：用一个对象包含全部的应用层级状态。由于 Vuex 的状态存储是响应式的，从 store 实例中读取状态最简单的方法就是在计算属性中返回某个状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">// 创建一个 Counter 组件</div><div class="line">const Counter = &#123;</div><div class="line">  template: `&lt;div&gt;&#123;&#123; count &#125;&#125;&lt;/div&gt;`,</div><div class="line">  computed: &#123;</div><div class="line">    count () &#123;</div><div class="line">      return store.state.count</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;每当 store.state.count 变化的时候,都会重新求取计算属性，并且触发更新相关联的 DOM。这种模式导致组件依赖全局状态单例。在模块化的构建系统中，在每个需要使用 state 的组件中需要频繁地导入，并且在测试组件时需要模拟状态。</p>
+<p>&emsp;&emsp;Vuex 通过 store 选项，提供了一种机制将状态从根组件“注入”到每一个子组件中（需调用 Vue.use(Vuex)）。通过在根实例中注册 store 选项，该 store 实例会注入到根组件下的所有子组件中，且子组件能通过 this.$store 访问到。</p>
+<p>&emsp;&emsp;当一个组件需要获取多个状态时候，将这些状态都声明为计算属性会有些重复和冗余。这时可以使用 mapState 辅助函数帮助我们生成计算属性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">// 在单独构建的版本中辅助函数为 Vuex.mapState</div><div class="line">import &#123; mapState &#125; from &apos;vuex&apos;</div><div class="line"></div><div class="line">export default &#123;</div><div class="line">  // ...</div><div class="line">  computed: mapState(&#123;</div><div class="line">    // 箭头函数可使代码更简练</div><div class="line">    count: state =&gt; state.count,</div><div class="line"></div><div class="line">    // 传字符串参数 &apos;count&apos; 等同于 `state =&gt; state.count`</div><div class="line">    countAlias: &apos;count&apos;,</div><div class="line"></div><div class="line">    // 为了能够使用 `this` 获取局部状态，必须使用常规函数</div><div class="line">    countPlusLocalState (state) &#123;</div><div class="line">      return state.count + this.localCount</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h5 id="0x03-关于Mutations"><a href="#0x03-关于Mutations" class="headerlink" title="0x03 关于Mutations"></a>0x03 关于Mutations</h5><p>&emsp;&emsp;提交 mutation是更改Vuex 的 store 中的状态的唯一方法。mutation 非常类似于事件：每个 mutation 都有一个字符串的 事件类型 (type) 和 一个 回调函数 (handler)。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">const store = new Vuex.Store(&#123;</div><div class="line">  state: &#123;</div><div class="line">    count: 1</div><div class="line">  &#125;,</div><div class="line">  mutations: &#123;</div><div class="line">    increment (state) &#123;</div><div class="line">      // 变更状态</div><div class="line">      state.count++</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;mutation handler不能直接被调用，Mutations以相应的type通过调用store.commit(‘increment’)触发 mutation handler</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">store.commit(&apos;increment&apos;)</div></pre></td></tr></table></figure>
+<h5 id="0x04-关于Actions"><a href="#0x04-关于Actions" class="headerlink" title="0x04 关于Actions"></a>0x04 关于Actions</h5><p>&emsp;&emsp;Action 类似于 mutation，不同在于：</p>
+<ul>
+<li>Action 提交的是 mutation，而不是直接变更状态。</li>
+<li>Action 可以包含任意异步操作。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">const store = new Vuex.Store(&#123;</div><div class="line">  state: &#123;</div><div class="line">    count: 0</div><div class="line">  &#125;,</div><div class="line">  mutations: &#123;</div><div class="line">    increment (state) &#123;</div><div class="line">      state.count++</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">  actions: &#123;</div><div class="line">    increment (context) &#123;</div><div class="line">      context.commit(&apos;increment&apos;)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&emsp;&emsp;Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此可以通过调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters。实践中，经常会用到 ES2015 的 参数解构 来简化代码（特别是需要多次调用 commit 的时候）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">actions: &#123;</div><div class="line">  increment (&#123; commit &#125;) &#123;</div><div class="line">    commit(&apos;increment&apos;)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;Action 通过 store.dispatch 方法触发：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">store.dispatch(&apos;increment&apos;)</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这个方式就体现了action与mutation 的不同之处：mutation 必须同步执行，而Action 就不受约束！可以在 action 内部执行异步操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">actions: &#123;</div><div class="line">  incrementAsync (&#123; commit &#125;) &#123;</div><div class="line">    setTimeout(() =&gt; &#123;</div><div class="line">      commit(&apos;increment&apos;)</div><div class="line">    &#125;, 1000)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h5 id="0x05-项目中的思路"><a href="#0x05-项目中的思路" class="headerlink" title="0x05 项目中的思路"></a>0x05 项目中的思路</h5><p>&emsp;&emsp;项目结构如下所示：其中Web.vue是整个页面的根组件，于是我将websocket的实时通信写在了这里。<br>&emsp;&emsp;在建立连接之后，当有用户上线，后端就向前端实时推送数据，并使用this.$store.dispatch将后端推送的数据保存为全局变量。</p>
+<h6 id="1、实时通信"><a href="#1、实时通信" class="headerlink" title="1、实时通信"></a>1、实时通信</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">methods:&#123;</div><div class="line">    initWebSocket()&#123;</div><div class="line">        // 打开一个 web socket</div><div class="line">        this.ws = new WebSocket(&quot;ws://192.168.32.192:8282&quot;);</div><div class="line">        this.ws.onopen = this.websocketsend;           </div><div class="line">        this.ws.onmessage = this.websocketonmessage;</div><div class="line">        this.ws.onclose = this.websocketclose;</div><div class="line">    &#125;,</div><div class="line">    websocketsend(agentData)&#123;// Web Socket 已连接上，使用 send() 方法发送数据</div><div class="line">        this.ws.send(agentData);</div><div class="line">    &#125;,</div><div class="line">    websocketonmessage(evt) &#123; </div><div class="line">        var data = eval(&quot;(&quot;+evt.data+&quot;)&quot;);</div><div class="line">        var type =data.type || &apos;&apos;;</div><div class="line">        var action = data.action;</div><div class="line">        var id = data.client_id;</div><div class="line">        // Events.php中返回的init类型的消息，将client_id发给后台进行uid绑定</div><div class="line">        // 利用jquery发起ajax请求，将client_id发给后端进行uid绑定</div><div class="line">        // console.log(evt);  </div><div class="line">        if(type == &apos;init&apos;)&#123;</div><div class="line">                $.ajax(&#123; //这里使用了jQuery的同步通信来提交用户id，是根据后端websocket框架使用的websocket通信连接验证及建立的方式来的。</div><div class="line">                    type: &apos;POST&apos;,</div><div class="line">                    url: &quot;http://192.168.32.192/rrxss/index.php/bind&quot;,  //?client_id=&quot;+data.client_id+&quot;&amp;token=&quot;+sessionStorage.token</div><div class="line">                    async: false,  </div><div class="line">                    dataType:&apos;json&apos;,</div><div class="line">                    data:&#123;client_id: id,token:sessionStorage.token&#125;,</div><div class="line">                    success: function(data)&#123;  </div><div class="line">                        // console.log(data);</div><div class="line">                        //第一次连接建立之后，就启动一个dispatch将当前返回的cookie存到vuex的全局变量中去。</div><div class="line">                        this.$store.dispatch(&apos;dataPush&apos;,</div><div class="line">                        data).then(() =&gt; &#123;</div><div class="line">                        </div><div class="line">                        &#125;)                   </div><div class="line">                    &#125;  </div><div class="line">                &#125;);   </div><div class="line">                // console.log(&quot;请求后&quot;);                  </div><div class="line">        &#125;else if(action == &apos;ping&apos;)&#123;</div><div class="line">            this.websocketsend(&quot;pong&quot;);  </div><div class="line">        &#125;else&#123;</div><div class="line">            // console.log(evt.data);</div><div class="line">            this.$store.dispatch(&apos;dataPush&apos;, evt.data).then(() =&gt; &#123;</div><div class="line">            &#125;)</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    websocketclose(e)&#123; // 关闭 websocket</div><div class="line">        console.log(e);</div><div class="line">    &#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后，在src文件夹下新建一个/store/index.js文件，引入vuex来进行全局状态管理。在state里面定义一个全局变量data。在mutations里面定义一个dataPush函数，更改state状态。当接收到新用户上线的数据推送时，就会触发store里面的dataPush函数，修改全局变量。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">import Vue from &apos;vue&apos;</div><div class="line">import Vuex from &apos;vuex&apos;</div><div class="line"></div><div class="line">Vue.use(Vuex)</div><div class="line"></div><div class="line">const store = new Vuex.Store(&#123;</div><div class="line">    // 全局变量</div><div class="line">    // state: &#123;</div><div class="line">    //     gloabalData: 1</div><div class="line">    // &#125;,</div><div class="line">    state: &#123;</div><div class="line">        data: undefined</div><div class="line">    &#125;,</div><div class="line">    // 修改全局变量必须通过mutations中的方法</div><div class="line">    // mutations只能采用同步方法</div><div class="line">    mutations: &#123;</div><div class="line">        dataPush (state, payload) &#123;</div><div class="line">            // console.log(&quot;3&quot;);</div><div class="line">            state.data = payload;</div><div class="line">            // console.log(state.user);</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    // 异步方法用actions</div><div class="line">    // actions不能直接修改全局变量，需要调用commit方法来触发mutation中的方法</div><div class="line">    actions: &#123;</div><div class="line">        dataPush (context, payload) &#123;</div><div class="line">            context.commit(&apos;dataPush&apos;, payload)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;)</div><div class="line"></div><div class="line">export default store</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;最后，在web.vue页面建立一个监听事件，监听$store.state.data这个全局变量是否有更新，如果有更新，就使用一个提示组件，展示新上线的用户信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">watch:&#123;//监听vuex中更新的data数据</div><div class="line">    &quot;$store.state.data&quot;:function () &#123;</div><div class="line">        var data = JSON.parse(this.$store.state.data);</div><div class="line">        // &quot;uid&quot;:&quot;15d7412429dddaac&quot;,&quot;attackid&quot;:&quot;90ff9be38524e4ae01cbfb4724551d71&quot;,</div><div class="line">        // &quot;sessdate&quot;:&quot;2018-07-25 15:07:41&quot;,&quot;ip&quot;:&quot;127.0.0.1&quot;,&quot;browser&quot;:null,&quot;os&quot;:null,&quot;site&quot;:null,&quot;domain&quot;:null</div><div class="line">        console.log(data);</div><div class="line">        </div><div class="line">        this.$Notice.warning(&#123;</div><div class="line">            title: &apos;客户端上线&apos;,</div><div class="line">            desc: &quot;ip:&quot;+data[&quot;ip&quot;]+&quot;&lt;br&gt;uid:&quot;+data[&quot;uid&quot;]+&quot;&lt;br&gt;attackid:&quot;+data[&quot;attackid&quot;]+&quot;&lt;br&gt;sessdate:&quot;+data[&quot;sessdate&quot;],</div><div class="line">            duration: 0</div><div class="line">        &#125;);                     </div><div class="line">    &#125;</div><div class="line">&#125;,</div></pre></td></tr></table></figure>]]></content>
+      
+        
+        <tags>
+            
+            <tag> vuex </tag>
+            
+        </tags>
+        
     </entry>
-
     
     <entry>
       <title><![CDATA[create-react-app中使用react-router-dom实现路由跳转]]></title>
-      <url>%2F2018%2F12%2F03%2Fcreate-react-app%E4%B8%AD%E4%BD%BF%E7%94%A8react-router-dom%E5%AE%9E%E7%8E%B0%E8%B7%AF%E7%94%B1%E8%B7%B3%E8%BD%AC%2F</url>
-      <content type="text"><![CDATA[0x00 写在前面&emsp;&emsp;说来很奇怪，之前用create-react-app写的web网页，结合ant desgin布局写的一个导航栏路由跳转。启动项目之后，首页有数据展示，点击导航栏可以跳转。但是！在整合了electron和react之后，启动项目之后首页空白，默认导航栏位置错误，要人为点击一下才有数据展示。这样用户体验真的真的很不友好。也是查了好久好久才解决了这个问题，于是决定写一篇博客，总结一下react-router-dom。 0x01 react-router-dom的安装与使用&emsp;&emsp;react-router-dom的使用有两种方式。 1. 使用npm1$ npm install --save react-router-dom js文件中1234567// using ES6 modulesimport &#123; BrowserRouter, Route, Link &#125; from &apos;react-router-dom&apos;//推荐使用 // using CommonJS modulesconst BrowserRouter = require(&apos;react-router-dom&apos;).BrowserRouterconst Route = require(&apos;react-router-dom&apos;).Routeconst Link = require(&apos;react-router-dom&apos;).Link 2. 使用unpkg1&lt;script src=&quot;https://unpkg.com/react-router-dom/umd/react-router-dom.min.js&quot;&gt;&lt;/script&gt; &emsp;&emsp;注意的是，这种方式还需要引入react的一些核心文件和依赖文件。不推荐使用这种方式。 0x02 react-router-dom与react-router的区别 react-router: 实现了路由的核心功能 react-router-dom: 基于react-router，加入了在浏览器运行环境下的一些功能，例如：Link组件，会渲染一个a标签，Link组件源码a标签行; BrowserRouter和HashRouter组件，前者使用pushState和popState事件构建路由，后者使用window.location.hash和hashchange事件构建路由。&emsp;&emsp;接下来将介绍react-router-dom的一些组件 0x03 react-router-dom的详细介绍1.HashRouter和BrowserRouter&emsp;&emsp;这两个API两个是路由的基本，需要将它们包裹在最外层，两者只需要选其一。 HashRouter：使用URL的哈希部分（即window.location.hash）的来保持UI与URL同步。注意：哈希历史记录不支持location.key或location.state。如果你使用过react-router2或3或者vue-router，你经常会发现，在浏览器打开页面，其url中会有个#，例如localhost:3000/#，HashRouter就会出现这种情况，它是通过hash值来对路由进行控制。如果使用HashRouter，路由就会默认有这个#。 123&lt;HashRouter&gt; &lt;Route path=&quot;/&quot; componet=&#123;Home&#125;&gt;&lt;/Route&gt;&lt;/HashRouter&gt; 很多情况下不需要这个#，这时就需要用到BrowserRouter。它的原理是使用HTML5历史记录API（pushState，replaceState和popstate事件）的来保持UI与URL的同步， 下面将主要结合它来讲解。如果文件放在服务器的二级目录下就可以使用它。 12345678&lt;BrowserRouter basename=&quot;app&quot; forceRefresh=true getUserConfirmation=window.confirm keyLength=9&gt; &lt;Link to=&quot;/about&quot;&gt;About&lt;/Link&gt;&lt;/BrowserRouter&gt; basename:string。所有位置的基本URL，如果应用程序是从服务器上的子目录提供的，则需要将其设置为子目录。 也就是说，上面例子中的Linkde解析后的href属性为 href=”#/app/about”。 getUserConfirmation：function。用来确认导航功能。默认使用window.confirm。 forceRefresh:bool。如果为true，则路由器将在页面导航中使用全页刷新。可以在不支持HTML5历史记录API的浏览器中使用此功能。 keyLength:number。location.key的长度，默认为6。 children:node。要呈现的单个子元素。 例如”http://localhost:3000/app/&quot;,当主页前面是有一级目录app时，同样要显示主页的内容。这时需要配合Link使用。建议使用BrowserRouter。 2. Route&emsp;&emsp;Route用于控制路径对应显示的组件。常用的有exact、path以及component属性。 exact用于严格匹配，控制匹配到/路径时不会再继续向下匹配； path标识指向的路由路径； component表示要跳转的路径对应的显示组件； &emsp;&emsp;Route会有三大props，分别是location、history、match； history &emsp;&emsp;history 指的是 history 包，它是 React Router 的两个主要依赖之一（除了 React 本身），并且提供了几种不同的实现方式，用于在各种环境中管理 JavaScript 中的会话历史。&emsp;&emsp;history分成以下三种 browser history - 针对 DOM 环境，用于支持 HTML5 history API 的浏览器 hash history - 针对 DOM 环境，用于传统的旧式（低版本） 浏览器 memory history - history 在内存上的实现，用于测试以及 React Native 等非 DOM 环境 &emsp;&emsp;history对象具有以下属性和方法： length - number 历史堆栈中的条目数 action - string 当前的导航操作（push、replace 或 pop） location - object 当前访问的位置信息，见下文 push(path, [state]) - function 将一个新条目推入到历史堆栈中 replace(path, [state]) - function 替换历史堆栈中的当前条目 go(n) - function 将历史堆栈中的指针移动 n 个条目 goBack() - function 返回到上一个页面，相当于 go(-1) goForward() - function 进入到下一个页面，相当于 go(1) block(prompt) - function 阻止导航（请参阅 history 文档） &emsp;&emsp;history 对象是可变的。因此建议从 渲染组件时接收的属性中直接访问 location，而不是通过 history.location 进行访问。这样可以保证 React 在生命周期中的钩子函数正常执行。 1234567componentWillReceiveProps(nextProps) &#123; // true console.log(nextProps.location !== this.props.location); // false，因为 history 是可变的。 console.log(nextProps.history.location !== this.props.history.location);&#125; location &emsp;&emsp;location 代表应用程序的位置。如当前的位置，将要去的位置，或是之前所在的位置。&emsp;&emsp;location具有以下的属性： pathname - string URL 路径 search - string URL 中的查询字符串 hash - string URL 中的 hash 片段 state - object 存储至 location 中的额外状态数据，仅在 browser history 和 memory history 中有效。&emsp;&emsp;Router 将在以下几个地方提供 location 对象： 在 Route component 中，以 this.props.location 方式获取 在 Route render 中，以 ({ location }) =&gt; () 方式获取 在 Route children 中，以 ({ location }) =&gt; () 方式获取 在 withRouter 中，以 this.props.location 方式获取 &emsp;&emsp;location 对象永远不会发生改变，因此可以在生命周期钩子函数中使用 location 对象来查看当前访问地址是否发生改变。12345componentWillReceiveProps(nextProps) &#123; if (nextProps.location !== this.props.location) &#123; // 已经跳转了！ &#125;&#125; match &emsp;&emsp;Match是在使用Router之后被放入props中的一个属性，在class创建的组件中我们需要通过this.props.match来获取match之中的信息。match中包含的信息如下。 params: object 路径参数，通过解析 URL 中的动态部分获得键值对 isExact: bool 为 true 时，整个 URL 都需要匹配 path: string 用来匹配的路径模式，用于创建嵌套的 Route url: string URL 匹配的部分，用于嵌套的 Link &emsp;&emsp;在获取id时经常使用match。 3. Link和NavLink&emsp;&emsp;两者都可以控制路由跳转，不同点是NavLink的api更多。 Link：主要api是to，to可以接受string或者一个object，来控制url，表示路由要跳转的路径。1234567&lt;Link to=&quot;/home&quot; /&gt;&lt;Link to=&#123;&#123; pathname: &apos;/home&apos;, search: &apos;?page=1&apos;, hash: &apos;#the-hash&apos;, state: &#123; fromDashboard: true &#125;&#125;&#125; /&gt; &emsp;&emsp;这时点击Link就会跳转到home页面。 NavLink：它可以为当前选中的路由设置类名、样式以及回调函数等。 12345678910&lt;BrowserRouter&gt; &lt;div&gt; &lt;ul&gt; &lt;li&gt; &lt;NavLink exact activeClassName=&quot;selected&quot; to=&quot;/home/1&quot;&gt;首页&lt;/NavLink&gt; &lt;/li&gt; &lt;/ul&gt; &lt;/div&gt; &lt;Route path=&quot;/home/:1&quot; componet=&#123;Home&#125;&gt;&lt;/Route&gt;&lt;/BrowserRouter&gt; &emsp;&emsp;exact用于严格匹配，匹配到/则不会继续向下匹配；to则是控制跳转的路径，activeClassName是选中状态的类名，可以为其添加样式。我们通过在/home后面添加1来向路由中传递信息，这结合了上面Route中的/second/:id，线面的1234内容显示需要用到match。 4. Switch&emsp;&emsp;Switch常常会用来包裹Route，它里面不能放其他元素，表示一次只能显示一个路由。用于渲染与路径匹配的第一个子 或 。但与不同的是， 只会渲染一个路由。而定义一系列 时，所有被匹配到的 将都会在页面被渲染出来。12&lt;Route exact path=&quot;/&quot; component=&#123;Service&#125; /&gt;&lt;Route path=&quot;/homepage&quot; component=&#123;Homepage&#125; /&gt; &emsp;&emsp;像这种情况，exact匹配到’/‘就不会再向下匹配，当url为”http://localhost:3000/&quot;时,两个页面都会被匹配到；（匹配不到页面）Switch有两个属性 location: object。用于匹配子元素而不是当前历史位置（通常是当前的浏览器 URL）的 location 对象。 children: node。 的子元素应该是 或 。只有第一个匹配当前路径的组件会被渲染。当 中包含 时，可以使用任何 拥有的路径匹配属性：path、exact 和 strict。from 只是 path 的别名。 5. Redirect&emsp;&emsp;Redirect有四个属性 to:string。链接到的路径名或位置。 to:object。要链接的位置。 push:bool。当为true时，重定向会将新条目推入历史记录，而不是替换当前条目 from:string。要重定向的路径名。用于在内部渲染时匹配位置。 0x04 结合小例子的讲解&emsp;&emsp;在这个小例子中，被放在最外层；的子节点是，表示当前只会渲染一个路由，如果不使用的话，两个组件将会以同时渲染在一个页面上；再接下来是，exact表示精确匹配到’’，只要匹配到’/‘就不会再往下匹配了，这时候就会出现将homepage和device两个页面都匹配到，这种情况下，如果不加Switch，就会按照先后顺序将两个组件都显示到同一个页面上；在加上switch的情况下，也会因为匹配到两个路径中有’/‘的组件而显示空白，这个时候，就需要加上Redirect，只显示第一个被匹配到的路径对应组件的内容。123456789101112131415161718&lt;Menu.Item key=&quot;1&quot;&gt; &lt;Link to=&quot;/service&quot;&gt;设备&lt;/Link&gt;&lt;/Menu.Item&gt;&lt;Menu.Item key=&quot;2&quot;&gt; &lt;Link to=&quot;/homepage&quot;&gt;取证&lt;/Link&gt;&lt;/Menu.Item&gt;&lt;BrowserRouter&gt; &lt;Switch&gt; &lt;Route exact path=&quot;/&quot; component=&#123;Device&#125;&gt; &lt;/Route&gt; &lt;Route path=&quot;/homepage&quot; component=&#123;Homepage&#125; /&gt; &lt;Redirect to=&quot;/&quot; /&gt; &lt;/Switch&gt; &lt;/BrowserRouter&gt;]]></content>
+      <url>/2018/12/03/create-react-app%E4%B8%AD%E4%BD%BF%E7%94%A8react-router-dom%E5%AE%9E%E7%8E%B0%E8%B7%AF%E7%94%B1%E8%B7%B3%E8%BD%AC/</url>
+      <content type="html"><![CDATA[<p><img src="/2018/12/03/create-react-app中使用react-router-dom实现路由跳转/react.PNG" alt="react"></p>
+<h5 id="0x00-写在前面"><a href="#0x00-写在前面" class="headerlink" title="0x00 写在前面"></a>0x00 写在前面</h5><p>&emsp;&emsp;说来很奇怪，之前用create-react-app写的web网页，结合ant desgin布局写的一个导航栏路由跳转。启动项目之后，首页有数据展示，点击导航栏可以跳转。但是！在整合了electron和react之后，启动项目之后首页空白，默认导航栏位置错误，要人为点击一下才有数据展示。这样用户体验真的真的很不友好。也是查了好久好久才解决了这个问题，于是决定写一篇博客，总结一下react-router-dom。<br><a id="more"></a></p>
+<h5 id="0x01-react-router-dom的安装与使用"><a href="#0x01-react-router-dom的安装与使用" class="headerlink" title="0x01 react-router-dom的安装与使用"></a>0x01 react-router-dom的安装与使用</h5><p>&emsp;&emsp;react-router-dom的使用有两种方式。    </p>
+<h6 id="1-使用npm"><a href="#1-使用npm" class="headerlink" title="1. 使用npm"></a>1. 使用npm</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ npm install --save react-router-dom</div></pre></td></tr></table></figure>
+<ul>
+<li>js文件中<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">// using ES6 modules</div><div class="line">import &#123; BrowserRouter, Route, Link &#125; from &apos;react-router-dom&apos;//推荐使用</div><div class="line"> </div><div class="line">// using CommonJS modules</div><div class="line">const BrowserRouter = require(&apos;react-router-dom&apos;).BrowserRouter</div><div class="line">const Route = require(&apos;react-router-dom&apos;).Route</div><div class="line">const Link = require(&apos;react-router-dom&apos;).Link</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h6 id="2-使用unpkg"><a href="#2-使用unpkg" class="headerlink" title="2. 使用unpkg"></a>2. 使用unpkg</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script src=&quot;https://unpkg.com/react-router-dom/umd/react-router-dom.min.js&quot;&gt;&lt;/script&gt;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;注意的是，这种方式还需要引入react的一些核心文件和依赖文件。不推荐使用这种方式。</p>
+<h5 id="0x02-react-router-dom与react-router的区别"><a href="#0x02-react-router-dom与react-router的区别" class="headerlink" title="0x02 react-router-dom与react-router的区别"></a>0x02 react-router-dom与react-router的区别</h5><ul>
+<li>react-router: 实现了路由的核心功能</li>
+<li>react-router-dom: 基于react-router，加入了在浏览器运行环境下的一些功能，例如：Link组件，会渲染一个a标签，Link组件源码a标签行; BrowserRouter和HashRouter组件，前者使用pushState和popState事件构建路由，后者使用window.location.hash和hashchange事件构建路由。<br>&emsp;&emsp;接下来将介绍react-router-dom的一些组件</li>
+</ul>
+<h5 id="0x03-react-router-dom的详细介绍"><a href="#0x03-react-router-dom的详细介绍" class="headerlink" title="0x03 react-router-dom的详细介绍"></a>0x03 react-router-dom的详细介绍</h5><h6 id="1-HashRouter和BrowserRouter"><a href="#1-HashRouter和BrowserRouter" class="headerlink" title="1.HashRouter和BrowserRouter"></a>1.HashRouter和BrowserRouter</h6><p>&emsp;&emsp;这两个API两个是路由的基本，需要将它们包裹在最外层，两者只需要选其一。      </p>
+<ol>
+<li><p>HashRouter：使用URL的哈希部分（即window.location.hash）的<router>来保持UI与URL同步。注意：哈希历史记录不支持location.key或location.state。如果你使用过react-router2或3或者vue-router，你经常会发现，在浏览器打开页面，其url中会有个#，例如localhost:3000/#，HashRouter就会出现这种情况，它是通过hash值来对路由进行控制。如果使用HashRouter，路由就会默认有这个#。</router></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;HashRouter&gt;</div><div class="line">    &lt;Route path=&quot;/&quot; componet=&#123;Home&#125;&gt;&lt;/Route&gt;</div><div class="line">&lt;/HashRouter&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>很多情况下不需要这个#，这时就需要用到BrowserRouter。它的原理是使用HTML5历史记录API（pushState，replaceState和popstate事件）的<router>来保持UI与URL的同步， 下面将主要结合它来讲解。如果文件放在服务器的二级目录下就可以使用它。</router></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;BrowserRouter</div><div class="line">  basename=&quot;app&quot;</div><div class="line">  forceRefresh=true</div><div class="line">  getUserConfirmation=window.confirm</div><div class="line">  keyLength=9</div><div class="line">&gt;</div><div class="line">  &lt;Link to=&quot;/about&quot;&gt;About&lt;/Link&gt;</div><div class="line">&lt;/BrowserRouter&gt;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
+<li>basename:string。所有位置的基本URL，如果应用程序是从服务器上的子目录提供的，则需要将其设置为子目录。 也就是说，上面例子中的Linkde解析后的href属性为 href=”#/app/about”。    </li>
+<li>getUserConfirmation：function。用来确认导航功能。默认使用window.confirm。      </li>
+<li>forceRefresh:bool。如果为true，则路由器将在页面导航中使用全页刷新。可以在不支持HTML5历史记录API的浏览器中使用此功能。      </li>
+<li>keyLength:number。location.key的长度，默认为6。       </li>
+<li>children:node。要呈现的单个子元素。       </li>
+<li>例如”<a href="http://localhost:3000/app/&quot;,当主页前面是有一级目录app时，同样要显示主页的内容。这时需要配合Link使用。建议使用BrowserRouter。" target="_blank" rel="external">http://localhost:3000/app/&quot;,当主页前面是有一级目录app时，同样要显示主页的内容。这时需要配合Link使用。建议使用BrowserRouter。</a>      </li>
+</ul>
+<h6 id="2-Route"><a href="#2-Route" class="headerlink" title="2. Route"></a>2. Route</h6><p>&emsp;&emsp;Route用于控制路径对应显示的组件。常用的有exact、path以及component属性。    </p>
+<ul>
+<li>exact用于严格匹配，控制匹配到/路径时不会再继续向下匹配；</li>
+<li>path标识指向的路由路径；</li>
+<li>component表示要跳转的路径对应的显示组件；</li>
+</ul>
+<p>&emsp;&emsp;Route会有三大props，分别是location、history、match；     </p>
+<ol>
+<li>history</li>
+</ol>
+<p>&emsp;&emsp;history 指的是 history 包，它是 React Router 的两个主要依赖之一（除了 React 本身），并且提供了几种不同的实现方式，用于在各种环境中管理 JavaScript 中的会话历史。<br>&emsp;&emsp;history分成以下三种     </p>
+<ul>
+<li>browser history - 针对 DOM 环境，用于支持 HTML5 history API 的浏览器</li>
+<li>hash history - 针对 DOM 环境，用于传统的旧式（低版本） 浏览器</li>
+<li>memory history - history 在内存上的实现，用于测试以及 React Native 等非 DOM 环境</li>
+</ul>
+<p>&emsp;&emsp;history对象具有以下属性和方法：    </p>
+<ul>
+<li>length - number 历史堆栈中的条目数</li>
+<li>action - string 当前的导航操作（push、replace 或 pop）</li>
+<li>location - object 当前访问的位置信息，见下文</li>
+<li>push(path, [state]) - function 将一个新条目推入到历史堆栈中</li>
+<li>replace(path, [state]) - function 替换历史堆栈中的当前条目</li>
+<li>go(n) - function 将历史堆栈中的指针移动 n 个条目</li>
+<li>goBack() - function 返回到上一个页面，相当于 go(-1)</li>
+<li>goForward() - function 进入到下一个页面，相当于 go(1)</li>
+<li>block(prompt) - function 阻止导航（请参阅 history 文档）</li>
+</ul>
+<p>&emsp;&emsp;history 对象是可变的。因此建议从 <route> 渲染组件时接收的属性中直接访问 location，而不是通过 history.location 进行访问。这样可以保证 React 在生命周期中的钩子函数正常执行。    </route></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">componentWillReceiveProps(nextProps) &#123;</div><div class="line">    // true</div><div class="line">    console.log(nextProps.location !== this.props.location);</div><div class="line">    </div><div class="line">    // false，因为 history 是可变的。</div><div class="line">    console.log(nextProps.history.location !== this.props.history.location);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ol>
+<li>location</li>
+</ol>
+<p>&emsp;&emsp;location 代表应用程序的位置。如当前的位置，将要去的位置，或是之前所在的位置。<br>&emsp;&emsp;location具有以下的属性：     </p>
+<ul>
+<li>pathname - string URL 路径</li>
+<li>search - string URL 中的查询字符串</li>
+<li>hash - string URL 中的 hash 片段</li>
+<li>state - object 存储至 location 中的额外状态数据，仅在 browser history 和 memory history 中有效。<br>&emsp;&emsp;Router 将在以下几个地方提供 location 对象：     </li>
+<li>在 Route component 中，以 this.props.location 方式获取</li>
+<li>在 Route render 中，以 ({ location }) =&gt; () 方式获取</li>
+<li>在 Route children 中，以 ({ location }) =&gt; () 方式获取</li>
+<li>在 withRouter 中，以 this.props.location 方式获取</li>
+</ul>
+<p>&emsp;&emsp;location 对象永远不会发生改变，因此可以在生命周期钩子函数中使用 location 对象来查看当前访问地址是否发生改变。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">componentWillReceiveProps(nextProps) &#123;</div><div class="line">  if (nextProps.location !== this.props.location) &#123;</div><div class="line">    // 已经跳转了！</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ol>
+<li>match</li>
+</ol>
+<p>&emsp;&emsp;Match是在使用Router之后被放入props中的一个属性，在class创建的组件中我们需要通过this.props.match来获取match之中的信息。match中包含的信息如下。</p>
+<ul>
+<li>params: object 路径参数，通过解析 URL 中的动态部分获得键值对 </li>
+<li>isExact: bool 为 true 时，整个 URL 都需要匹配 </li>
+<li>path: string 用来匹配的路径模式，用于创建嵌套的 Route </li>
+<li>url: string URL 匹配的部分，用于嵌套的 Link</li>
+</ul>
+<p>&emsp;&emsp;在获取id时经常使用match。    </p>
+<h6 id="3-Link和NavLink"><a href="#3-Link和NavLink" class="headerlink" title="3. Link和NavLink"></a>3. Link和NavLink</h6><p>&emsp;&emsp;两者都可以控制路由跳转，不同点是NavLink的api更多。    </p>
+<ul>
+<li>Link：主要api是to，to可以接受string或者一个object，来控制url，表示路由要跳转的路径。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;Link to=&quot;/home&quot; /&gt;</div><div class="line">&lt;Link to=&#123;&#123;</div><div class="line">    pathname: &apos;/home&apos;,</div><div class="line">    search: &apos;?page=1&apos;,</div><div class="line">    hash: &apos;#the-hash&apos;,</div><div class="line">    state: &#123; fromDashboard: true &#125;</div><div class="line">&#125;&#125; /&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&emsp;&emsp;这时点击Link就会跳转到home页面。    </p>
+<ul>
+<li>NavLink：它可以为当前选中的路由设置类名、样式以及回调函数等。     <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&lt;BrowserRouter&gt;</div><div class="line">    &lt;div&gt;</div><div class="line">        &lt;ul&gt;</div><div class="line">            &lt;li&gt;</div><div class="line">                &lt;NavLink exact activeClassName=&quot;selected&quot; to=&quot;/home/1&quot;&gt;首页&lt;/NavLink&gt;</div><div class="line">            &lt;/li&gt;</div><div class="line">        &lt;/ul&gt;</div><div class="line">    &lt;/div&gt;</div><div class="line">    &lt;Route path=&quot;/home/:1&quot; componet=&#123;Home&#125;&gt;&lt;/Route&gt;</div><div class="line">&lt;/BrowserRouter&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&emsp;&emsp;exact用于严格匹配，匹配到/则不会继续向下匹配；to则是控制跳转的路径，activeClassName是选中状态的类名，可以为其添加样式。我们通过在/home后面添加1来向路由中传递信息，这结合了上面Route中的/second/:id，线面的1234内容显示需要用到match。    </p>
+<h6 id="4-Switch"><a href="#4-Switch" class="headerlink" title="4. Switch"></a>4. Switch</h6><p>&emsp;&emsp;Switch常常会用来包裹Route，它里面不能放其他元素，表示一次只能显示一个路由。用于渲染与路径匹配的第一个子 <route> 或 <redirect>。但与<route>不同的是，<switch> 只会渲染一个路由。而定义一系列 <route> 时，所有被匹配到的 <route> 将都会在页面被渲染出来。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;Route exact path=&quot;/&quot; component=&#123;Service&#125; /&gt;</div><div class="line">&lt;Route path=&quot;/homepage&quot; component=&#123;Homepage&#125; /&gt;</div></pre></td></tr></table></figure></route></route></switch></route></redirect></route></p>
+<p>&emsp;&emsp;像这种情况，exact匹配到’/‘就不会再向下匹配，当url为”<a href="http://localhost:3000/&quot;时,两个页面都会被匹配到；（匹配不到页面）Switch有两个属性" target="_blank" rel="external">http://localhost:3000/&quot;时,两个页面都会被匹配到；（匹配不到页面）Switch有两个属性</a>    </p>
+<ul>
+<li>location: object。用于匹配子元素而不是当前历史位置（通常是当前的浏览器 URL）的 location 对象。</li>
+<li>children: node。<switch> 的子元素应该是 <route> 或 <redirect>。只有第一个匹配当前路径的组件会被渲染。当<switch> 中包含 <redirect> 时，可以使用任何 <route> 拥有的路径匹配属性：path、exact 和 strict。from 只是 path 的别名。     </route></redirect></switch></redirect></route></switch></li>
+</ul>
+<h6 id="5-Redirect"><a href="#5-Redirect" class="headerlink" title="5. Redirect"></a>5. Redirect</h6><p>&emsp;&emsp;Redirect有四个属性    </p>
+<ul>
+<li><p>to:string。链接到的路径名或位置。</p>
+</li>
+<li><p>to:object。要链接的位置。</p>
+</li>
+<li><p>push:bool。当为true时，重定向会将新条目推入历史记录，而不是替换当前条目</p>
+</li>
+<li><p>from:string。要重定向的路径名。用于在<switch>内部渲染<redirect>时匹配位置。</redirect></switch></p>
+</li>
+</ul>
+<h5 id="0x04-结合小例子的讲解"><a href="#0x04-结合小例子的讲解" class="headerlink" title="0x04 结合小例子的讲解"></a>0x04 结合小例子的讲解</h5><p>&emsp;&emsp;在这个小例子中，<browserrouter>被放在最外层；<browserrouter>的子节点是<switch>，表示当前只会渲染一个路由，如果不使用<switch>的话，两个组件将会以同时渲染在一个页面上；再接下来是<route>，exact表示精确匹配到’’，只要匹配到’/‘就不会再往下匹配了，这时候就会出现将homepage和device两个页面都匹配到，这种情况下，如果不加Switch，就会按照先后顺序将两个组件都显示到同一个页面上；在加上switch的情况下，也会因为匹配到两个路径中有’/‘的组件而显示空白，这个时候，就需要加上Redirect，只显示第一个被匹配到的路径对应组件的内容。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">&lt;Menu.Item key=&quot;1&quot;&gt;</div><div class="line">    &lt;Link to=&quot;/service&quot;&gt;设备&lt;/Link&gt;</div><div class="line">&lt;/Menu.Item&gt;</div><div class="line">&lt;Menu.Item key=&quot;2&quot;&gt;</div><div class="line">    &lt;Link to=&quot;/homepage&quot;&gt;取证&lt;/Link&gt;</div><div class="line">&lt;/Menu.Item&gt;</div><div class="line">&lt;BrowserRouter&gt;</div><div class="line">    </div><div class="line">    &lt;Switch&gt;</div><div class="line">     </div><div class="line">        &lt;Route exact path=&quot;/&quot; component=&#123;Device&#125;&gt;</div><div class="line">            </div><div class="line">        &lt;/Route&gt;</div><div class="line">        &lt;Route path=&quot;/homepage&quot; component=&#123;Homepage&#125; /&gt;</div><div class="line">        &lt;Redirect to=&quot;/&quot; /&gt;</div><div class="line">    &lt;/Switch&gt;</div><div class="line">           </div><div class="line">&lt;/BrowserRouter&gt;</div></pre></td></tr></table></figure></route></switch></switch></browserrouter></browserrouter></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> react </tag>
+            
+        </tags>
+        
     </entry>
-
     
     <entry>
       <title><![CDATA[用setTimeout实现for循环中的计时器]]></title>
-      <url>%2F2018%2F09%2F01%2F%E7%94%A8setTimeout%E5%AE%9E%E7%8E%B0for%E5%BE%AA%E7%8E%AF%E4%B8%AD%E7%9A%84%E8%AE%A1%E6%97%B6%E5%99%A8%2F</url>
-      <content type="text"><![CDATA[写在前面&emsp;&emsp;要实现的功能：在for循环中写一个计时器，先隔2000毫秒打印1，再隔2000毫秒打印2….依次每间隔2000毫秒打印出0到9. 00x1 基本思路&emsp;&emsp;要实现分别输出数组中的所有值，通过简单的for循环就能实现。要实现间隔一段时间输出，则使用setTimeout函数。12345678function test()&#123; for (var i = 0; i &lt; 10; i++) &#123; // setTimeout(function()&#123; console.log(i);//分别输出i的值 // &#125;,2000) &#125; &#125;;test(); &emsp;&emsp;可以在控制台看到紧跟着分别输出了小于10的i的值。但是加上setTimeout函数后，控制台的内容却都变成了10。&emsp;&emsp;解释造成这种差别的原因，我们要从JavaScript的执行机制开始说起。 00x2 js执行机制与作用域链&emsp;&emsp;首先，JavaScript是单线程环境，代码从上到下依次执行。这种执行方这也被称作是“同步执行”。（同一时间JavaScript只能执行一段代码，如果这段代码要执行很长时间，那么之后的代码只能尽情地等待它执行完才能有机会执行）。&emsp;&emsp;但JavaScript中引进了异步机制。于是，所有任务可以分成两种，一种是同步任务（synchronous），另一种是异步任务（asynchronous）。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有主线程上的任务执行完了，才通知”任务队列”，任务队列中的任务才会进入主线程执行。 &emsp;&emsp;在上面的代码中，for循环是同步代码，setTimeout是异步代码。遇到这种既包含同步又包含异步的情况，JavaScript依旧按照从上到下的顺序执行同步代码，并将异步代码插入任务队列。setTimeout的第二个参数则是把执行代码（console.log(i)）添加到任务队列需等待的毫秒数，但等待的时间是相对主程序完毕的时间计算的，也就是说，在执行到setTimeout函数时会等待一段时间，再将当前任务插入任务队列。&emsp;&emsp;最后，当执行完同步代码，js引擎就会去执行任务队列中的异步代码。这时候任务队列中就会有十个console.log(i)。我们知道，在每次循环中将setTimeout里面的代码“console.log(i)”放入任务队列时，i的值都是不一样的。但JavaScript引擎开始执行任务队列中的代码时，会开始在当前的作用域中开始找变量i，但是当前作用域中并没有对变量i进行定义。这个时候就会在创造该函数的作用域中寻找i。创建该函数的作用域就是全局作用域，这个时候就找到了for循环中的变量i，这时的i是全局变量，并且值已经确定：10。十个console.log“共享”i的值。这就是作用域链的问题。&emsp;&emsp;为了解决以上两个问题，可以使用let或者闭包或者箭头函数。 00x3 解决方案一——闭包&emsp;&emsp;终于来到了本文中最重要的一部分。什么是闭包？！&emsp;&emsp;闭包是指有权访问另一个函数作用域中的变量的函数。或者说，将函数作为参数或者返回值。创建闭包的常见方式，就是在一个函数内部创建另一个函数。以下面的代码为例。1234567891011function test()&#123; for (var i = 0; i &lt; 10; i++) &#123; (function(j)&#123;//闭包 setTimeout(function()&#123; console.log(j);//分别输出i的值 &#125;,4000) &#125;)(i);//闭包 &#125;; &#125;;test(); &emsp;&emsp;代码中注释为“闭包”的两行代码就是一个典型的闭包。我们在函数内部创建了一个函数，并将变量i以函数参数形式传递给内层函数中变量j，j就是这个函数中的局部变量，每次i传入的值不同，局部变量j的值也不同。 00x4 解决方案二——let&emsp;&emsp;如下面的代码所示，使用let替换var，也能输出0-9的值。这是因为，当for循环中的i是通过var定义的变量时，作用域是一整个封闭函数，是全局作用域；当i是通过let定义的变量时，作用域在代码块中，叫做块级作用域，在for循环这个子块中。12345678function test()&#123; for (let i = 0; i &lt; 10; i++) &#123; setTimeout(function()&#123; console.log(i);//分别输出i的值 &#125;,2000) &#125;;&#125;;test(); 00x5 解决方案三——箭头函数&emsp;&emsp;如下面的代码所示，使用let替换var，也能输出0-9的值。这是因为，当for循环中的i是通过var定义的变量时，作用域是一整个封闭函数，是全局作用域；当i是通过let定义的变量时，作用域在代码块中，叫做块级作用域，在for循环这个子块中。12345678function test()&#123; for (let i = 0; i &lt; 10; i++) &#123; setTimeout(() =&gt; &#123; console.log(i);//分别输出i的值 &#125;,2000) &#125;;&#125;;test(); 00x5 间隔输出&emsp;&emsp;在实际查看时，控制台并不是一开始就输出i的值，但是也并没有按照预期每隔一段时间输出i的值，问题就出现setTimeout等待的时间上，每次都是2000ms。在任务队列里，setTimeout按照异步的顺序执行，按照放入任务队列的顺序依次开始执行，所以几乎同时打印出值。也就是说，在异步的情况下，执行任务队列里的代码(console.log(i))按照先后顺序执行，没有明显的时间差。可以利用传入的i的值来设置这种时间差。12345678910function test()&#123; for (var i = 0; i &lt; 10; i++) &#123; (function(j)&#123;//闭包 setTimeout(function()&#123; console.log(j);//分别输出i的值 &#125;,2000*j) &#125;)(i);//闭包 &#125;;&#125;;test(); &emsp;&emsp;这样等待的时间就会分别变成20001,20002,2000*3……且传入i的值就立即执行，所以每次打印都会有2000ms的时间差。]]></content>
+      <url>/2018/09/01/%E7%94%A8setTimeout%E5%AE%9E%E7%8E%B0for%E5%BE%AA%E7%8E%AF%E4%B8%AD%E7%9A%84%E8%AE%A1%E6%97%B6%E5%99%A8/</url>
+      <content type="html"><![CDATA[<h5 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h5><p>&emsp;&emsp;要实现的功能：在for循环中写一个计时器，先隔2000毫秒打印1，再隔2000毫秒打印2….依次每间隔2000毫秒打印出0到9.</p>
+<a id="more"></a>
+<h5 id="00x1-基本思路"><a href="#00x1-基本思路" class="headerlink" title="00x1 基本思路"></a>00x1 基本思路</h5><p>&emsp;&emsp;要实现分别输出数组中的所有值，通过简单的for循环就能实现。要实现间隔一段时间输出，则使用setTimeout函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">	for (var i = 0; i &lt; 10; i++) &#123;</div><div class="line">	// setTimeout(function()&#123;</div><div class="line">		console.log(i);//分别输出i的值</div><div class="line">	// &#125;,2000)			</div><div class="line">	&#125;	</div><div class="line">&#125;;</div><div class="line">test();</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;可以在控制台看到紧跟着分别输出了小于10的i的值。但是加上setTimeout函数后，控制台的内容却都变成了10。<br>&emsp;&emsp;解释造成这种差别的原因，我们要从JavaScript的执行机制开始说起。</p>
+<h5 id="00x2-js执行机制与作用域链"><a href="#00x2-js执行机制与作用域链" class="headerlink" title="00x2 js执行机制与作用域链"></a>00x2 js执行机制与作用域链</h5><p>&emsp;&emsp;首先，JavaScript是单线程环境，代码从上到下依次执行。这种执行方这也被称作是“同步执行”。（同一时间JavaScript只能执行一段代码，如果这段代码要执行很长时间，那么之后的代码只能尽情地等待它执行完才能有机会执行）。<br>&emsp;&emsp;但JavaScript中引进了异步机制。于是，所有任务可以分成两种，一种是同步任务（synchronous），另一种是异步任务（asynchronous）。同步任务指的是，在主线程上排队执行的任务，只有前一个任务执行完毕，才能执行后一个任务；异步任务指的是，不进入主线程、而进入”任务队列”（task queue）的任务，只有主线程上的任务执行完了，才通知”任务队列”，任务队列中的任务才会进入主线程执行。</p>
+<p>&emsp;&emsp;在上面的代码中，for循环是同步代码，setTimeout是异步代码。遇到这种既包含同步又包含异步的情况，JavaScript依旧按照从上到下的顺序执行同步代码，并将异步代码插入任务队列。setTimeout的第二个参数则是把执行代码（console.log(i)）添加到任务队列需等待的毫秒数，但等待的时间是相对主程序完毕的时间计算的，也就是说，在执行到setTimeout函数时会等待一段时间，再将当前任务插入任务队列。<br>&emsp;&emsp;最后，当执行完同步代码，js引擎就会去执行任务队列中的异步代码。这时候任务队列中就会有十个console.log(i)。我们知道，在每次循环中将setTimeout里面的代码“console.log(i)”放入任务队列时，i的值都是不一样的。但JavaScript引擎开始执行任务队列中的代码时，会开始在当前的作用域中开始找变量i，但是当前作用域中并没有对变量i进行定义。这个时候就会在创造该函数的作用域中寻找i。创建该函数的作用域就是全局作用域，这个时候就找到了for循环中的变量i，这时的i是全局变量，并且值已经确定：10。十个console.log“共享”i的值。这就是作用域链的问题。<br>&emsp;&emsp;为了解决以上两个问题，可以使用let或者闭包或者箭头函数。</p>
+<h5 id="00x3-解决方案一——闭包"><a href="#00x3-解决方案一——闭包" class="headerlink" title="00x3 解决方案一——闭包"></a>00x3 解决方案一——闭包</h5><p>&emsp;&emsp;终于来到了本文中最重要的一部分。什么是闭包？！<br>&emsp;&emsp;闭包是指有权访问另一个函数作用域中的变量的函数。或者说，将函数作为参数或者返回值。创建闭包的常见方式，就是在一个函数内部创建另一个函数。以下面的代码为例。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">    for (var i = 0; i &lt; 10; i++) &#123;</div><div class="line">    	(function(j)&#123;//闭包</div><div class="line">    		setTimeout(function()&#123;</div><div class="line">    			console.log(j);//分别输出i的值</div><div class="line">    		&#125;,4000)		</div><div class="line">    	&#125;)(i);//闭包</div><div class="line">    &#125;;	</div><div class="line">&#125;;</div><div class="line"></div><div class="line">test();</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;代码中注释为“闭包”的两行代码就是一个典型的闭包。我们在函数内部创建了一个函数，并将变量i以函数参数形式传递给内层函数中变量j，j就是这个函数中的局部变量，每次i传入的值不同，局部变量j的值也不同。</p>
+<h5 id="00x4-解决方案二——let"><a href="#00x4-解决方案二——let" class="headerlink" title="00x4 解决方案二——let"></a>00x4 解决方案二——let</h5><p>&emsp;&emsp;如下面的代码所示，使用let替换var，也能输出0-9的值。这是因为，当for循环中的i是通过var定义的变量时，作用域是一整个封闭函数，是全局作用域；当i是通过let定义的变量时，作用域在代码块中，叫做块级作用域，在for循环这个子块中。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">	for (let i = 0; i &lt; 10; i++) &#123;</div><div class="line">		setTimeout(function()&#123;</div><div class="line">			console.log(i);//分别输出i的值</div><div class="line">		&#125;,2000)		</div><div class="line">	&#125;;</div><div class="line">&#125;;</div><div class="line">test();</div></pre></td></tr></table></figure></p>
+<h5 id="00x5-解决方案三——箭头函数"><a href="#00x5-解决方案三——箭头函数" class="headerlink" title="00x5 解决方案三——箭头函数"></a>00x5 解决方案三——箭头函数</h5><p>&emsp;&emsp;如下面的代码所示，使用let替换var，也能输出0-9的值。这是因为，当for循环中的i是通过var定义的变量时，作用域是一整个封闭函数，是全局作用域；当i是通过let定义的变量时，作用域在代码块中，叫做块级作用域，在for循环这个子块中。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">	for (let i = 0; i &lt; 10; i++) &#123;</div><div class="line">		setTimeout(() =&gt; &#123;</div><div class="line">			console.log(i);//分别输出i的值</div><div class="line">		&#125;,2000)		</div><div class="line">	&#125;;</div><div class="line">&#125;;</div><div class="line">test();</div></pre></td></tr></table></figure></p>
+<h5 id="00x5-间隔输出"><a href="#00x5-间隔输出" class="headerlink" title="00x5 间隔输出"></a>00x5 间隔输出</h5><p>&emsp;&emsp;在实际查看时，控制台并不是一开始就输出i的值，但是也并没有按照预期每隔一段时间输出i的值，问题就出现setTimeout等待的时间上，每次都是2000ms。在任务队列里，setTimeout按照异步的顺序执行，按照放入任务队列的顺序依次开始执行，所以几乎同时打印出值。也就是说，在异步的情况下，执行任务队列里的代码(console.log(i))按照先后顺序执行，没有明显的时间差。可以利用传入的i的值来设置这种时间差。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">function test()&#123;</div><div class="line">	for (var i = 0; i &lt; 10; i++) &#123;</div><div class="line">		(function(j)&#123;//闭包</div><div class="line">			setTimeout(function()&#123;</div><div class="line">				console.log(j);//分别输出i的值</div><div class="line">			&#125;,2000*j)		</div><div class="line">		&#125;)(i);//闭包</div><div class="line">	&#125;;</div><div class="line">&#125;;</div><div class="line">test();</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;这样等待的时间就会分别变成2000<em>1,2000</em>2,2000*3……且传入i的值就立即执行，所以每次打印都会有2000ms的时间差。</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> setTimeout </tag>
+            
+        </tags>
+        
     </entry>
-
     
     <entry>
       <title><![CDATA[electron与vue实践初体验]]></title>
-      <url>%2F2018%2F05%2F24%2Felectron%E4%B8%8Evue%E5%AE%9E%E8%B7%B5%E5%88%9D%E4%BD%93%E9%AA%8C%2F</url>
-      <content type="text"><![CDATA[写在前面&emsp;&emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。 &emsp;&emsp;使用下面的命令来安装cnpm。1npm install -g cnpm --registry=https://registry.npm.taobao.org//安装cnpm 00x1 构建electron 首先，打开命令行，使用cnpm安装electron。12cnpm install -g electron//在全局安装cnpm install --save-dev electron//在当前目录安装 &emsp;&emsp;这里使用了全局安装方式： 打开git，在github上下载electron-quick-start。1234git clone https://github.com/electron/electron-quick-startcd electron-quick-startcnpm install //安装各种依赖cnpm run start //打开桌面应用 &emsp;&emsp;可以看到一个桌面应用被打开。 00x2 在electron中引入vue 新建一个vue项目 12345cnpm install -g vue-cli//全局安装vue-cli脚手架vue init webpack my-vue(项目名字)//初始化一个项目cd my-vuecnpm install //安装各种依赖npm run dev //打开这个项目 vue打包&emsp;&emsp;打开vue项目中config文件夹下的index.js文件，确认其中的assetsPublicPath修改为相对路径 ./。注意是build配置下的assetsPublicPath。 &emsp;&emsp;运行npm run build对vue项目进行打包，在dist文件夹中生成打包文件。将dist文件夹中生成的static文件夹和index.html放入electron-quick-start下，替换掉electron-quick-start的index.html。1npm run build &emsp;&emsp;再次在electron-quick-start目录中运行npm run start 00x3 打包 在electron-quick-start下安装打包插件 1cnpm install -g electron-packager//采用全局安装 使用electron-packager来进行打包，可以直接使用打包命令 electron-packager &emsp;&emsp;这里的参数: location of project：项目所在路径 name of project：打包的项目名字 platform：确定了你要构建哪个平台的应用（Windows、Mac 还是 Linux） architecture：决定了使用 x86 还是 x64 还是两个架构都用 electron version：electron 的版本 optional options：可选选项 &emsp;&emsp;但是这个命令很长，每次都这样输入会比较麻烦； 可以在package.json下的script下这样写 1&quot;electron_build&quot;: &quot;electron-packager ./ --platform=win32 --arch=x64 --icon=./app/img/electron.ico --overwrite&quot; 打包 1npm run electron_build &emsp;&emsp;运行打包命令就会生成一个文件夹，在里面就能找到打包生成的.exe文件。双击就能运行]]></content>
+      <url>/2018/05/24/electron%E4%B8%8Evue%E5%AE%9E%E8%B7%B5%E5%88%9D%E4%BD%93%E9%AA%8C/</url>
+      <content type="html"><![CDATA[<p><img src="/2018/05/24/electron与vue实践初体验/electron.png" alt="electron"></p>
+<h5 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h5><p>&emsp;&emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。     </p>
+<a id="more"></a>
+<p>&emsp;&emsp;使用下面的命令来安装cnpm。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org//安装cnpm</div></pre></td></tr></table></figure></p>
+<h5 id="00x1-构建electron"><a href="#00x1-构建electron" class="headerlink" title="00x1 构建electron"></a>00x1 构建electron</h5><ul>
+<li>首先，打开命令行，使用cnpm安装electron。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cnpm install -g electron//在全局安装</div><div class="line">cnpm install --save-dev electron//在当前目录安装</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&emsp;&emsp;这里使用了全局安装方式：<br><img src="/2018/05/24/electron与vue实践初体验/cnpm-install-g-electron.PNG" alt="mockjs"></p>
+<ul>
+<li>打开git，在github上下载electron-quick-start。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/electron/electron-quick-start</div><div class="line">cd electron-quick-start</div><div class="line">cnpm install //安装各种依赖</div><div class="line">cnpm run start //打开桌面应用</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&emsp;&emsp;可以看到一个桌面应用被打开。<br><img src="/2018/05/24/electron与vue实践初体验/helloword.PNG" alt="mockjs"></p>
+<h5 id="00x2-在electron中引入vue"><a href="#00x2-在electron中引入vue" class="headerlink" title="00x2 在electron中引入vue"></a>00x2 在electron中引入vue</h5><ul>
+<li><p>新建一个vue项目</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cnpm install -g vue-cli//全局安装vue-cli脚手架</div><div class="line">vue init webpack my-vue(项目名字)//初始化一个项目</div><div class="line">cd my-vue</div><div class="line">cnpm install //安装各种依赖</div><div class="line">npm run dev //打开这个项目</div></pre></td></tr></table></figure>
+</li>
+<li><p>vue打包<br>&emsp;&emsp;打开vue项目中config文件夹下的index.js文件，确认其中的assetsPublicPath修改为相对路径 ./。注意是build配置下的assetsPublicPath。</p>
+</li>
+</ul>
+<p>&emsp;&emsp;运行npm run build对vue项目进行打包，在dist文件夹中生成打包文件。将dist文件夹中生成的static文件夹和index.html放入electron-quick-start下，替换掉electron-quick-start的index.html。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm run build</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;再次在electron-quick-start目录中运行npm run start</p>
+<h5 id="00x3-打包"><a href="#00x3-打包" class="headerlink" title="00x3 打包"></a>00x3 打包</h5><ul>
+<li><p>在electron-quick-start下安装打包插件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cnpm install -g electron-packager//采用全局安装</div></pre></td></tr></table></figure>
+</li>
+<li><p>使用electron-packager来进行打包，可以直接使用打包命令</p>
+</li>
+</ul>
+<p>electron-packager <location of="" project=""> <name of="" project=""> <platform> <architecture> <electronversion> <optional options=""></optional></electronversion></architecture></platform></name></location></p>
+<p>&emsp;&emsp;这里的参数:</p>
+<ul>
+<li>location of project：项目所在路径 </li>
+<li>name of project：打包的项目名字 </li>
+<li>platform：确定了你要构建哪个平台的应用（Windows、Mac 还是 Linux） </li>
+<li>architecture：决定了使用 x86 还是 x64 还是两个架构都用 </li>
+<li>electron version：electron 的版本 </li>
+<li>optional options：可选选项</li>
+</ul>
+<p>&emsp;&emsp;但是这个命令很长，每次都这样输入会比较麻烦；</p>
+<ul>
+<li><p>可以在package.json下的script下这样写</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&quot;electron_build&quot;: &quot;electron-packager ./ --platform=win32 --arch=x64 --icon=./app/img/electron.ico --overwrite&quot;</div></pre></td></tr></table></figure>
+</li>
+<li><p>打包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm run electron_build</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&emsp;&emsp;运行打包命令就会生成一个文件夹，在里面就能找到打包生成的.exe文件。双击就能运行</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> electron </tag>
+            
+            <tag> Vue </tag>
+            
+        </tags>
+        
     </entry>
-
     
     <entry>
       <title><![CDATA[mongoDB-数据聚合的三种方式]]></title>
-      <url>%2F2018%2F03%2F03%2FmongoDB-%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F%2F</url>
-      <content type="text"><![CDATA[00x1 group&emsp;&emsp;使用group可以执行相对复杂的聚合，先选定分组所依据的键，而后mongoDB就会将集合依据选定键进行分组，然后对每一个分组内的文档进行聚合，以得到结果文档。（1）group结构 12345678db.test.group(&#123; key:&#123;field:true&#125; //key为分组依据，相当于aggregate中的$group initial:&#123;count:0&#125; //在分组前对变量初始化，这里声明的变量在下面回调函数中作为result的属性使用。 condition://过滤条件，相当于aggregate中的$match。 reduce:function ( curr, result ) &#123;&#125; //第一个参数为当前分组中此时迭代到的文档对象，第二个参数为当前分组 &quot;$keyf&quot;:function() &#123;return &#125; //定义分组函数 finalize:function(result)&#123;&#125; //这里的result为reduce的result，代表当前分组。此函数对完成当前分组后回调。&#125;) &emsp;&emsp;Group有传入的命令中共有六个参数，其中三个是JavaScript函数，因此每次查询到匹配的数据，都会被转换为对象传入函数。从运行效率上来说，Group比Aggregate差一大截。 （2）使用场景&emsp;&emsp;对返回数据最多只包含20000个元素，最多支持20000独立分组。 00x2 aggregate&emsp;&emsp;aggregate是mongoDB中经常提起的“管道”。主要用于处理数据（如求和，统计平均值等），并返回计算后的数据结构。&emsp;&emsp;aggreagte是一个数组，其中包含多个对象（命令），通过遍历Pipleline数组对collection中的数据进行操作。&emsp;&emsp;下面介绍一下aggregate的聚合管道比较常用的几种操作：（1）$project&emsp;&emsp;修改输入文档的结构。可以用来重命名、增加或删除域，也可以用于创建计算结果以及嵌套文档。 123456db.testtest.aggregate(&#123; $project:&#123; &quot;_id&quot;:1, &quot;name&quot;:1 &#125;&#125;) （2）$match&emsp;&emsp;用于过滤数据，只输出符合条件的文档。$match使用MongoDB的标准查询操作。12345db.testtest.aggregate(&#123; $match:&#123; &quot;count&quot;:&quot;3&quot;, &#125;&#125;) （3）$limit&emsp;&emsp;用来限制MongoDB聚合管道返回的文档数。123db.testtest.aggregate(&#123; $limit:5&#125;) （4）$skip&emsp;&emsp;在聚合管道中跳过指定数量的文档，并返回余下的文档。123db.testtest.aggregate(&#123; $skip:8&#125;) （5）$unwind&emsp;&emsp;将文档中的某一个数组类型字段拆分成多条，每条包含数组中的一个值。123db.testtest.aggregate(&#123; $unwind:&quot;$identlist&quot;&#125;) （6）$group&emsp;&emsp;将集合中的文档分组，可用于统计结果。123db.testtest.aggregate(&#123; $group:&#123;&quot;_id&quot;:&quot;$count&quot;&#125;&#125;) （7）$sort&emsp;&emsp;将输入文档排序后输出123db.testtest.aggregate(&#123; $sort:&#123;&quot;count&quot;:1&#125;&#125;) （8）使用场景&emsp;&emsp;应用于常用的聚合操作；对聚合响应性能有一定要求时（索引及组合优化）；管道操作在中完成，由于内存有大小限制，处理的数据集大小有限。 00x3 MapReduce（1）MapReduce结构&emsp;&emsp;mapreduce是mongoDB中提供的用于数据聚合的一种方式。通过对集合中的各个满足条件的文档进行预处理，整理出想要的数据然后统计得到最终的统计结果。&emsp;&emsp;mapreduce的结构如下：12345678910111213db.runCommand(&#123; mapreduce:&lt;collection&gt;, //需要进行处理的集合名 map:&lt;mapfunction&gt;, //映射函数（分组） reduce:&lt;reducefunction&gt;, //统计函数 [,query:&lt;query filter object&gt;] //，在发往map函数之前，对文档进行过滤 [,sort:&lt;sorts the input objects using this key.Useful for optimization,like sorting by the emit key for fewer reduces&gt;] //在发往map函数之前，对文档进行排序 [,limit:&lt;number of objects to return from collection&gt;] //限制发往map函数的文档数量 [,out:&lt;see output options below&gt;] //新建集合，用于存放统计结果 [,keeptemp:&lt;true|false&gt;] //是否保存统计结果为临时集合 [,finalize:&lt;finalizefunction&gt;] //最终处理函数，对reduce返回结果（存入out之前）进行最终处理 [,scope:&lt;object where fields go into javascript global scope&gt;] //向map、reduce、finalize导入外部变量 [,verbose:true] //详细的统计信息，用于调试&#125;); &emsp;&emsp;使用MapReduce主要需要实现两个函数：Map函数和Reduce函数。接下来详细介绍这两个函数。（2）Map函数&emsp;&emsp;可以将Map函数理解为分组，调用emit（key，values），遍历collection中所有的记录。其中，emit中的key为分组依据；values为分组后需要保留的数据，为1时则统计该分组的值的个数。&emsp;&emsp;key对应最后结果集中的_id。经过Map函数处理的集合，每条数据中只有”key”和”values”两个字段。 （3）Reduce函数&emsp;&emsp;Reduce为统计函数，接受Map函数处理后返回的key和values作为参数，将key-values变成key-value，也就是把values数组变成一个个单一的value。当key-values中的values数组过大时，会被再切分成很多个小的key-values，再对这些小的key-values分别执行Reduce，再将多个块的结果组合成一个新的数组，作为Reduce函数的第二个参数，继续Reduce操作。这个类似于多阶的归并排序。（4）out和keeptemp&emsp;&emsp;out:&emsp;&emsp;在文档输出时，output是可选的，一般结构为{ “out”: option }。&emsp;&emsp;option可以有以下几个选项。1234&#123; replace : &quot;collection name&quot; &#125; – mapReduce的输出结果会替换掉原来的collection，collection不存在则创建。&#123; merge : &quot;collection name&quot; &#125; – 将新老数据进行合并，新的替换旧的，没有的添加进去。&#123; reduce : &quot;collection name&quot; &#125; – 存在老数据时，在原来基础上加新数据(即 new value = old value + mapReduce value)。&#123; inline : 1 &#125; – 不会创建collection，结果保存在内存里，只限于结果小于16MB的情况。 &emsp;&emsp;通常结构为{“out”:”collection name”}，如果collection不存在，就新建一个集合。 &emsp;&emsp;keeptemp&emsp;&emsp;值只能为true或者false，表明输出到的collection是否是临时的，如果想在连接关闭后任然保留这个集合，则需要指定keeptemp的值为”true”。在使用output的情况下，不必指定keeptemp为true。 （5）使用场景&emsp;&emsp;聚合要求复杂；大型数据集 00x4 三者比较 &emsp; group aggregate MapReduce 是否使用JavaScript引擎 是，定制reduce函数 是，不能编写自定义函数 是，MapReduce函数是用JavaScript编写的 返回结果集保存位置 内联,结果必须符合BSON文档的限制(当前是16Mb) 内联，服务器支持的最大文档大小(16Mb)，超过时会报错 内联、新集合、合并、替换、减少 处理数据集大小 将不会分组到一个超过10,000个键的结果集 操作在内存中完成，有内存大小限制，处理数据集大小有限 大型数据集，超过20000的独立分组建议采用MapReduce 处理性能 低于aggregate 较高，管道可重复使用 低于aggregate 灵活度 低于MapReduce 低于MapRduce 较高，能使用JavaScript 00x5 从一个小例子具体分析&emsp; &emsp; 为公司的每个用户分配一张卡（有唯一的卡号”_id”）；持有该卡的用户可以使用这张卡在不同的超市消费，每个超市都有一个标识码，用”identlist”存放用户消费过的超市标识码；持有该卡的用户名字用”name”表示，默认在该公司中，每个人的姓名都是唯一的，与”_id”一一对应；”eventline”列举用户每次消费购买的物品；”timeline”记录每次消费的时间;”newtimeline”为用户最近一次消费的时间。&emsp; &emsp;示例数据如下：&emsp; &emsp;知道最近有几家超市做促销（数组A），要求（1）获取在A中任意一家或多家超市消费过的卡的持有者；（2）这些卡的最新消费时间；（3）这些卡的累积消费次数；（4）根据最新消费时间/累积消费次数对获取到的这些卡的数据进行排序；对排序后的数据进行分页。&emsp; &emsp;分析：要求中最难的是第一步：遍历数组A，将A中的每一条数据，作为分组依据（可能将原来的一条数据拆分成几条）；再对分组后的数据以”_id”进行聚合。（1）使用MapReduce实现以上要求。 1234567891011121314151617181920212223242526272829var map = function()&#123; emit(this.name,this.timeline); &#125;;var reduce = function(key,values)&#123; return Array.sum(values); &#125;;db.testtest.mapReduce( map, reduce, &#123; query:&#123;$where:function()&#123; var arr = new Array(&quot;Jk3Nx5-YUxBJZ-Zklt&quot;,&quot;LMuHW7-JtnwQC-OBIh&quot;); for(var index in arr)&#123; for(var current in this.identlist)&#123; if(this.identlist[current] == arr[index])&#123; return true; &#125; return false; &#125; &#125; &#125;&#125;, sort:&#123;&quot;count&quot;:1&#125;, finalize:function(key,value)&#123;return &#123;count:value.length,time:value[0]&#125;;&#125;, out:&quot;bbb_result&quot; &#125;)db.bbb_result.find().skip(1).limit(5) （2）使用aggregate123456789101112var arr = new Array(&quot;wdeVyU-YVutsF-CEza&quot;,&quot;Jk3Nx5-YUxBJZ-Zklt&quot;);db.getCollection(&apos;testtest&apos;).aggregate([ &#123;&apos;$unwind&apos;:&quot;$identlist&quot;&#125;, &#123;&quot;$match&quot;:&#123;&quot;identlist&quot;:&#123;&quot;$in&quot;:arr&#125;&#125;&#125;, &#123;$group:&#123;_id:&quot;$name&quot;,timeline:&#123;$addToSet:&quot;$timeline&quot;&#125;&#125;&#125;, &#123;&apos;$unwind&apos;:&quot;$timeline&quot;&#125;, &#123;&apos;$unwind&apos;:&quot;$timeline&quot;&#125;, &#123;$group:&#123;_id:&quot;$_id&quot;,time:&#123;$first:&quot;$timeline&quot;&#125;,count:&#123;&quot;$sum&quot;:1&#125;&#125;&#125;, &#123;$sort:&#123;&quot;count&quot;:-1&#125;&#125;, &#123;$skip:0&#125;, &#123;$limit:5&#125;]) &emsp; &emsp;以上两个小例子经测试后均能实现要求，这里不做详细解释，需要的请自取~]]></content>
+      <url>/2018/03/03/mongoDB-%E6%95%B0%E6%8D%AE%E8%81%9A%E5%90%88%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E5%BC%8F/</url>
+      <content type="html"><![CDATA[<h5 id="00x1-group"><a href="#00x1-group" class="headerlink" title="00x1 group"></a>00x1 group</h5><p>&emsp;&emsp;使用group可以执行相对复杂的聚合，先选定分组所依据的键，而后mongoDB就会将集合依据选定键进行分组，然后对每一个分组内的文档进行聚合，以得到结果文档。<br>（1）group结构<br><a id="more"></a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">db.test.group(&#123;</div><div class="line">    key:&#123;field:true&#125;  //key为分组依据，相当于aggregate中的$group</div><div class="line">    initial:&#123;count:0&#125;   //在分组前对变量初始化，这里声明的变量在下面回调函数中作为result的属性使用。</div><div class="line">    condition://过滤条件，相当于aggregate中的$match。</div><div class="line">    reduce:function ( curr, result ) &#123;&#125;     //第一个参数为当前分组中此时迭代到的文档对象，第二个参数为当前分组</div><div class="line">    &quot;$keyf&quot;:function() &#123;return &#125;  //定义分组函数</div><div class="line">    finalize:function(result)&#123;&#125; //这里的result为reduce的result，代表当前分组。此函数对完成当前分组后回调。</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;Group有传入的命令中共有六个参数，其中三个是JavaScript函数，因此每次查询到匹配的数据，都会被转换为对象传入函数。从运行效率上来说，Group比Aggregate差一大截。</p>
+<p>（2）使用场景<br>&emsp;&emsp;对返回数据最多只包含20000个元素，最多支持20000独立分组。</p>
+<h5 id="00x2-aggregate"><a href="#00x2-aggregate" class="headerlink" title="00x2 aggregate"></a>00x2 aggregate</h5><p>&emsp;&emsp;aggregate是mongoDB中经常提起的“管道”。主要用于处理数据（如求和，统计平均值等），并返回计算后的数据结构。<br>&emsp;&emsp;aggreagte是一个数组，其中包含多个对象（命令），通过遍历Pipleline数组对collection中的数据进行操作。<br>&emsp;&emsp;下面介绍一下aggregate的聚合管道比较常用的几种操作：<br>（1）$project<br>&emsp;&emsp;修改输入文档的结构。可以用来重命名、增加或删除域，也可以用于创建计算结果以及嵌套文档。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $project:&#123;</div><div class="line">        &quot;_id&quot;:1,</div><div class="line">        &quot;name&quot;:1</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<p>（2）$match<br>&emsp;&emsp;用于过滤数据，只输出符合条件的文档。$match使用MongoDB的标准查询操作。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $match:&#123;</div><div class="line">        &quot;count&quot;:&quot;3&quot;,</div><div class="line">    &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>（3）$limit<br>&emsp;&emsp;用来限制MongoDB聚合管道返回的文档数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $limit:5</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>（4）$skip<br>&emsp;&emsp;在聚合管道中跳过指定数量的文档，并返回余下的文档。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $skip:8</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>（5）$unwind<br>&emsp;&emsp;将文档中的某一个数组类型字段拆分成多条，每条包含数组中的一个值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">	$unwind:&quot;$identlist&quot;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>（6）$group<br>&emsp;&emsp;将集合中的文档分组，可用于统计结果。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $group:&#123;&quot;_id&quot;:&quot;$count&quot;&#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>（7）$sort<br>&emsp;&emsp;将输入文档排序后输出<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">db.testtest.aggregate(&#123;</div><div class="line">    $sort:&#123;&quot;count&quot;:1&#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>（8）使用场景<br>&emsp;&emsp;应用于常用的聚合操作；对聚合响应性能有一定要求时（索引及组合优化）；管道操作在中完成，由于内存有大小限制，处理的数据集大小有限。    </p>
+<h5 id="00x3-MapReduce"><a href="#00x3-MapReduce" class="headerlink" title="00x3 MapReduce"></a>00x3 MapReduce</h5><p>（1）MapReduce结构<br>&emsp;&emsp;mapreduce是mongoDB中提供的用于数据聚合的一种方式。通过对集合中的各个满足条件的文档进行预处理，整理出想要的数据然后统计得到最终的统计结果。<br>&emsp;&emsp;mapreduce的结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">db.runCommand(&#123;  </div><div class="line">    mapreduce:&lt;collection&gt;,  //需要进行处理的集合名</div><div class="line">    map:&lt;mapfunction&gt;,  //映射函数（分组）</div><div class="line">    reduce:&lt;reducefunction&gt;,  //统计函数</div><div class="line">    [,query:&lt;query filter object&gt;]  //，在发往map函数之前，对文档进行过滤 </div><div class="line">    [,sort:&lt;sorts the input objects using this key.Useful for optimization,like sorting by the emit key for fewer reduces&gt;]  //在发往map函数之前，对文档进行排序</div><div class="line">    [,limit:&lt;number of objects to return from collection&gt;]  //限制发往map函数的文档数量</div><div class="line">    [,out:&lt;see output options below&gt;]  //新建集合，用于存放统计结果</div><div class="line">    [,keeptemp:&lt;true|false&gt;]  //是否保存统计结果为临时集合</div><div class="line">    [,finalize:&lt;finalizefunction&gt;]  //最终处理函数，对reduce返回结果（存入out之前）进行最终处理</div><div class="line">    [,scope:&lt;object where fields go into javascript global scope&gt;] //向map、reduce、finalize导入外部变量</div><div class="line">    [,verbose:true]  //详细的统计信息，用于调试</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;使用MapReduce主要需要实现两个函数：Map函数和Reduce函数。接下来详细介绍这两个函数。<br>（2）Map函数<br>&emsp;&emsp;可以将Map函数理解为分组，调用emit（key，values），遍历collection中所有的记录。其中，emit中的key为分组依据；values为分组后需要保留的数据，为1时则统计该分组的值的个数。<br>&emsp;&emsp;key对应最后结果集中的_id。经过Map函数处理的集合，每条数据中只有”key”和”values”两个字段。</p>
+<p>（3）Reduce函数<br>&emsp;&emsp;Reduce为统计函数，接受Map函数处理后返回的key和values作为参数，将key-values变成key-value，也就是把values数组变成一个个单一的value。当key-values中的values数组过大时，会被再切分成很多个小的key-values，再对这些小的key-values分别执行Reduce，再将多个块的结果组合成一个新的数组，作为Reduce函数的第二个参数，继续Reduce操作。这个类似于多阶的归并排序。<br>（4）out和keeptemp<br>&emsp;&emsp;out:<br>&emsp;&emsp;在文档输出时，output是可选的，一般结构为{ “out”: option }。<br>&emsp;&emsp;option可以有以下几个选项。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&#123; replace : &quot;collection name&quot; &#125; – mapReduce的输出结果会替换掉原来的collection，collection不存在则创建。</div><div class="line">&#123; merge : &quot;collection name&quot; &#125; – 将新老数据进行合并，新的替换旧的，没有的添加进去。</div><div class="line">&#123; reduce : &quot;collection name&quot; &#125; – 存在老数据时，在原来基础上加新数据(即 new value = old value + mapReduce value)。</div><div class="line">&#123; inline : 1 &#125; – 不会创建collection，结果保存在内存里，只限于结果小于16MB的情况。</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;通常结构为{“out”:”collection name”}，如果collection不存在，就新建一个集合。</p>
+<p>&emsp;&emsp;keeptemp<br>&emsp;&emsp;值只能为true或者false，表明输出到的collection是否是临时的，如果想在连接关闭后任然保留这个集合，则需要指定keeptemp的值为”true”。在使用output的情况下，不必指定keeptemp为true。</p>
+<p>（5）使用场景<br>&emsp;&emsp;聚合要求复杂；大型数据集            </p>
+<h5 id="00x4-三者比较"><a href="#00x4-三者比较" class="headerlink" title="00x4 三者比较"></a>00x4 三者比较</h5><table>
+<thead>
+<tr>
+<th>&emsp;</th>
+<th>group</th>
+<th>aggregate</th>
+<th>MapReduce</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>是否使用JavaScript引擎</td>
+<td>是，定制reduce函数</td>
+<td>是，不能编写自定义函数</td>
+<td>是，MapReduce函数是用JavaScript编写的</td>
+</tr>
+<tr>
+<td>返回结果集保存位置</td>
+<td>内联,结果必须符合BSON文档的限制(当前是16Mb)</td>
+<td>内联，服务器支持的最大文档大小(16Mb)，超过时会报错</td>
+<td>内联、新集合、合并、替换、减少</td>
+</tr>
+<tr>
+<td>处理数据集大小</td>
+<td>将不会分组到一个超过10,000个键的结果集</td>
+<td>操作在内存中完成，有内存大小限制，处理数据集大小有限</td>
+<td>大型数据集，超过20000的独立分组建议采用MapReduce</td>
+</tr>
+<tr>
+<td>处理性能</td>
+<td>低于aggregate</td>
+<td>较高，管道可重复使用</td>
+<td>低于aggregate</td>
+</tr>
+<tr>
+<td>灵活度</td>
+<td>低于MapReduce</td>
+<td>低于MapRduce</td>
+<td>较高，能使用JavaScript</td>
+</tr>
+</tbody>
+</table>
+<p>00x5  从一个小例子具体分析<br>&emsp; &emsp; 为公司的每个用户分配一张卡（有唯一的卡号”_id”）；持有该卡的用户可以使用这张卡在不同的超市消费，每个超市都有一个标识码，用”identlist”存放用户消费过的超市标识码；持有该卡的用户名字用”name”表示，默认在该公司中，每个人的姓名都是唯一的，与”_id”一一对应；”eventline”列举用户每次消费购买的物品；”timeline”记录每次消费的时间;”newtimeline”为用户最近一次消费的时间。<br>&emsp; &emsp;示例数据如下：<br><img src="/2018/03/03/mongoDB-数据聚合的三种方式/mongoDB数据.PNG" alt="mockjs"><br>&emsp; &emsp;知道最近有几家超市做促销（数组A），要求（1）获取在A中任意一家或多家超市消费过的卡的持有者；（2）这些卡的最新消费时间；（3）这些卡的累积消费次数；（4）根据最新消费时间/累积消费次数对获取到的这些卡的数据进行排序；对排序后的数据进行分页。<br>&emsp; &emsp;分析：要求中最难的是第一步：遍历数组A，将A中的每一条数据，作为分组依据（可能将原来的一条数据拆分成几条）；再对分组后的数据以”_id”进行聚合。<br>（1）使用MapReduce实现以上要求。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">var map = function()&#123;</div><div class="line">    emit(this.name,this.timeline);</div><div class="line">    &#125;;</div><div class="line">var reduce = function(key,values)&#123;</div><div class="line">    return Array.sum(values);</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">db.testtest.mapReduce(</div><div class="line">    map,</div><div class="line">    reduce,</div><div class="line">    &#123;</div><div class="line">        query:&#123;$where:function()&#123;</div><div class="line">        var arr = new Array(&quot;Jk3Nx5-YUxBJZ-Zklt&quot;,&quot;LMuHW7-JtnwQC-OBIh&quot;);</div><div class="line">            for(var index in arr)&#123;               </div><div class="line">                for(var current in this.identlist)&#123;</div><div class="line">                    if(this.identlist[current] == arr[index])&#123;</div><div class="line">                        return true;</div><div class="line">                    &#125;</div><div class="line">                    return false;</div><div class="line">                &#125;</div><div class="line">               </div><div class="line">              &#125;             </div><div class="line">        &#125;&#125;,</div><div class="line">        sort:&#123;&quot;count&quot;:1&#125;,</div><div class="line">        finalize:function(key,value)&#123;return &#123;count:value.length,time:value[0]&#125;;&#125;,</div><div class="line">        out:&quot;bbb_result&quot;        </div><div class="line">     &#125;</div><div class="line">)</div><div class="line">db.bbb_result.find().skip(1).limit(5)</div></pre></td></tr></table></figure>
+<p>（2）使用aggregate<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">var arr = new Array(&quot;wdeVyU-YVutsF-CEza&quot;,&quot;Jk3Nx5-YUxBJZ-Zklt&quot;);</div><div class="line">db.getCollection(&apos;testtest&apos;).aggregate([</div><div class="line">    &#123;&apos;$unwind&apos;:&quot;$identlist&quot;&#125;,</div><div class="line">    &#123;&quot;$match&quot;:&#123;&quot;identlist&quot;:&#123;&quot;$in&quot;:arr&#125;&#125;&#125;,</div><div class="line">    &#123;$group:&#123;_id:&quot;$name&quot;,timeline:&#123;$addToSet:&quot;$timeline&quot;&#125;&#125;&#125;,</div><div class="line">    &#123;&apos;$unwind&apos;:&quot;$timeline&quot;&#125;,</div><div class="line">    &#123;&apos;$unwind&apos;:&quot;$timeline&quot;&#125;,</div><div class="line">    &#123;$group:&#123;_id:&quot;$_id&quot;,time:&#123;$first:&quot;$timeline&quot;&#125;,count:&#123;&quot;$sum&quot;:1&#125;&#125;&#125;,</div><div class="line">    &#123;$sort:&#123;&quot;count&quot;:-1&#125;&#125;,</div><div class="line">    &#123;$skip:0&#125;,</div><div class="line">    &#123;$limit:5&#125;</div><div class="line">])</div></pre></td></tr></table></figure></p>
+<p>&emsp; &emsp;以上两个小例子经测试后均能实现要求，这里不做详细解释，需要的请自取~</p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> mongoDB </tag>
+            
+        </tags>
+        
     </entry>
-
     
     <entry>
       <title><![CDATA[在Vue项目中使用Mock.js构造模拟数据]]></title>
-      <url>%2F2018%2F03%2F03%2F%E5%9C%A8Vue%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Mock-js%E6%9E%84%E9%80%A0%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE%2F</url>
-      <content type="text"><![CDATA[00x1 mockjs简介&emsp;&emsp;mock.js是一款开发前端虚拟接口的插件，主要有两个功能 生成随机数据 拦截Ajax请求00x2 在vue-cli项目中安装配置mockjs &emsp;&emsp;首先确保安装并成功引入axios；&emsp;&emsp;然后安装mockjs npm install mockjs –save-dev；&emsp;&emsp;在main.js文件中引入mockjs并配置axios跨域信息：12345678910111213141516171819202122232425262728293031require(&apos;./mock.js&apos;) //配置axios跨域请求头部axios.defaults.headers.post[&apos;Content-Type&apos;] = &apos;application/x-www-form-urlencoded;charset=UTF-8&apos;//配置axios请求拦截器axios.interceptors.request.use(function(config) &#123; return config; &#125;, function(error) &#123; return Promise.reject(error); &#125;)//配置axios响应拦截器axios.interceptors.response.use(function(response) &#123; return response;&#125;, function(error) &#123; return Promise.reject(error);&#125;)//封装axios的post请求export function fetch(url, params) &#123; return new Promise((resolve, reject) =&gt; &#123; axios.post(url, params).then(response =&gt; &#123; resolve(response.data); &#125;).catch((error) =&gt; &#123; reject(error); &#125;) &#125;)&#125;//封装接口信息export default &#123; http(url, params) &#123; return fetch(url, params); &#125;&#125; 00x3 Mock.js语法&emsp;&emsp;mock.js语法分为两种，数据模板定义和数据占位符定义 数据模板定义基本结构：属性名|生成规则:属性值1234567（1）&apos;name|min-max&apos;: value（2）&apos;name|count&apos;: value（3）&apos;name|min-max.dmin-dmax&apos;: value（4）&apos;name|min-max.dcount&apos;: value（5）&apos;name|count.dmin-dmax&apos;: value（6）&apos;name|count.dcount&apos;: value（7）&apos;name|+step&apos;: value (1)属性值是字符串String123451. name|min-max: string通过重复string生成一个字符串，重复次数大于等于min，小于等于max。这里的重复是指对初始化string的重复次数。2. name|count: string通过重复string生成一个字符串，重复次数等于count。 (2)属性值是数字Number123456781. name|+1 : number属性值自动加1， 初始值为number2. name|min-max: number生成一个大于等于min，小于等于max的整数。3. name|min-max.dmin-dmax: number生成一个浮点数，整数部分大于等于min，小于等于max，小数部分保留dmin到dmax位。 （3）属性值是布尔类型Boolean123451. name|1: boolean随机生成一个布尔值，值为true的概率为1/2， 值为false的概率为1/2。2. name|min-max: value随机生成一个布尔值，值为 value 的概率是 min / (min + max)，值为 !value 的概率是 max / (min + max)。 （4）属性值是对象Object123451. name|count: object从属性值object中随机选取count个属性2. name|min-max: object从属性值object中随机选取min到max个属性 (5) 属性值是数组Array12345678910111. name|1: array从属性值array中随机选取一个元素，作为最终值2. name|+1: array从属性值array中顺序选取一个元素，作为最终值3. name|min-max: array通过重复属性值array生成一个新数组，重复次数大于等于min，小于等于max。4. name|count: array通过重复属性值array生成一个新数组，重复次数为count。 (6) 属性值是函数Function123&apos;name&apos;: function执行函数 function，取其返回值作为最终的属性值，函数的上下文为属性 &apos;name&apos; 所在的对象。 (7) 属性值是正则表达式RegExp121. name: regexp根据正则表达式regexp反向生成可以匹配他的字符串。用于生成自定义格式的字符串。 数据占位符定义基本结构：属性名：占位符1&apos;name|&apos;:&apos;@占位符()&apos; &emsp;&emsp;占位符也可以引用数据模板中的属性；占位符会有限引用数据模板中的属性；占位符支持相对路径和绝对路径。 00x4 Mock.mock() Mock.mock(rurl?, rtype?, template|function(options)) 根据数据模板生成模拟数据 Mock.mock(template) 根据数据模板生成模拟数据。 Mock.mock(rurl, template) 记录数据模板，当拦截到匹配rurl的ajax请求时，根据数据模板生成模拟数据，并作为响应数据返回。 Mock.mock(rurl, function(options)) 记录用于生成响应数据的函数。当拦截到匹配rurl的ajax请求时，函数function执行，并把执行结果作为响应数据返回。 Mock.mock(rurl, rtype, template) 记录数据模板，当拦截到匹配rurl和rtype的ajax请求时，将根据数据模板生成模拟数据，并作为响应数据返回。 Mock.mock(rurl, rtype, function(options)) 记录用于生成响应数据的函数。当拦截到匹配rurl和rtype的ajax请求时，函数function(options)将被执行，并把执行结果作为响应数据返回。 rurl 标识需要拦截的url，可以是url字符串或者url正则： 1/\/domain\/list\.json/、&apos;/domian/list.json&apos;。 rtype 可选，标识需要拦截的ajax请求类型。例如GET, POST, PUT, DELETE等。 template 可选，标识数据模板，可以是对象或字符串。 function(options) 可选，表示用于生成响应数据的函数。 options 指向本次请求的ajax选项集，含有url， type和body三个属性。 00x5 构造模拟数据 &emsp;&emsp;新建一个mock.js文件，在mock.js文件中引入mockjs1const Mock = require(&apos;mockjs&apos;); &emsp;&emsp;根据mock.js语法格式构造模拟数据12345678910111213141516171819202122232425262728export default Mock.mock(&apos;http://test.com&apos;, &#123; &apos;cur_ip&apos;:&#123; &apos;data&apos;:&apos;@date&apos;, &apos;ip&apos;:&apos;@ip&apos;, &apos;number|1-100&apos;:10000, &apos;rank|1-100&apos;:20, &apos;info&apos;:&apos;@title(3)&apos;, &#125;, &apos;cur_whois&apos;:[&#123; &apos;alexa|1-300&apos;:100, &quot;cdate&quot;:&apos;@datetime&apos;, &quot;edate&quot;:&apos;@datetime&apos;, &quot;name_server&quot;:&apos;@domain&apos;, &quot;registrant_address&quot;:&apos;@county(true)&apos;, &quot;registrant_company&quot;:&apos;@ctitle(3, 5)&apos;, &quot;registrant_email&quot;:&apos;@email&apos;, &quot;registrant_name&quot;:&apos;@name(true)&apos;, &quot;registrant_phone&quot;:/^1[0-9]&#123;10&#125;$/, &quot;registrar_name&quot;:&apos;@name(true)&apos;, &quot;udate&quot;:&apos;@datetime&apos;, &#125;], &apos;history_ip|20&apos;:[&#123; &quot;date&quot;:&apos;@datetime&apos;, &quot;ip&quot;:&apos;@ip&apos;, &quot;info&quot;:&apos;@title(3)&apos;, &#125;],&#125;） &emsp;&emsp;mock.js也支持模拟ajax请求响应时间，自定义的响应时间可以是绝对值，也可以是区间。123456Mock.setup(&#123; timeout: 40000//40秒后再响应&#125;)Mock.setup(&#123; timeout: &apos;10000-40000&apos;//在10秒和40秒之间响应&#125;) 00x6 请求获取数据&emsp;&emsp;在需要数据的页面中引入构造的mock的api1import mock from &apos;../main.js&apos; &emsp;&emsp;请求获取数据123mock.http(&apos;http://test.com&apos;, &apos;type=top&amp;key=123456&apos;).then(res =&gt; &#123; console.log(res);&#125;); &emsp;&emsp;完成到这一步后，打开项目就可以看到已经生成的模拟数据，亲测可用。如果只是想了解mockjs语法，可以在打开官网，直接使用示例语法在浏览器控制台上进行测试。 参考：http://mockjs.com/examples.html]]></content>
+      <url>/2018/03/03/%E5%9C%A8Vue%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8Mock-js%E6%9E%84%E9%80%A0%E6%A8%A1%E6%8B%9F%E6%95%B0%E6%8D%AE/</url>
+      <content type="html"><![CDATA[<p><img src="/2018/03/03/在Vue项目中使用Mock-js构造模拟数据/mockjs.PNG" alt="mockjs"></p>
+<h5 id="00x1-mockjs简介"><a href="#00x1-mockjs简介" class="headerlink" title="00x1 mockjs简介"></a>00x1 mockjs简介</h5><p>&emsp;&emsp;mock.js是一款开发前端虚拟接口的插件，主要有两个功能<br><a id="more"></a></p>
+<blockquote>
+<ul>
+<li>生成随机数据</li>
+<li>拦截Ajax请求<h5 id="00x2-在vue-cli项目中安装配置mockjs"><a href="#00x2-在vue-cli项目中安装配置mockjs" class="headerlink" title="00x2 在vue-cli项目中安装配置mockjs"></a>00x2 在vue-cli项目中安装配置mockjs</h5></li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;首先确保安装并成功引入axios；<br>&emsp;&emsp;然后安装mockjs  npm install mockjs –save-dev；<br>&emsp;&emsp;在main.js文件中引入mockjs并配置axios跨域信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">require(&apos;./mock.js&apos;)  </div><div class="line">//配置axios跨域请求头部</div><div class="line">axios.defaults.headers.post[&apos;Content-Type&apos;] = &apos;application/x-www-form-urlencoded;charset=UTF-8&apos;</div><div class="line">//配置axios请求拦截器</div><div class="line">axios.interceptors.request.use(function(config) &#123;</div><div class="line">    return config;</div><div class="line">  &#125;, function(error) &#123;</div><div class="line">    return Promise.reject(error);</div><div class="line">  &#125;)</div><div class="line">//配置axios响应拦截器</div><div class="line">axios.interceptors.response.use(function(response) &#123;</div><div class="line">  return response;</div><div class="line">&#125;, function(error) &#123;</div><div class="line">  return Promise.reject(error);</div><div class="line">&#125;)</div><div class="line">//封装axios的post请求</div><div class="line">export function fetch(url, params) &#123;</div><div class="line">  return new Promise((resolve, reject) =&gt; &#123;</div><div class="line">    axios.post(url, params).then(response =&gt; &#123;</div><div class="line">        resolve(response.data);</div><div class="line">      &#125;).catch((error) =&gt; &#123;</div><div class="line">        reject(error);</div><div class="line">      &#125;)</div><div class="line">  &#125;)</div><div class="line">&#125;</div><div class="line">//封装接口信息</div><div class="line">export default &#123;</div><div class="line">  http(url, params) &#123;</div><div class="line">    return fetch(url, params);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h5 id="00x3-Mock-js语法"><a href="#00x3-Mock-js语法" class="headerlink" title="00x3 Mock.js语法"></a>00x3 Mock.js语法</h5><p>&emsp;&emsp;mock.js语法分为两种，数据模板定义和数据占位符定义     </p>
+<blockquote>
+<ul>
+<li>数据模板定义<br>基本结构：属性名|生成规则:属性值<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">（1）&apos;name|min-max&apos;: value</div><div class="line">（2）&apos;name|count&apos;: value</div><div class="line">（3）&apos;name|min-max.dmin-dmax&apos;: value</div><div class="line">（4）&apos;name|min-max.dcount&apos;: value</div><div class="line">（5）&apos;name|count.dmin-dmax&apos;: value</div><div class="line">（6）&apos;name|count.dcount&apos;: value</div><div class="line">（7）&apos;name|+step&apos;: value</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<p>(1)属性值是字符串String<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1. name|min-max: string</div><div class="line">通过重复string生成一个字符串，重复次数大于等于min，小于等于max。这里的重复是指对初始化string的重复次数。</div><div class="line"></div><div class="line">2. name|count: string</div><div class="line">通过重复string生成一个字符串，重复次数等于count。</div></pre></td></tr></table></figure></p>
+<p>(2)属性值是数字Number<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">1. name|+1 : number</div><div class="line">属性值自动加1， 初始值为number</div><div class="line"></div><div class="line">2. name|min-max: number</div><div class="line">生成一个大于等于min，小于等于max的整数。</div><div class="line"></div><div class="line">3. name|min-max.dmin-dmax: number</div><div class="line">生成一个浮点数，整数部分大于等于min，小于等于max，小数部分保留dmin到dmax位。</div></pre></td></tr></table></figure></p>
+<p>（3）属性值是布尔类型Boolean<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1. name|1: boolean</div><div class="line">随机生成一个布尔值，值为true的概率为1/2， 值为false的概率为1/2。</div><div class="line"></div><div class="line">2. name|min-max: value</div><div class="line">随机生成一个布尔值，值为 value 的概率是 min / (min + max)，值为 !value 的概率是 max / (min + max)。</div></pre></td></tr></table></figure></p>
+<p>（4）属性值是对象Object<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">1. name|count: object</div><div class="line">从属性值object中随机选取count个属性</div><div class="line"></div><div class="line">2. name|min-max: object</div><div class="line">从属性值object中随机选取min到max个属性</div></pre></td></tr></table></figure></p>
+<p>(5) 属性值是数组Array<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">1. name|1: array</div><div class="line">从属性值array中随机选取一个元素，作为最终值</div><div class="line"></div><div class="line">2. name|+1: array</div><div class="line">从属性值array中顺序选取一个元素，作为最终值</div><div class="line"></div><div class="line">3. name|min-max: array</div><div class="line">通过重复属性值array生成一个新数组，重复次数大于等于min，小于等于max。</div><div class="line"></div><div class="line">4. name|count: array</div><div class="line">通过重复属性值array生成一个新数组，重复次数为count。</div></pre></td></tr></table></figure></p>
+<p>(6) 属性值是函数Function<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&apos;name&apos;: function</div><div class="line"></div><div class="line">执行函数 function，取其返回值作为最终的属性值，函数的上下文为属性 &apos;name&apos; 所在的对象。</div></pre></td></tr></table></figure></p>
+<p>(7) 属性值是正则表达式RegExp<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">1. name: regexp</div><div class="line">根据正则表达式regexp反向生成可以匹配他的字符串。用于生成自定义格式的字符串。</div></pre></td></tr></table></figure></p>
+<blockquote>
+<ul>
+<li>数据占位符定义<br>基本结构：属性名：占位符<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&apos;name|&apos;:&apos;@占位符()&apos;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<p>&emsp;&emsp;占位符也可以引用数据模板中的属性；占位符会有限引用数据模板中的属性；占位符支持相对路径和绝对路径。</p>
+<h5 id="00x4-Mock-mock"><a href="#00x4-Mock-mock" class="headerlink" title="00x4 Mock.mock()"></a>00x4 Mock.mock()</h5><ul>
+<li><p>Mock.mock(rurl?, rtype?, template|function(options))    </p>
+<blockquote>
+<p>根据数据模板生成模拟数据</p>
+</blockquote>
+</li>
+<li><p>Mock.mock(template)</p>
+<blockquote>
+<p>根据数据模板生成模拟数据。</p>
+</blockquote>
+</li>
+<li><p>Mock.mock(rurl, template)</p>
+<blockquote>
+<p>记录数据模板，当拦截到匹配rurl的ajax请求时，根据数据模板生成模拟数据，并作为响应数据返回。</p>
+</blockquote>
+</li>
+<li><p>Mock.mock(rurl, function(options))</p>
+<blockquote>
+<p>记录用于生成响应数据的函数。当拦截到匹配rurl的ajax请求时，函数function执行，并把执行结果作为响应数据返回。</p>
+</blockquote>
+</li>
+<li><p>Mock.mock(rurl, rtype, template)</p>
+<blockquote>
+<p>记录数据模板，当拦截到匹配rurl和rtype的ajax请求时，将根据数据模板生成模拟数据，并作为响应数据返回。</p>
+</blockquote>
+</li>
+<li><p>Mock.mock(rurl, rtype, function(options))</p>
+<blockquote>
+<p>记录用于生成响应数据的函数。当拦截到匹配rurl和rtype的ajax请求时，函数function(options)将被执行，并把执行结果作为响应数据返回。</p>
+</blockquote>
+</li>
+<li><p>rurl</p>
+<blockquote>
+<p>标识需要拦截的url，可以是url字符串或者url正则：</p>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/\/domain\/list\.json/、&apos;/domian/list.json&apos;。</div></pre></td></tr></table></figure>
+<ul>
+<li><p>rtype</p>
+<blockquote>
+<p>可选，标识需要拦截的ajax请求类型。例如GET, POST, PUT, DELETE等。</p>
+</blockquote>
+</li>
+<li><p>template</p>
+<blockquote>
+<p>可选，标识数据模板，可以是对象或字符串。</p>
+</blockquote>
+</li>
+<li><p>function(options)</p>
+<blockquote>
+<p>可选，表示用于生成响应数据的函数。</p>
+</blockquote>
+</li>
+<li><p>options</p>
+<blockquote>
+<p>指向本次请求的ajax选项集，含有url， type和body三个属性。</p>
+<h5 id="00x5-构造模拟数据"><a href="#00x5-构造模拟数据" class="headerlink" title="00x5 构造模拟数据"></a>00x5 构造模拟数据</h5></blockquote>
+</li>
+</ul>
+<p>&emsp;&emsp;新建一个mock.js文件，在mock.js文件中引入mockjs<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">const Mock = require(&apos;mockjs&apos;);</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;根据mock.js语法格式构造模拟数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">export default Mock.mock(&apos;http://test.com&apos;, &#123;</div><div class="line">    &apos;cur_ip&apos;:&#123;</div><div class="line">        &apos;data&apos;:&apos;@date&apos;,</div><div class="line">        &apos;ip&apos;:&apos;@ip&apos;,</div><div class="line">        &apos;number|1-100&apos;:10000, </div><div class="line">        &apos;rank|1-100&apos;:20,</div><div class="line">        &apos;info&apos;:&apos;@title(3)&apos;,</div><div class="line">    &#125;,</div><div class="line">    &apos;cur_whois&apos;:[&#123;</div><div class="line">        &apos;alexa|1-300&apos;:100,</div><div class="line">        &quot;cdate&quot;:&apos;@datetime&apos;,</div><div class="line">        &quot;edate&quot;:&apos;@datetime&apos;,</div><div class="line">        &quot;name_server&quot;:&apos;@domain&apos;,</div><div class="line">        &quot;registrant_address&quot;:&apos;@county(true)&apos;,</div><div class="line">        &quot;registrant_company&quot;:&apos;@ctitle(3, 5)&apos;,</div><div class="line">        &quot;registrant_email&quot;:&apos;@email&apos;,</div><div class="line">        &quot;registrant_name&quot;:&apos;@name(true)&apos;,</div><div class="line">        &quot;registrant_phone&quot;:/^1[0-9]&#123;10&#125;$/,</div><div class="line">        &quot;registrar_name&quot;:&apos;@name(true)&apos;,</div><div class="line">        &quot;udate&quot;:&apos;@datetime&apos;,</div><div class="line"></div><div class="line">     &#125;],</div><div class="line">    &apos;history_ip|20&apos;:[&#123;</div><div class="line">        &quot;date&quot;:&apos;@datetime&apos;,</div><div class="line">        &quot;ip&quot;:&apos;@ip&apos;,</div><div class="line">        &quot;info&quot;:&apos;@title(3)&apos;,</div><div class="line">    &#125;],</div><div class="line">&#125;）</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;mock.js也支持模拟ajax请求响应时间，自定义的响应时间可以是绝对值，也可以是区间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Mock.setup(&#123;</div><div class="line">    timeout: 40000//40秒后再响应</div><div class="line">&#125;)</div><div class="line">Mock.setup(&#123;</div><div class="line">    timeout: &apos;10000-40000&apos;//在10秒和40秒之间响应</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<h5 id="00x6-请求获取数据"><a href="#00x6-请求获取数据" class="headerlink" title="00x6 请求获取数据"></a>00x6 请求获取数据</h5><p>&emsp;&emsp;在需要数据的页面中引入构造的mock的api<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import mock from &apos;../main.js&apos;</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;请求获取数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mock.http(&apos;http://test.com&apos;, &apos;type=top&amp;key=123456&apos;).then(res =&gt; &#123;</div><div class="line">  console.log(res);</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;完成到这一步后，打开项目就可以看到已经生成的模拟数据，亲测可用。如果只是想了解mockjs语法，可以在打开官网，直接使用示例语法在浏览器控制台上进行测试。</p>
+<blockquote>
+<p>参考：<br><a href="http://mockjs.com/examples.html" target="_blank" rel="external">http://mockjs.com/examples.html</a></p>
+</blockquote>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> Vue </tag>
+            
+            <tag> Mockjs </tag>
+            
+        </tags>
+        
     </entry>
-
     
     <entry>
       <title><![CDATA[mongoDB安装与配置]]></title>
-      <url>%2F2017%2F07%2F26%2FmongoDB%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE%2F</url>
-      <content type="text"><![CDATA[00x1 mongodb的安装与配置 (1)在mongodb的官网https://www.mongodb.com/download-center#community 下载安装文件。 进入官网，直接点击donwnload即可。 (2)双击.msi文件安装 (3)创建数据目录 进入mongodb的安装包，创建数据目录 D:\software\mongodb\mkdir data D:\software\mongodb\cd data D:\software\mongodb\data\cd db D:\software\mongodb\data\db\ (4)命令行下运行mongodb服务器 进入mongodb安装目录下的bin文件夹 D:\software\mongodb\bin\mongod.exe --dbpath D:\software\mongodb\data\db 出现下面的内容就表示正确运行了。 当然这一步也有可能出现问题，比如我就遇到了“mongod不是内部或外部命令,也不是可运行的程序”这个问题。 最开始我在环境变量中加入了bin文件夹的路径，但是问题没有解决。 解决方法：直接在bin文件夹中双击打开mongod.exe文件。同样会出现以上的内容。 然后在浏览器中打开http://localhost:27017进行测试。出现下面的内容表示mongodb的服务器正确运行了。 (5)将mongodb安装为windows服务（命令行要有管理员权限） D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data --install 但是出现了下面的提示，表明安装失败。 按照提示，需要指定log目录。因此重新切换到bin目录下，新建logs文件。并在logs文件夹下新建mongodb.log文件。 创建日志目录： D:\software\mongodb\mkdir logs D:\software\mongodb\cd logs D:\software\mongodb\logs 然后重新进入bin文件夹，输入命令： D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend. 没有出现错误提示。 也能够正常启动：6.MongoDB后台管理shell（命令行要有管理员权限） 打开 MongoDB shell，失败。 连接失败，net start MongoDB服务，服务不能正常打开，mongo的服务没有被正确创建。 使用sc命令创建mongodb服务，需要注意的是，这一步的cmd必须要以管理员权限打开。 D:\software\mongodb\bin\sc create MongDB binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend 服务创建成功 net start MongoDB 服务也可以正常启动 MongoDB Shell是MongoDB自带的交互式Javascript shell,用来对MongoDB进行操作和管理的交互式环境。可以运行一些简单的算术运算 (7)设置环境变量 进入电脑上的环境变量，在系统变量下的path中加入mongodb目录下的bin文件的路径。 这样命令行就可以在任何位置使用mongodb命令，不需要每次使用mongo和mongod命令的时候都进入 bin文件夹下。 00x2 配置过程中一些命令的总结 在配置过程中，出现问题最多的是将mongodb安装为windows服务，和mongodb后台管理shell这两步骤。在解决这两步的问题时，尝试了不同的命令，在这里做一个总结。 (1)进入bin文件夹下 mongod.exe --bind_ip yourIPadress --logpath &quot;C:\data\dbConf\mongodb.log&quot; --logappend --dbpath &quot;C:\data\db&quot; --port yourPortNumber --serviceName &quot;YourServiceName&quot; --serviceDisplayName &quot;YourServiceName&quot; --install (2)打开具有管理员身份的cmd 如果已经有某个服务名了，比如MongoDB，那么先把这个服务删了， sc delete MongoDB 然后进入mongodb安装目录下的bin文件 mongod --logpath d:\data\log\MongoDB.log --logappend --dbpath d:\data\db --serviceName MongoDB --install (3)同样是进入mongodb安装目录下的bin文件下 mongod --logpath &quot;D:\software\mongodb\data\mongodb.log&quot; --logappend --dbpath &quot;D:\software\mongodb\data&quot; --serviceName &quot;MongoDB&quot; --serviceDisplayName &quot;MongoDB&quot; --install 在解决这部分问题之后，觉得使用这些命令没有成功的原因可能是命令行没有获取管理员权限，还有就是mongdb 的服务没有被正确创建。最正确的创建mongodb服务的方法是使用sc命令进行创建。 D:\software\mongodb\bin\sc create MongDB binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend]]></content>
-    </entry>
+      <url>/2017/07/26/mongoDB%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE/</url>
+      <content type="html"><![CDATA[<h5 id="00x1-mongodb的安装与配置"><a href="#00x1-mongodb的安装与配置" class="headerlink" title="00x1 mongodb的安装与配置"></a>00x1 mongodb的安装与配置</h5><blockquote>
+<p>(1)在mongodb的官网<a href="https://www.mongodb.com/download-center#community" target="_blank" rel="external">https://www.mongodb.com/download-center#community</a> 下载安装文件。</p>
+</blockquote>
+<a id="more"></a>
+<pre><code>进入官网，直接点击donwnload即可。
+</code></pre><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/1.PNG" alt="Alt text"><br>(2)双击.msi文件安装<br><img src="http://oloaybpun.bkt.clouddn.com/2.png" alt="Alt text"></p>
+<p><img src="http://oloaybpun.bkt.clouddn.com/3.png" alt="Alt text"></p>
+<p><img src="http://oloaybpun.bkt.clouddn.com/4.png" alt="Alt text"></p>
+<p><img src="http://oloaybpun.bkt.clouddn.com/5.png" alt="Alt text"></p>
+<p><img src="http://oloaybpun.bkt.clouddn.com/6.png" alt="Alt text"></p>
+<p><img src="http://oloaybpun.bkt.clouddn.com/7.png" alt="Alt text"></p>
+<p><img src="http://oloaybpun.bkt.clouddn.com/8.png" alt="Alt text"></p>
+<p>(3)创建数据目录</p>
+</blockquote>
+<pre><code>进入mongodb的安装包，创建数据目录
 
+
+D:\software\mongodb\mkdir data
+
+
+D:\software\mongodb\cd  data
+
+
+D:\software\mongodb\data\cd db
+
+
+D:\software\mongodb\data\db\
+</code></pre><blockquote>
+<p>(4)命令行下运行mongodb服务器</p>
+</blockquote>
+<pre><code>进入mongodb安装目录下的bin文件夹
+
+
+D:\software\mongodb\bin\mongod.exe --dbpath D:\software\mongodb\data\db
+
+
+出现下面的内容就表示正确运行了。
+</code></pre><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/9.png" alt="Alt text"></p>
+</blockquote>
+<pre><code>当然这一步也有可能出现问题，比如我就遇到了“mongod不是内部或外部命令,也不是可运行的程序”这个问题。
+最开始我在环境变量中加入了bin文件夹的路径，但是问题没有解决。
+
+
+
+解决方法：直接在bin文件夹中双击打开mongod.exe文件。同样会出现以上的内容。
+
+
+
+然后在浏览器中打开http://localhost:27017进行测试。出现下面的内容表示mongodb的服务器正确运行了。
+</code></pre><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/10.png" alt="Alt text"><br>(5)将mongodb安装为windows服务（命令行要有管理员权限）</p>
+</blockquote>
+<pre><code>D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data --install
+
+
+但是出现了下面的提示，表明安装失败。
+</code></pre><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/11.png" alt="Alt text"></p>
+<p>按照提示，需要指定log目录。因此重新切换到bin目录下，新建logs文件。并在logs文件夹下新建mongodb.log文件。</p>
+</blockquote>
+<pre><code>创建日志目录：
+
+
+    D:\software\mongodb\mkdir logs
+
+
+    D:\software\mongodb\cd logs
+
+
+    D:\software\mongodb\logs
+
+
+    然后重新进入bin文件夹，输入命令：
+
+
+    D:\software\mongodb\bin\mongod --dbpath D:\software\mongodb\data  --logpath=D:\software\mongodb\logs\mongodb.log --logappend.
+
+
+    没有出现错误提示。
+</code></pre><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/12.png" alt="Alt text"></p>
+<p>也能够正常启动：<br><img src="http://oloaybpun.bkt.clouddn.com/13.png" alt="Alt text"><br>6.MongoDB后台管理shell（命令行要有管理员权限）</p>
+</blockquote>
+<pre><code>打开 MongoDB shell，失败。
+</code></pre><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/14.png" alt="Alt text"></p>
+<p>   连接失败，net start  MongoDB服务，服务不能正常打开，mongo的服务没有被正确创建。</p>
+</blockquote>
+<pre><code>使用sc命令创建mongodb服务，需要注意的是，这一步的cmd必须要以管理员权限打开。
+
+
+D:\software\mongodb\bin\sc create MongDB binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data --logpath=D:\software\mongodb\logs\mongodb.log --logappend 服务创建成功
+
+
+net start MongoDB 服务也可以正常启动
+</code></pre><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/15.png" alt="Alt text"></p>
+</blockquote>
+<p> MongoDB Shell是MongoDB自带的交互式Javascript shell,用来对MongoDB进行操作和管理的交互式环境。可以运行一些简单的算术运算</p>
+<blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/16.png" alt="Alt text"></p>
+</blockquote>
+<p>(7)设置环境变量</p>
+<pre><code>进入电脑上的环境变量，在系统变量下的path中加入mongodb目录下的bin文件的路径。
+
+
+这样命令行就可以在任何位置使用mongodb命令，不需要每次使用mongo和mongod命令的时候都进入
+bin文件夹下。
+</code></pre><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/18.PNG" alt="Alt text"></p>
+</blockquote>
+<h5 id="00x2-配置过程中一些命令的总结"><a href="#00x2-配置过程中一些命令的总结" class="headerlink" title="00x2 配置过程中一些命令的总结"></a>00x2 配置过程中一些命令的总结</h5><blockquote>
+<p>在配置过程中，出现问题最多的是将mongodb安装为windows服务，和mongodb后台管理shell这两步骤。在解决这两步的问题时，尝试了不同的命令，在这里做一个总结。</p>
+<p>(1)进入bin文件夹下</p>
+</blockquote>
+<pre><code>mongod.exe --bind_ip yourIPadress --logpath &quot;C:\data\dbConf\mongodb.log&quot; --logappend --dbpath &quot;C:\data\db&quot; --port yourPortNumber --serviceName &quot;YourServiceName&quot; --serviceDisplayName &quot;YourServiceName&quot; --install
+</code></pre><blockquote>
+<p>(2)打开具有管理员身份的cmd</p>
+</blockquote>
+<pre><code>如果已经有某个服务名了，比如MongoDB，那么先把这个服务删了，
+
+
+sc delete MongoDB
+
+
+然后进入mongodb安装目录下的bin文件
+
+
+mongod --logpath d:\data\log\MongoDB.log --logappend --dbpath d:\data\db --serviceName MongoDB --install
+</code></pre><blockquote>
+<p>(3)同样是进入mongodb安装目录下的bin文件下</p>
+</blockquote>
+<pre><code>mongod --logpath &quot;D:\software\mongodb\data\mongodb.log&quot; --logappend
+--dbpath &quot;D:\software\mongodb\data&quot; --serviceName &quot;MongoDB&quot; --serviceDisplayName &quot;MongoDB&quot; --install
+
+
+在解决这部分问题之后，觉得使用这些命令没有成功的原因可能是命令行没有获取管理员权限，还有就是mongdb
+的服务没有被正确创建。最正确的创建mongodb服务的方法是使用sc命令进行创建。
+D:\software\mongodb\bin\sc create MongDB
+binpath=&quot;D:\software\mongo\bin\mongod.exe --service --dbpath D:\software\mongodb\data
+--logpath=D:\software\mongodb\logs\mongodb.log --logappend
+</code></pre>]]></content>
+      
+        
+        <tags>
+            
+            <tag> mongoDB </tag>
+            
+        </tags>
+        
+    </entry>
     
     <entry>
       <title><![CDATA[表单提交类型与ajax]]></title>
-      <url>%2F2017%2F04%2F23%2F%E8%A1%A8%E5%8D%95%E6%8F%90%E4%BA%A4%E7%B1%BB%E5%9E%8B%E4%B8%8Eajax%2F</url>
-      <content type="text"><![CDATA[00x1 问题描述 在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。2.数据库中数据成功入库，但是回调函数不显示。 00x2 问题分析及解决数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明表单中的数据应该是被提交了两次，第一次以POST方式（ajax中type设置成“POST”）提交，然后再以GET方式提交。 通过查找资料发现，代码中将button的type设置成了“submit”，将提交按钮的type属性修改成“button”，问题就会解决。submit默认为以GET方式进行表单提交（form）。button则响应用户自定义的事件，如果不指定onclick等事件处理函数，它不做任何事情。以ajax方式提交时，jQuery给提交按钮绑定了click事件，ajax中设定了以POST方式提交。而在button中，type被设置成submit，默认以GET方式提交。就引出了关于click和submit执行先后顺序的问题。 00x3 click和submit执行的先后顺序 点击提交按钮时，是先触发click事件，然后再触发submit事件。这里主要说的是click的处理后续和submit的处理后续：click-&gt;click响应事件-&gt;submit响应事件-&gt;submit。click的处理事件完成后，然后轮到submit事件的处理以及处理后的submit。到这一步，感觉问题就快解决了。但是如果ajax提交表单成功之后，再submit以get方式提交的话。过程中就肯定能看到数据入库后返回的回调函数。就说明，ajax提交并没有完全执行，应该是在向后台提交数据之后和在success返回回调信息之间出现了阻塞。 00x4 同步和异步的区别 在JS中负责解释和执行JavaScript代码的线程只有一个。 这里我们叫做主线程。实际上还存在其他的线程。例如：处理AJAX请求的线程、处理DOM事件的线程、定时器线程、读写文件的线程(例如在Node.js中)等等。这些线程可能存在于JS引擎之内，也可能存在于JS引擎之外。我们把它叫做工作线程。主线程发起一个异步请求（提交form表单），相应的工作线程接收请求并告知主线程已收到(异步函数返回)；主线程可以继续执行后面的代码，同时工作线程执行异步任务（提交form表单到数据库）；工作线程完成工作后，通知主线程（数据成功入库，返回执行结果，并将其放入消息队列）；主线程收到通知后（主线程通过事件循环从消息队列里取消息），执行一定的动作(调用回调函数来处理返回结果) ；触发submit响应（返回值不为FALSE），执行表单的submit事件。又因为给了action的地址，所以会出现跳转。并且在跳转地址中出现GET方式的提交。 在同步情况下，主线程发起一个同步请求（提交form表单），相应的工作线程接收请求并立即开始执行同步任务（提交form表单到数据库）；主线程则一直等待，直到工作线程完工作通知主线程（数据成功入库，返回执行结果，回调函数处理返回结果）。因为返回结果不为FALSE，所以在出现提示之后，出现跳转。 00x5 submit阻止表单提交 参考：ajax同步和异步的区别：http://www.open-open.com/lib/view/open1453079994386.html]]></content>
+      <url>/2017/04/23/%E8%A1%A8%E5%8D%95%E6%8F%90%E4%BA%A4%E7%B1%BB%E5%9E%8B%E4%B8%8Eajax/</url>
+      <content type="html"><![CDATA[<h5 id="00x1-问题描述"><a href="#00x1-问题描述" class="headerlink" title="00x1 问题描述"></a>00x1 问题描述</h5><blockquote>
+<p>在写蜜罐时，遇到了form表单提交的一个问题。使用ajax方式异步提交表单，点击提交按钮后，<br>1.提交页面刷新。ajax使用的是POST方式提交，但是在地址栏出现了GET方式提交才会出现的地址类型。<br><img src="http://oloaybpun.bkt.clouddn.com/%E5%9C%B0%E5%9D%80.PNG" alt="Alt text"><br>2.数据库中数据成功入库，但是回调函数不显示。<br><a id="more"></a></p>
+<h5 id="00x2-问题分析及解决"><a href="#00x2-问题分析及解决" class="headerlink" title="00x2 问题分析及解决"></a>00x2 问题分析及解决</h5><p>数据成功入库，说明ajax提交数据是成功的。而在地址栏中，又出现了GET方式提交才会出现的地址类型，说明表单中的数据应该是被提交了两次，第一次以POST方式（ajax中type设置成“POST”）提交，然后再以GET方式提交。</p>
+<p>通过查找资料发现，代码中将button的type设置成了“submit”，将提交按钮的type属性修改成“button”，问题就会解决。<br><img src="http://oloaybpun.bkt.clouddn.com/submit.PNG" alt="Alt text"><br>submit默认为以GET方式进行表单提交（form）。<br>button则响应用户自定义的事件，如果不指定onclick等事件处理函数，它不做任何事情。<br>以ajax方式提交时，jQuery给提交按钮绑定了click事件，ajax中设定了以POST方式提交。而在button中，type被设置成submit，默认以GET方式提交。就引出了关于click和submit执行先后顺序的问题。</p>
+</blockquote>
+<h5 id="00x3-click和submit执行的先后顺序"><a href="#00x3-click和submit执行的先后顺序" class="headerlink" title="00x3 click和submit执行的先后顺序"></a>00x3 click和submit执行的先后顺序</h5><blockquote>
+<p>点击提交按钮时，是先触发click事件，然后再触发submit事件。<br>这里主要说的是click的处理后续和submit的处理后续：click-&gt;click响应事件-&gt;submit响应事件-&gt;submit。click的处理事件完成后，然后轮到submit事件的处理以及处理后的submit。<br>到这一步，感觉问题就快解决了。但是如果ajax提交表单成功之后，再submit以get方式提交的话。过程中就肯定能看到数据入库后返回的回调函数。就说明，ajax提交并没有完全执行，应该是在向后台提交数据之后和在success返回回调信息之间出现了阻塞。</p>
+</blockquote>
+<h5 id="00x4-同步和异步的区别"><a href="#00x4-同步和异步的区别" class="headerlink" title="00x4 同步和异步的区别"></a>00x4 同步和异步的区别</h5><blockquote>
+<p>在JS中负责解释和执行JavaScript代码的线程只有一个。 这里我们叫做主线程。<br>实际上还存在其他的线程。例如：处理AJAX请求的线程、处理DOM事件的线程、定时器线程、读写文件的线程(例如在Node.js中)等等。这些线程可能存在于JS引擎之内，也可能存在于JS引擎之外。我们把它叫做工作线程。<br><img src="http://oloaybpun.bkt.clouddn.com/clipboard.png" alt="Alt text"><br>主线程发起一个异步请求（提交form表单），相应的工作线程接收请求并告知主线程已收到(异步函数返回)；主线程可以继续执行后面的代码，同时工作线程执行异步任务（提交form表单到数据库）；工作线程完成工作后，通知主线程（数据成功入库，返回执行结果，并将其放入消息队列）；主线程收到通知后（主线程通过事件循环从消息队列里取消息），执行一定的动作(调用回调函数来处理返回结果) ；触发submit响应（返回值不为FALSE），执行表单的submit事件。又因为给了action的地址，所以会出现跳转。并且在跳转地址中出现GET方式的提交。</p>
+<p>在同步情况下，主线程发起一个同步请求（提交form表单），相应的工作线程接收请求并立即开始执行同步任务（提交form表单到数据库）；主线程则一直等待，直到工作线程完工作通知主线程（数据成功入库，返回执行结果，回调函数处理返回结果）。因为返回结果不为FALSE，所以在出现提示之后，出现跳转。</p>
+</blockquote>
+<h5 id="00x5-submit阻止表单提交"><a href="#00x5-submit阻止表单提交" class="headerlink" title="00x5 submit阻止表单提交"></a>00x5 submit阻止表单提交</h5><blockquote>
+<p><img src="http://oloaybpun.bkt.clouddn.com/clipboard1.png" alt="Alt text"></p>
+<p>参考：<br>ajax同步和异步的区别：<a href="http://www.open-open.com/lib/view/open1453079994386.html" target="_blank" rel="external">http://www.open-open.com/lib/view/open1453079994386.html</a></p>
+</blockquote>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> ajax </tag>
+            
+        </tags>
+        
     </entry>
-
     
   
   
