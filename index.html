@@ -275,6 +275,102 @@
             
               
                 
+                <a class="post-title-link" href="/2018/12/04/react-electron-ant-design-sqlite3实现一个桌面应用/" itemprop="url">
+                  react+electron+ant-design+sqlite3实现一个桌面应用
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2018-12-04T21:22:27+08:00" content="2018-12-04">
+              2018-12-04
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h5 id="0x00-写在前面"><a href="#0x00-写在前面" class="headerlink" title="0x00 写在前面"></a>0x00 写在前面</h5><p>&emsp;&emsp;最近帮隔壁实验室写个简单的展示页面，想着自己学了一下nodejs与react，刚好可以用来练练手。于是使用sqlite3数据库，用nodejs来写后端，react写前端的前后端分离方法，完成了一个小demo。这时候又要求用electron改成桌面版的应用，这简单啊，把react打包出来的index.html放到electron下做入口文件不就OK了。但是又涉及到跟对方的Java环境下的jar包通信的问题，对方的思路是通过前端点击按钮在数据库里存入一个字段，jar包所在环境通过不断轮询数据库去获取该字段确定是否启动手机应用拖数据库。前端在点击按钮后不断轮询数据库，看需要的数据是否更新，有数据更新就取回数据，并在前端展示。对于这个方案，我是拒绝的。回来跟师兄讨论了一下，确定了下几种方案。</p>
+          <div class="post-more-link text-center">
+            <a class="btn" href="/2018/12/04/react-electron-ant-design-sqlite3实现一个桌面应用/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2018/12/04/浏览器存储的三种方式-Cookie、localStorage和SessionStorage/" itemprop="url">
                   浏览器存储的三种方式------Cookie、localStorage和SessionStorage
                 </a>
@@ -1166,7 +1262,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">9</span>
+              <span class="site-state-item-count">10</span>
               <span class="site-state-item-name">posts</span>
             </a>
           </div>
@@ -1176,7 +1272,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">tags</span>
               </a>
             </div>
