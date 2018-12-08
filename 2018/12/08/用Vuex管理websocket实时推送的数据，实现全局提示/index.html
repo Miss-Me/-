@@ -1,0 +1,802 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Vuex," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Miss Me" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="0x00 写在前面&amp;emsp;&amp;emsp;最近的项目中用到了websocket实现实时通信。遇到了一个问题：如何将websocket服务器端实时推送过来的数据全局实时推送。由于websocket通信的实时性和vue中的渲染机制。在查了很多资料之后，发现vuex是实现这个功能的最佳选择。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Vuex管理websocket实时推送的数据，实现全局提示">
+<meta property="og:url" content="http://yoursite.com/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/index.html">
+<meta property="og:site_name" content="Miss Me">
+<meta property="og:description" content="0x00 写在前面&amp;emsp;&amp;emsp;最近的项目中用到了websocket实现实时通信。遇到了一个问题：如何将websocket服务器端实时推送过来的数据全局实时推送。由于websocket通信的实时性和vue中的渲染机制。在查了很多资料之后，发现vuex是实现这个功能的最佳选择。">
+<meta property="og:image" content="http://yoursite.com/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/用vuex管理websocket推送的数据，实现全局提示/state.PNG">
+<meta property="og:image" content="http://yoursite.com/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/用vuex管理websocket推送的数据，实现全局提示/vuex.PNG">
+<meta property="og:updated_time" content="2018-12-08T03:07:24.519Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用Vuex管理websocket实时推送的数据，实现全局提示">
+<meta name="twitter:description" content="0x00 写在前面&amp;emsp;&amp;emsp;最近的项目中用到了websocket实现实时通信。遇到了一个问题：如何将websocket服务器端实时推送过来的数据全局实时推送。由于websocket通信的实时性和vue中的渲染机制。在查了很多资料之后，发现vuex是实现这个功能的最佳选择。">
+<meta name="twitter:image" content="http://yoursite.com/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/用vuex管理websocket推送的数据，实现全局提示/state.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> 用Vuex管理websocket实时推送的数据，实现全局提示 | Miss Me </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Miss Me</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                用Vuex管理websocket实时推送的数据，实现全局提示
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2018-12-08T10:57:51+08:00" content="2018-12-08">
+              2018-12-08
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/用vuex管理websocket推送的数据，实现全局提示/state.PNG" alt="state"></p>
+<h5 id="0x00-写在前面"><a href="#0x00-写在前面" class="headerlink" title="0x00 写在前面"></a>0x00 写在前面</h5><p>&emsp;&emsp;最近的项目中用到了websocket实现实时通信。遇到了一个问题：如何将websocket服务器端实时推送过来的数据全局实时推送。由于websocket通信的实时性和vue中的渲染机制。在查了很多资料之后，发现vuex是实现这个功能的最佳选择。</p>
+<a id="more"></a>
+<p>&emsp;&emsp;上图中展示了一个状态自管理应用中的单向数据流。由 state，驱动应用的数据源；view，以声明方式将 state 映射到视图；actions，响应在 view 上的用户输入导致的状态变化 三部分组成。当遇到多个组件共享状态时，单向数据流的简洁性很容易被破坏：</p>
+<ul>
+<li>多个视图依赖于同一状态。</li>
+<li>来自不同视图的行为需要变更同一状态。</li>
+</ul>
+<p>&emsp;&emsp;这时，将组件的共享状态抽取出来，以一个全局单例模式管理。在这种模式下，组件树构成了一个巨大的“视图”，不管在树的哪个位置，任何组件都能获取状态或者触发行为！这就是vuex的设计思想。</p>
+<h5 id="0x01-什么是vuex？"><a href="#0x01-什么是vuex？" class="headerlink" title="0x01 什么是vuex？"></a>0x01 什么是vuex？</h5><p>&emsp;&emsp;vue官方说法中，Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。<br><img src="/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/用vuex管理websocket推送的数据，实现全局提示/vuex.PNG" alt="vuex"><br>&emsp;&emsp;如上图所示，Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的状态 (state)。Vuex 和单纯的全局对象有以下两点不同：</p>
+<ul>
+<li><p>Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。</p>
+</li>
+<li><p>不能直接改变 store 中的状态。改变 store 中的状态的唯一途径就是显式地提交 (commit) mutation。这样可以方便跟踪每一个状态的变化。</p>
+</li>
+</ul>
+<h5 id="0x02-关于State"><a href="#0x02-关于State" class="headerlink" title="0x02 关于State"></a>0x02 关于State</h5><p>&emsp;&emsp;Vuex 使用单一状态树：用一个对象包含全部的应用层级状态。由于 Vuex 的状态存储是响应式的，从 store 实例中读取状态最简单的方法就是在计算属性中返回某个状态：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">// 创建一个 Counter 组件</div><div class="line">const Counter = &#123;</div><div class="line">  template: `&lt;div&gt;&#123;&#123; count &#125;&#125;&lt;/div&gt;`,</div><div class="line">  computed: &#123;</div><div class="line">    count () &#123;</div><div class="line">      return store.state.count</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;每当 store.state.count 变化的时候,都会重新求取计算属性，并且触发更新相关联的 DOM。这种模式导致组件依赖全局状态单例。在模块化的构建系统中，在每个需要使用 state 的组件中需要频繁地导入，并且在测试组件时需要模拟状态。</p>
+<p>&emsp;&emsp;Vuex 通过 store 选项，提供了一种机制将状态从根组件“注入”到每一个子组件中（需调用 Vue.use(Vuex)）。通过在根实例中注册 store 选项，该 store 实例会注入到根组件下的所有子组件中，且子组件能通过 this.$store 访问到。</p>
+<p>&emsp;&emsp;当一个组件需要获取多个状态时候，将这些状态都声明为计算属性会有些重复和冗余。这时可以使用 mapState 辅助函数帮助我们生成计算属性。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">// 在单独构建的版本中辅助函数为 Vuex.mapState</div><div class="line">import &#123; mapState &#125; from &apos;vuex&apos;</div><div class="line"></div><div class="line">export default &#123;</div><div class="line">  // ...</div><div class="line">  computed: mapState(&#123;</div><div class="line">    // 箭头函数可使代码更简练</div><div class="line">    count: state =&gt; state.count,</div><div class="line"></div><div class="line">    // 传字符串参数 &apos;count&apos; 等同于 `state =&gt; state.count`</div><div class="line">    countAlias: &apos;count&apos;,</div><div class="line"></div><div class="line">    // 为了能够使用 `this` 获取局部状态，必须使用常规函数</div><div class="line">    countPlusLocalState (state) &#123;</div><div class="line">      return state.count + this.localCount</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h5 id="0x03-关于Mutations"><a href="#0x03-关于Mutations" class="headerlink" title="0x03 关于Mutations"></a>0x03 关于Mutations</h5><p>&emsp;&emsp;提交 mutation是更改Vuex 的 store 中的状态的唯一方法。mutation 非常类似于事件：每个 mutation 都有一个字符串的 事件类型 (type) 和 一个 回调函数 (handler)。这个回调函数就是我们实际进行状态更改的地方，并且它会接受 state 作为第一个参数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">const store = new Vuex.Store(&#123;</div><div class="line">  state: &#123;</div><div class="line">    count: 1</div><div class="line">  &#125;,</div><div class="line">  mutations: &#123;</div><div class="line">    increment (state) &#123;</div><div class="line">      // 变更状态</div><div class="line">      state.count++</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;mutation handler不能直接被调用，Mutations以相应的type通过调用store.commit(‘increment’)触发 mutation handler</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">store.commit(&apos;increment&apos;)</div></pre></td></tr></table></figure>
+<h5 id="0x04-关于Actions"><a href="#0x04-关于Actions" class="headerlink" title="0x04 关于Actions"></a>0x04 关于Actions</h5><p>&emsp;&emsp;Action 类似于 mutation，不同在于：</p>
+<ul>
+<li>Action 提交的是 mutation，而不是直接变更状态。</li>
+<li>Action 可以包含任意异步操作。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">const store = new Vuex.Store(&#123;</div><div class="line">  state: &#123;</div><div class="line">    count: 0</div><div class="line">  &#125;,</div><div class="line">  mutations: &#123;</div><div class="line">    increment (state) &#123;</div><div class="line">      state.count++</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">  actions: &#123;</div><div class="line">    increment (context) &#123;</div><div class="line">      context.commit(&apos;increment&apos;)</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>&emsp;&emsp;Action 函数接受一个与 store 实例具有相同方法和属性的 context 对象，因此可以通过调用 context.commit 提交一个 mutation，或者通过 context.state 和 context.getters 来获取 state 和 getters。实践中，经常会用到 ES2015 的 参数解构 来简化代码（特别是需要多次调用 commit 的时候）：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">actions: &#123;</div><div class="line">  increment (&#123; commit &#125;) &#123;</div><div class="line">    commit(&apos;increment&apos;)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;Action 通过 store.dispatch 方法触发：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">store.dispatch(&apos;increment&apos;)</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这个方式就体现了action与mutation 的不同之处：mutation 必须同步执行，而Action 就不受约束！可以在 action 内部执行异步操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">actions: &#123;</div><div class="line">  incrementAsync (&#123; commit &#125;) &#123;</div><div class="line">    setTimeout(() =&gt; &#123;</div><div class="line">      commit(&apos;increment&apos;)</div><div class="line">    &#125;, 1000)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h5 id="0x05-项目中的思路"><a href="#0x05-项目中的思路" class="headerlink" title="0x05 项目中的思路"></a>0x05 项目中的思路</h5><p>&emsp;&emsp;项目结构如下所示：其中Web.vue是整个页面的根组件，于是我将websocket的实时通信写在了这里。<br>&emsp;&emsp;在建立连接之后，当有用户上线，后端就向前端实时推送数据，并使用this.$store.dispatch将后端推送的数据保存为store里的一个state。</p>
+<h6 id="1、实时通信"><a href="#1、实时通信" class="headerlink" title="1、实时通信"></a>1、实时通信</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">methods:&#123;</div><div class="line">    initWebSocket()&#123;</div><div class="line">        // 打开一个 web socket</div><div class="line">        this.ws = new WebSocket(&quot;ws://ip:port&quot;);</div><div class="line">        this.ws.onopen = this.websocketsend;           </div><div class="line">        this.ws.onmessage = this.websocketonmessage;</div><div class="line">        this.ws.onclose = this.websocketclose;</div><div class="line">    &#125;,</div><div class="line">    websocketsend(agentData)&#123;// Web Socket 已连接上，使用 send() 方法发送数据</div><div class="line">        this.ws.send(agentData);</div><div class="line">    &#125;,</div><div class="line">    websocketonmessage(evt) &#123; </div><div class="line">        var data = eval(&quot;(&quot;+evt.data+&quot;)&quot;);</div><div class="line">        var type =data.type || &apos;&apos;;</div><div class="line">        var action = data.action;</div><div class="line">        var id = data.client_id;</div><div class="line">        // 后端php文件中中返回的init类型的消息，将client_id发给后台进行uid绑定</div><div class="line">        // 利用jquery发起ajax请求，将client_id发给后端进行uid绑定</div><div class="line">        // console.log(evt);  </div><div class="line">        if(type == &apos;init&apos;)&#123;</div><div class="line">                $.ajax(&#123; //这里使用了jQuery的同步通信来提交用户id，是根据后端websocket框架使用的websocket通信连接验证及建立的方式来的。</div><div class="line">                    type: &apos;POST&apos;,</div><div class="line">                    url: &quot;./index.php/bind&quot;,  //?client_id=&quot;+data.client_id+&quot;&amp;token=&quot;+sessionStorage.token</div><div class="line">                    async: false,  </div><div class="line">                    dataType:&apos;json&apos;,</div><div class="line">                    data:&#123;client_id: id,token:sessionStorage.token&#125;,</div><div class="line">                    success: function(data)&#123;  </div><div class="line">                        // console.log(data);</div><div class="line">                        //第一次连接建立之后，就启动一个dispatch将当前返回的cookie存到vuex的全局变量中去。</div><div class="line">                        this.$store.dispatch(&apos;dataPush&apos;,</div><div class="line">                        data).then(() =&gt; &#123;</div><div class="line">                        </div><div class="line">                        &#125;)                   </div><div class="line">                    &#125;  </div><div class="line">                &#125;);   </div><div class="line">                // console.log(&quot;请求后&quot;);                  </div><div class="line">        &#125;else if(action == &apos;ping&apos;)&#123;</div><div class="line">            this.websocketsend(&quot;pong&quot;);  </div><div class="line">        &#125;else&#123;</div><div class="line">            // console.log(evt.data);</div><div class="line">            this.$store.dispatch(&apos;dataPush&apos;, evt.data).then(() =&gt; &#123;</div><div class="line">            &#125;)</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    websocketclose(e)&#123; // 关闭 websocket</div><div class="line">        console.log(e);</div><div class="line">    &#125;,</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;然后，在src文件夹下新建一个/store/index.js文件，引入vuex来进行全局状态管理。在state里面定义一个全局变量data。在mutations里面定义一个dataPush函数，更改state状态。当接收到新用户上线的数据推送时，就会触发store里面的dataPush函数，修改store里面的数据状态。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">import Vue from &apos;vue&apos;</div><div class="line">import Vuex from &apos;vuex&apos;</div><div class="line"></div><div class="line">Vue.use(Vuex)</div><div class="line"></div><div class="line">const store = new Vuex.Store(&#123;</div><div class="line">    // 全局变量</div><div class="line">    state: &#123;</div><div class="line">        data: undefined</div><div class="line">    &#125;,</div><div class="line">    // 修改全局变量必须通过mutations中的方法</div><div class="line">    // mutations只能采用同步方法</div><div class="line">    mutations: &#123;</div><div class="line">        dataPush (state, payload) &#123;</div><div class="line">            state.data = payload;</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">    // 异步方法用actions</div><div class="line">    // actions不能直接修改全局变量，需要调用commit方法来触发mutation中的方法</div><div class="line">    actions: &#123;</div><div class="line">        dataPush (context, payload) &#123;</div><div class="line">            context.commit(&apos;dataPush&apos;, payload)</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;)</div><div class="line"></div><div class="line">export default store</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;最后，在web.vue页面建立一个监听事件，监听$store.state.data这个状态是否有更新，如果有更新，就使用一个提示组件，展示新上线的用户信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">watch:&#123;//监听vuex中更新的data数据</div><div class="line">    &quot;$store.state.data&quot;:function () &#123;</div><div class="line">        var data = JSON.parse(this.$store.state.data);</div><div class="line">        // &quot;uid&quot;:&quot;xxxxxxx&quot;,&quot;eventid&quot;:&quot;xxxxxxxxxxxxxxxxxxx&quot;,</div><div class="line">        // &quot;sessdate&quot;:&quot;&quot;,&quot;ip&quot;:&quot;&quot;</div><div class="line">        </div><div class="line">        this.$Notice.warning(&#123;</div><div class="line">            title: &apos;客户端上线&apos;,</div><div class="line">            desc: &quot;ip:&quot;+data[&quot;ip&quot;]+&quot;&lt;br&gt;uid:&quot;+data[&quot;uid&quot;]+&quot;&lt;br&gt;eventid:&quot;+data[&quot;eventid&quot;]+&quot;&lt;br&gt;sessdate:&quot;+data[&quot;sessdate&quot;],</div><div class="line">            duration: 0</div><div class="line">        &#125;);                     </div><div class="line">    &#125;</div><div class="line">&#125;,</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="" alt="Miss Me wechat" style="width: 200px; max-width: 100%;"/>
+    <div>light</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Vuex/" rel="tag">#Vuex</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/04/react-electron-ant-design-sqlite3实现一个桌面应用/" rel="next" title="react+electron+ant-design+sqlite3实现一个桌面应用">
+                <i class="fa fa-chevron-left"></i> react+electron+ant-design+sqlite3实现一个桌面应用
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/img/smile.jpg"
+               alt="Miss Me" />
+          <p class="site-author-name" itemprop="name">Miss Me</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">10</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Miss-Me" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/u/3490792282" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x00-写在前面"><span class="nav-number">1.</span> <span class="nav-text">0x00 写在前面</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-什么是vuex？"><span class="nav-number">2.</span> <span class="nav-text">0x01 什么是vuex？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-关于State"><span class="nav-number">3.</span> <span class="nav-text">0x02 关于State</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x03-关于Mutations"><span class="nav-number">4.</span> <span class="nav-text">0x03 关于Mutations</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x04-关于Actions"><span class="nav-number">5.</span> <span class="nav-text">0x04 关于Actions</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x05-项目中的思路"><span class="nav-number">6.</span> <span class="nav-text">0x05 项目中的思路</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1、实时通信"><span class="nav-number">6.1.</span> <span class="nav-text">1、实时通信</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Miss Me</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>
