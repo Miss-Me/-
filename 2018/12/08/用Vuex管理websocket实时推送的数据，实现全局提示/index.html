@@ -73,6 +73,8 @@
 
 
 
+  
+
 
   <link rel="alternate" href="/atom.xml" title="Miss Me" type="application/atom+xml" />
 
@@ -93,8 +95,8 @@
 <meta property="og:site_name" content="Miss Me">
 <meta property="og:description" content="0x00 写在前面&amp;emsp;&amp;emsp;最近的项目中用到了websocket实现实时通信。遇到了一个问题：如何将websocket服务器端实时推送过来的数据全局实时推送。由于websocket通信的实时性和vue中的渲染机制。在查了很多资料之后，发现vuex是实现这个功能的最佳选择。">
 <meta property="og:image" content="http://yoursite.com/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/state.PNG">
-<meta property="og:image" content="http://yoursite.com/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/用vuex管理websocket推送的数据，实现全局提示/vuex.PNG">
-<meta property="og:updated_time" content="2018-12-08T03:10:04.901Z">
+<meta property="og:image" content="http://yoursite.com/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/vuex.PNG">
+<meta property="og:updated_time" content="2018-12-22T04:11:44.603Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="用Vuex管理websocket实时推送的数据，实现全局提示">
 <meta name="twitter:description" content="0x00 写在前面&amp;emsp;&amp;emsp;最近的项目中用到了websocket实现实时通信。遇到了一个问题：如何将websocket服务器端实时推送过来的数据全局实时推送。由于websocket通信的实时性和vue中的渲染机制。在查了很多资料之后，发现vuex是实现这个功能的最佳选择。">
@@ -328,7 +330,7 @@
 <li>来自不同视图的行为需要变更同一状态。</li>
 </ul>
 <p>&emsp;&emsp;这时，将组件的共享状态抽取出来，以一个全局单例模式管理。在这种模式下，组件树构成了一个巨大的“视图”，不管在树的哪个位置，任何组件都能获取状态或者触发行为！这就是vuex的设计思想。</p>
-<h5 id="0x01-什么是vuex？"><a href="#0x01-什么是vuex？" class="headerlink" title="0x01 什么是vuex？"></a>0x01 什么是vuex？</h5><p>&emsp;&emsp;vue官方说法中，Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。<br><img src="/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/用vuex管理websocket推送的数据，实现全局提示/vuex.PNG" alt="vuex"><br>&emsp;&emsp;如上图所示，Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的状态 (state)。Vuex 和单纯的全局对象有以下两点不同：</p>
+<h5 id="0x01-什么是vuex？"><a href="#0x01-什么是vuex？" class="headerlink" title="0x01 什么是vuex？"></a>0x01 什么是vuex？</h5><p>&emsp;&emsp;vue官方说法中，Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。<br><img src="/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/vuex.PNG" alt="vuex"><br>&emsp;&emsp;如上图所示，Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的状态 (state)。Vuex 和单纯的全局对象有以下两点不同：</p>
 <ul>
 <li><p>Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。</p>
 </li>
