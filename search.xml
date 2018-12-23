@@ -3,6 +3,129 @@
   
     
     <entry>
+      <title><![CDATA[Electron中主进程和渲染进程间的通信]]></title>
+      <url>/2018/12/23/Electron%E4%B8%AD%E4%B8%BB%E8%BF%9B%E7%A8%8B%E5%92%8C%E6%B8%B2%E6%9F%93%E8%BF%9B%E7%A8%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1/</url>
+      <content type="html"><![CDATA[<p><img src="/2018/12/23/Electron中主进程和渲染进程间的通信/electron.PNG" alt="electron"></p>
+<h5 id="0x00-写在前面"><a href="#0x00-写在前面" class="headerlink" title="0x00 写在前面"></a>0x00 写在前面</h5><p>&emsp;&emsp;在最近的项目中，用到了electron来进行桌面应用的开发。开发过程中涉及到从数据库中获取数据，并在页面中进行渲染这一过程。这一块也是electron开发中很重要的一个知识点：主进程和渲染进程间的通信。</p>
+<a id="more"></a>
+<h5 id="0x01-主进程—ipcMain"><a href="#0x01-主进程—ipcMain" class="headerlink" title="0x01 主进程—ipcMain"></a>0x01 主进程—ipcMain</h5><p>&emsp;&emsp;ipcMain模块是EventEmitter类的一个实例。 当在主进程中使用时，它处理从渲染器进程（网页）发送出来的异步和同步信息。 从渲染器进程发送的消息将被发送到该模块。</p>
+<h6 id="1-发送消息"><a href="#1-发送消息" class="headerlink" title="1. 发送消息"></a>1. 发送消息</h6><ul>
+<li>发送消息时，事件名称为channel。</li>
+<li>回复同步信息时，需要设置event.returnValue。</li>
+<li>将异步消息发送回发件人，需要使用event.sender.send(…)。</li>
+</ul>
+<h6 id="2-方法"><a href="#2-方法" class="headerlink" title="2. 方法"></a>2. 方法</h6><p>&emsp;&emsp;IpcMain模块可以使用以下方法来侦听事件：</p>
+<ul>
+<li>ipcMain.on(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;监听一个事件，当接收到新的消息时 listener 会以 listener(event, args…) 的形式被调用。</p>
+<ul>
+<li>ipcMain.once(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;这个方法只添加一次性的监听事件，当且仅当下一个消息发送到 channel 时 listener 才会被调用，随后 listener 会被移除。</p>
+<ul>
+<li>ipcMain.removeListener(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;从监听器数组中移除监听事件(channel)指定的监听器(listener)。</p>
+<ul>
+<li>ipcMain.removeAllListeners([channel][String])</li>
+</ul>
+<p>&emsp;&emsp;删除所有监听者，或特指的 事件(channel) 的所有监听者.</p>
+<h6 id="3-事件对象"><a href="#3-事件对象" class="headerlink" title="3. 事件对象"></a>3. 事件对象</h6><p>&emsp;&emsp;主进程向callback传递event对象可以有如下方法：</p>
+<ul>
+<li>event.returnValue</li>
+</ul>
+<p>&emsp;&emsp;在一个同步消息中使用该方法返回值.</p>
+<ul>
+<li>event.sender</li>
+</ul>
+<p>&emsp;&emsp;在一个异步消息中使用该方法返回值.</p>
+<h5 id="0x02-渲染进程—ipcRenderer"><a href="#0x02-渲染进程—ipcRenderer" class="headerlink" title="0x02 渲染进程—ipcRenderer"></a>0x02 渲染进程—ipcRenderer</h5><p>&emsp;&emsp;ipcRenderer 是一个 EventEmitter 的实例。 可以使用它提供的一些方法从渲染进程 (web 页面) 发送同步或异步的消息到主进程。 也可以接收主进程回复的消息。</p>
+<h6 id="1-方法"><a href="#1-方法" class="headerlink" title="1. 方法"></a>1. 方法</h6><p>&emsp;&emsp;ipcRenderer 模块可以使用以下方法来监听事件和发送消息。</p>
+<ul>
+<li>ipcRenderer.on(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;监听事件(channel), 当新消息到达，将通过 listener(event, args…) 调用监听器(listener)。</p>
+<ul>
+<li>ipcRenderer.once(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;为事件添加一个一次性用的监听器(listener) 函数.这个监听器 只有在下次的消息到达 事件(channel) 时被请求调用，之后就被删除了.</p>
+<ul>
+<li>ipcRenderer.removeListener(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;为特定的事件(channel)从监听队列中删除特定的 listener 监听者.</p>
+<ul>
+<li>ipcRenderer.removeAllListeners(channel[String])</li>
+</ul>
+<p>&emsp;&emsp;移除所有的监听器，当指定 channel 时只移除与其相关的所有监听器。</p>
+<ul>
+<li>ipcRenderer.send(channel[, arg1][, arg2][, …])</li>
+</ul>
+<p>&emsp;&emsp;通过事件(channel)发送异步消息到主进程，可以携带任意参数。 在内部，参数会被序列化为 JSON，因此参数对象上的函数和原型链不会被发送。主进程可以使用 ipcMain 监听事件(channel) .</p>
+<ul>
+<li>ipcRenderer.sendSync(channel[, arg1][, arg2][, …])</li>
+</ul>
+<p>&emsp;&emsp;返回任何由ipcMain处理程序发送过来的值。通过 channel 发送同步消息到主进程，可以携带任意参数。 在内部，参数会被序列化为 JSON，因此参数对象上的函数和原型链不会被发送。主进程可以使用 ipcMain 监听 channel来接收这些消息，并通过 event.returnValue 设置回复消息。<br>需要注意的是: 发送同步消息将会阻塞整个渲染进程。</p>
+<h5 id="0x03-渲染进程—remote"><a href="#0x03-渲染进程—remote" class="headerlink" title="0x03 渲染进程—remote"></a>0x03 渲染进程—remote</h5><p>&emsp;&emsp;可以使用 remote 模块来调用 main 进程对象的方法,而不必显式发送进程间消息。也就是说，可以使用remote在渲染进程中使用主进程模块。<br>比如，可以利用下面的代码在渲染进程中新建一个浏览器窗口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//渲染进程</div><div class="line">const &#123;BrowserWindow&#125; = require(&apos;electron&apos;).remote</div><div class="line">let win = new BrowserWindow(&#123;width: 800, height: 600&#125;)</div><div class="line">win.loadURL(&apos;https://miss-me.github.io/&apos;)</div></pre></td></tr></table></figure>
+<h6 id="1-远程对象"><a href="#1-远程对象" class="headerlink" title="1. 远程对象"></a>1. 远程对象</h6><p>&emsp;&emsp;remote 模块返回的每个对象 (包括函数) 表示主进程中的一个对象 (称之为远程对象或远程函数)。 当调用远程对象的方法时, 调用远程函数, 或者使用远程构造函数 (函数) 创建新对象时, 实际上是在发送同步进程消息。<br>&emsp;&emsp;在上面的渲染进程中新建浏览器窗口时，BrowserWindow和win都是远程对象，new BrowserWindow并不是在渲染进程中创建BrowserWindow对象，而是在主进程中创建了一个BrowserWindow对象，并在渲染进程中返回相应的远程对象，即win对象。<br>&emsp;&emsp;【注意】Electron确保只要渲染进程中的远程对象存在（换句话说，没有被垃圾收集），主进程中的相应对象将不会被释放。也就是说，当远程对象被垃圾回收后，主进程中的相应对象将被接触引用。在这种情况下，如果远程对象在渲染进程中泄露（存储在映射中，但从未释放），则主进程中的相应对象也将被泄露。</p>
+<h6 id="2-访问主进程中的内置模块"><a href="#2-访问主进程中的内置模块" class="headerlink" title="2. 访问主进程中的内置模块"></a>2. 访问主进程中的内置模块</h6><p>&emsp;&emsp;主进程中的内置模块被添加为 remote 模块中的获取器，因此可以像 electron 模块一样直接使用它们。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">const app = require(&apos;electron&apos;).remote.app</div><div class="line">console.log(app)</div></pre></td></tr></table></figure>
+<h6 id="3-方法"><a href="#3-方法" class="headerlink" title="3. 方法"></a>3. 方法</h6><ul>
+<li>remote.require(module[String])</li>
+</ul>
+<p>&emsp;&emsp;返回任何主进程中require(module) 返回的对象。 由其相对路径指定的模块将相对于主进程的入口点来解析。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// main process: main/index.js</div><div class="line">const &#123;app&#125; = require(&apos;electron&apos;)</div><div class="line">app.on(&apos;ready&apos;, () =&gt; &#123; /* ... */ &#125;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// some relative module: main/foo.js</div><div class="line">module.exports = &apos;bar&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// renderer process: renderer/index.js</div><div class="line">const foo = require(&apos;electron&apos;).remote.require(&apos;./foo&apos;) // bar</div></pre></td></tr></table></figure>
+<ul>
+<li>remote.getCurrentWindow()</li>
+</ul>
+<p>&emsp;&emsp;返回 BrowserWindow - 此网页所属的窗口</p>
+<ul>
+<li>remote.getCurrentWebContents()</li>
+</ul>
+<p>&emsp;&emsp;返回 WebContents - 此网页的 web 内容</p>
+<ul>
+<li>remote.getGlobal(name[String])</li>
+</ul>
+<p>&emsp;&emsp;返回任何主进程中 name (例如 global[name])的全局变量。</p>
+<h6 id="4-属性"><a href="#4-属性" class="headerlink" title="4. 属性"></a>4. 属性</h6><ul>
+<li>remote.process</li>
+</ul>
+<p>&emsp;&emsp;主进程中的 process 对象。这与 remote.getGlobal(‘process’) 相同, 但已被缓存。</p>
+<h5 id="0x04-进程间通信"><a href="#0x04-进程间通信" class="headerlink" title="0x04 进程间通信"></a>0x04 进程间通信</h5><h6 id="1-同步消息"><a href="#1-同步消息" class="headerlink" title="1. 同步消息"></a>1. 同步消息</h6><ul>
+<li>渲染进程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">const ipcRenderer = require(&apos;electron&apos;).ipcRenderer//引入ipcRenderer</div><div class="line"></div><div class="line">const reply = ipc.sendSync(&apos;synchronous-message&apos;, &apos;ping&apos;)//向&apos;synchronous-message&apos;事件发送一个异步消息：字段&apos;ping&apos;</div></pre></td></tr></table></figure>
+<ul>
+<li>主进程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">const ipcMain = require(&apos;electron&apos;).ipcMain</div><div class="line">//主进程通过监听&apos;synchronous-message&apos;这个事件，接收渲染进程发送过来的值，也就是这里的arg</div><div class="line">ipcMain.on(&apos;synchronous-message&apos;, function (event, arg) &#123;</div><div class="line">  event.returnValue = &apos;pong&apos;//向渲染进程返回一个值，同步返回消息</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h6 id="2-异步消息"><a href="#2-异步消息" class="headerlink" title="2. 异步消息"></a>2. 异步消息</h6><ul>
+<li>渲染进程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">const ipcipcRenderer = require(&apos;electron&apos;).ipcRenderer</div><div class="line"></div><div class="line">ipc.send(&apos;asynchronous-message&apos;, &apos;ping&apos;)//渲染进程向主进程发送一个异步消息</div><div class="line"></div><div class="line"></div><div class="line">ipcRenderer.on(&apos;asynchronous-reply&apos;, function (event, arg) &#123;//渲染进程监听一个异步返回消息的事件，主进程返回的消息保存在arg里</div><div class="line">  const message = arg</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<ul>
+<li>主进程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">const ipcMain = require(&apos;electron&apos;).ipcMain</div><div class="line"></div><div class="line">ipcMain.on(&apos;asynchronous-message&apos;, function (event, arg) &#123;//主进程监听来自渲染进程的异步消息，并返回一个消息</div><div class="line">  event.sender.send(&apos;asynchronous-reply&apos;, &apos;pong&apos;)//异步返回数据</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h6 id="3-使用remote通信"><a href="#3-使用remote通信" class="headerlink" title="3. 使用remote通信"></a>3. 使用remote通信</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 渲染进程</div><div class="line">//渲染remote接口直接获取渲染进程发送消息。</div><div class="line">remote.BrowserWindow.fromId(winId).webContents.send(&apos;ping&apos;, &apos;someThing&apos;);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// 主进程</div><div class="line">//主进程创建事件，发送消息</div><div class="line">win1.webContents.send(&apos;distributeIds&apos;,&#123;</div><div class="line">    win2Id : win2.id</div><div class="line">&#125;);</div><div class="line">win2.webContents.send(&apos;distributeIds&apos;,&#123;</div><div class="line">    win1Id : win1.id</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p><a href="https://segmentfault.com/a/1190000009253100" target="_blank" rel="external">https://segmentfault.com/a/1190000009253100</a></p>
+<h6 id="4-渲染进程间的通信"><a href="#4-渲染进程间的通信" class="headerlink" title="4. 渲染进程间的通信"></a>4. 渲染进程间的通信</h6><p>&emsp;&emsp;使用 ipcRenderer.sendTo() 在渲染进程中互相发送通信，更加容易。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ipcRenderer.sendTo(windowId, &apos;ping&apos;, &apos;someThing&apos;)</div></pre></td></tr></table></figure></p>
+]]></content>
+      
+        
+        <tags>
+            
+            <tag> Electron </tag>
+            
+        </tags>
+        
+    </entry>
+    
+    <entry>
       <title><![CDATA[用Vuex管理websocket实时推送的数据，实现全局提示]]></title>
       <url>/2018/12/08/%E7%94%A8Vuex%E7%AE%A1%E7%90%86websocket%E5%AE%9E%E6%97%B6%E6%8E%A8%E9%80%81%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%8C%E5%AE%9E%E7%8E%B0%E5%85%A8%E5%B1%80%E6%8F%90%E7%A4%BA/</url>
       <content type="html"><![CDATA[<p><img src="/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/state.PNG" alt="state"></p>
@@ -154,9 +277,9 @@
         
         <tags>
             
-            <tag> electron </tag>
-            
             <tag> react </tag>
+            
+            <tag> electron </tag>
             
             <tag> ant-design </tag>
             
@@ -450,7 +573,7 @@
     </entry>
     
     <entry>
-      <title><![CDATA[electron与vue实践初体验]]></title>
+      <title><![CDATA[Electron与vue实践初体验]]></title>
       <url>/2018/05/24/electron%E4%B8%8Evue%E5%AE%9E%E8%B7%B5%E5%88%9D%E4%BD%93%E9%AA%8C/</url>
       <content type="html"><![CDATA[<p><img src="/2018/05/24/electron与vue实践初体验/electron.png" alt="electron"></p>
 <h5 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h5><p>&emsp;&emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。     </p>
@@ -507,7 +630,7 @@
         
         <tags>
             
-            <tag> electron </tag>
+            <tag> Electron </tag>
             
             <tag> Vue </tag>
             

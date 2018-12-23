@@ -1,0 +1,870 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Electron," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Miss Me" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="0x00 写在前面&amp;emsp;&amp;emsp;在最近的项目中，用到了electron来进行桌面应用的开发。开发过程中涉及到从数据库中获取数据，并在页面中进行渲染这一过程。这一块也是electron开发中很重要的一个知识点：主进程和渲染进程间的通信。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Electron中主进程和渲染进程间的通信">
+<meta property="og:url" content="http://yoursite.com/2018/12/23/Electron中主进程和渲染进程间的通信/index.html">
+<meta property="og:site_name" content="Miss Me">
+<meta property="og:description" content="0x00 写在前面&amp;emsp;&amp;emsp;在最近的项目中，用到了electron来进行桌面应用的开发。开发过程中涉及到从数据库中获取数据，并在页面中进行渲染这一过程。这一块也是electron开发中很重要的一个知识点：主进程和渲染进程间的通信。">
+<meta property="og:image" content="http://yoursite.com/2018/12/23/Electron中主进程和渲染进程间的通信/electron.PNG">
+<meta property="og:updated_time" content="2018-12-23T08:17:21.364Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Electron中主进程和渲染进程间的通信">
+<meta name="twitter:description" content="0x00 写在前面&amp;emsp;&amp;emsp;在最近的项目中，用到了electron来进行桌面应用的开发。开发过程中涉及到从数据库中获取数据，并在页面中进行渲染这一过程。这一块也是electron开发中很重要的一个知识点：主进程和渲染进程间的通信。">
+<meta name="twitter:image" content="http://yoursite.com/2018/12/23/Electron中主进程和渲染进程间的通信/electron.PNG">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: 'Author'
+    }
+  };
+</script>
+
+  <title> Electron中主进程和渲染进程间的通信 | Miss Me </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Miss Me</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="#" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Electron中主进程和渲染进程间的通信
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">Posted on</span>
+            <time itemprop="dateCreated" datetime="2018-12-23T15:52:11+08:00" content="2018-12-23">
+              2018-12-23
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="/2018/12/23/Electron中主进程和渲染进程间的通信/electron.PNG" alt="electron"></p>
+<h5 id="0x00-写在前面"><a href="#0x00-写在前面" class="headerlink" title="0x00 写在前面"></a>0x00 写在前面</h5><p>&emsp;&emsp;在最近的项目中，用到了electron来进行桌面应用的开发。开发过程中涉及到从数据库中获取数据，并在页面中进行渲染这一过程。这一块也是electron开发中很重要的一个知识点：主进程和渲染进程间的通信。</p>
+<a id="more"></a>
+<h5 id="0x01-主进程—ipcMain"><a href="#0x01-主进程—ipcMain" class="headerlink" title="0x01 主进程—ipcMain"></a>0x01 主进程—ipcMain</h5><p>&emsp;&emsp;ipcMain模块是EventEmitter类的一个实例。 当在主进程中使用时，它处理从渲染器进程（网页）发送出来的异步和同步信息。 从渲染器进程发送的消息将被发送到该模块。</p>
+<h6 id="1-发送消息"><a href="#1-发送消息" class="headerlink" title="1. 发送消息"></a>1. 发送消息</h6><ul>
+<li>发送消息时，事件名称为channel。</li>
+<li>回复同步信息时，需要设置event.returnValue。</li>
+<li>将异步消息发送回发件人，需要使用event.sender.send(…)。</li>
+</ul>
+<h6 id="2-方法"><a href="#2-方法" class="headerlink" title="2. 方法"></a>2. 方法</h6><p>&emsp;&emsp;IpcMain模块可以使用以下方法来侦听事件：</p>
+<ul>
+<li>ipcMain.on(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;监听一个事件，当接收到新的消息时 listener 会以 listener(event, args…) 的形式被调用。</p>
+<ul>
+<li>ipcMain.once(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;这个方法只添加一次性的监听事件，当且仅当下一个消息发送到 channel 时 listener 才会被调用，随后 listener 会被移除。</p>
+<ul>
+<li>ipcMain.removeListener(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;从监听器数组中移除监听事件(channel)指定的监听器(listener)。</p>
+<ul>
+<li>ipcMain.removeAllListeners([channel][String])</li>
+</ul>
+<p>&emsp;&emsp;删除所有监听者，或特指的 事件(channel) 的所有监听者.</p>
+<h6 id="3-事件对象"><a href="#3-事件对象" class="headerlink" title="3. 事件对象"></a>3. 事件对象</h6><p>&emsp;&emsp;主进程向callback传递event对象可以有如下方法：</p>
+<ul>
+<li>event.returnValue</li>
+</ul>
+<p>&emsp;&emsp;在一个同步消息中使用该方法返回值.</p>
+<ul>
+<li>event.sender</li>
+</ul>
+<p>&emsp;&emsp;在一个异步消息中使用该方法返回值.</p>
+<h5 id="0x02-渲染进程—ipcRenderer"><a href="#0x02-渲染进程—ipcRenderer" class="headerlink" title="0x02 渲染进程—ipcRenderer"></a>0x02 渲染进程—ipcRenderer</h5><p>&emsp;&emsp;ipcRenderer 是一个 EventEmitter 的实例。 可以使用它提供的一些方法从渲染进程 (web 页面) 发送同步或异步的消息到主进程。 也可以接收主进程回复的消息。</p>
+<h6 id="1-方法"><a href="#1-方法" class="headerlink" title="1. 方法"></a>1. 方法</h6><p>&emsp;&emsp;ipcRenderer 模块可以使用以下方法来监听事件和发送消息。</p>
+<ul>
+<li>ipcRenderer.on(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;监听事件(channel), 当新消息到达，将通过 listener(event, args…) 调用监听器(listener)。</p>
+<ul>
+<li>ipcRenderer.once(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;为事件添加一个一次性用的监听器(listener) 函数.这个监听器 只有在下次的消息到达 事件(channel) 时被请求调用，之后就被删除了.</p>
+<ul>
+<li>ipcRenderer.removeListener(channel[String], listener[Function])</li>
+</ul>
+<p>&emsp;&emsp;为特定的事件(channel)从监听队列中删除特定的 listener 监听者.</p>
+<ul>
+<li>ipcRenderer.removeAllListeners(channel[String])</li>
+</ul>
+<p>&emsp;&emsp;移除所有的监听器，当指定 channel 时只移除与其相关的所有监听器。</p>
+<ul>
+<li>ipcRenderer.send(channel[, arg1][, arg2][, …])</li>
+</ul>
+<p>&emsp;&emsp;通过事件(channel)发送异步消息到主进程，可以携带任意参数。 在内部，参数会被序列化为 JSON，因此参数对象上的函数和原型链不会被发送。主进程可以使用 ipcMain 监听事件(channel) .</p>
+<ul>
+<li>ipcRenderer.sendSync(channel[, arg1][, arg2][, …])</li>
+</ul>
+<p>&emsp;&emsp;返回任何由ipcMain处理程序发送过来的值。通过 channel 发送同步消息到主进程，可以携带任意参数。 在内部，参数会被序列化为 JSON，因此参数对象上的函数和原型链不会被发送。主进程可以使用 ipcMain 监听 channel来接收这些消息，并通过 event.returnValue 设置回复消息。<br>需要注意的是: 发送同步消息将会阻塞整个渲染进程。</p>
+<h5 id="0x03-渲染进程—remote"><a href="#0x03-渲染进程—remote" class="headerlink" title="0x03 渲染进程—remote"></a>0x03 渲染进程—remote</h5><p>&emsp;&emsp;可以使用 remote 模块来调用 main 进程对象的方法,而不必显式发送进程间消息。也就是说，可以使用remote在渲染进程中使用主进程模块。<br>比如，可以利用下面的代码在渲染进程中新建一个浏览器窗口。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">//渲染进程</div><div class="line">const &#123;BrowserWindow&#125; = require(&apos;electron&apos;).remote</div><div class="line">let win = new BrowserWindow(&#123;width: 800, height: 600&#125;)</div><div class="line">win.loadURL(&apos;https://miss-me.github.io/&apos;)</div></pre></td></tr></table></figure>
+<h6 id="1-远程对象"><a href="#1-远程对象" class="headerlink" title="1. 远程对象"></a>1. 远程对象</h6><p>&emsp;&emsp;remote 模块返回的每个对象 (包括函数) 表示主进程中的一个对象 (称之为远程对象或远程函数)。 当调用远程对象的方法时, 调用远程函数, 或者使用远程构造函数 (函数) 创建新对象时, 实际上是在发送同步进程消息。<br>&emsp;&emsp;在上面的渲染进程中新建浏览器窗口时，BrowserWindow和win都是远程对象，new BrowserWindow并不是在渲染进程中创建BrowserWindow对象，而是在主进程中创建了一个BrowserWindow对象，并在渲染进程中返回相应的远程对象，即win对象。<br>&emsp;&emsp;【注意】Electron确保只要渲染进程中的远程对象存在（换句话说，没有被垃圾收集），主进程中的相应对象将不会被释放。也就是说，当远程对象被垃圾回收后，主进程中的相应对象将被接触引用。在这种情况下，如果远程对象在渲染进程中泄露（存储在映射中，但从未释放），则主进程中的相应对象也将被泄露。</p>
+<h6 id="2-访问主进程中的内置模块"><a href="#2-访问主进程中的内置模块" class="headerlink" title="2. 访问主进程中的内置模块"></a>2. 访问主进程中的内置模块</h6><p>&emsp;&emsp;主进程中的内置模块被添加为 remote 模块中的获取器，因此可以像 electron 模块一样直接使用它们。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">const app = require(&apos;electron&apos;).remote.app</div><div class="line">console.log(app)</div></pre></td></tr></table></figure>
+<h6 id="3-方法"><a href="#3-方法" class="headerlink" title="3. 方法"></a>3. 方法</h6><ul>
+<li>remote.require(module[String])</li>
+</ul>
+<p>&emsp;&emsp;返回任何主进程中require(module) 返回的对象。 由其相对路径指定的模块将相对于主进程的入口点来解析。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// main process: main/index.js</div><div class="line">const &#123;app&#125; = require(&apos;electron&apos;)</div><div class="line">app.on(&apos;ready&apos;, () =&gt; &#123; /* ... */ &#125;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// some relative module: main/foo.js</div><div class="line">module.exports = &apos;bar&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// renderer process: renderer/index.js</div><div class="line">const foo = require(&apos;electron&apos;).remote.require(&apos;./foo&apos;) // bar</div></pre></td></tr></table></figure>
+<ul>
+<li>remote.getCurrentWindow()</li>
+</ul>
+<p>&emsp;&emsp;返回 BrowserWindow - 此网页所属的窗口</p>
+<ul>
+<li>remote.getCurrentWebContents()</li>
+</ul>
+<p>&emsp;&emsp;返回 WebContents - 此网页的 web 内容</p>
+<ul>
+<li>remote.getGlobal(name[String])</li>
+</ul>
+<p>&emsp;&emsp;返回任何主进程中 name (例如 global[name])的全局变量。</p>
+<h6 id="4-属性"><a href="#4-属性" class="headerlink" title="4. 属性"></a>4. 属性</h6><ul>
+<li>remote.process</li>
+</ul>
+<p>&emsp;&emsp;主进程中的 process 对象。这与 remote.getGlobal(‘process’) 相同, 但已被缓存。</p>
+<h5 id="0x04-进程间通信"><a href="#0x04-进程间通信" class="headerlink" title="0x04 进程间通信"></a>0x04 进程间通信</h5><h6 id="1-同步消息"><a href="#1-同步消息" class="headerlink" title="1. 同步消息"></a>1. 同步消息</h6><ul>
+<li>渲染进程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">const ipcRenderer = require(&apos;electron&apos;).ipcRenderer//引入ipcRenderer</div><div class="line"></div><div class="line">const reply = ipc.sendSync(&apos;synchronous-message&apos;, &apos;ping&apos;)//向&apos;synchronous-message&apos;事件发送一个异步消息：字段&apos;ping&apos;</div></pre></td></tr></table></figure>
+<ul>
+<li>主进程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">const ipcMain = require(&apos;electron&apos;).ipcMain</div><div class="line">//主进程通过监听&apos;synchronous-message&apos;这个事件，接收渲染进程发送过来的值，也就是这里的arg</div><div class="line">ipcMain.on(&apos;synchronous-message&apos;, function (event, arg) &#123;</div><div class="line">  event.returnValue = &apos;pong&apos;//向渲染进程返回一个值，同步返回消息</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h6 id="2-异步消息"><a href="#2-异步消息" class="headerlink" title="2. 异步消息"></a>2. 异步消息</h6><ul>
+<li>渲染进程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">const ipcipcRenderer = require(&apos;electron&apos;).ipcRenderer</div><div class="line"></div><div class="line">ipc.send(&apos;asynchronous-message&apos;, &apos;ping&apos;)//渲染进程向主进程发送一个异步消息</div><div class="line"></div><div class="line"></div><div class="line">ipcRenderer.on(&apos;asynchronous-reply&apos;, function (event, arg) &#123;//渲染进程监听一个异步返回消息的事件，主进程返回的消息保存在arg里</div><div class="line">  const message = arg</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<ul>
+<li>主进程</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">const ipcMain = require(&apos;electron&apos;).ipcMain</div><div class="line"></div><div class="line">ipcMain.on(&apos;asynchronous-message&apos;, function (event, arg) &#123;//主进程监听来自渲染进程的异步消息，并返回一个消息</div><div class="line">  event.sender.send(&apos;asynchronous-reply&apos;, &apos;pong&apos;)//异步返回数据</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+<h6 id="3-使用remote通信"><a href="#3-使用remote通信" class="headerlink" title="3. 使用remote通信"></a>3. 使用remote通信</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">// 渲染进程</div><div class="line">//渲染remote接口直接获取渲染进程发送消息。</div><div class="line">remote.BrowserWindow.fromId(winId).webContents.send(&apos;ping&apos;, &apos;someThing&apos;);</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// 主进程</div><div class="line">//主进程创建事件，发送消息</div><div class="line">win1.webContents.send(&apos;distributeIds&apos;,&#123;</div><div class="line">    win2Id : win2.id</div><div class="line">&#125;);</div><div class="line">win2.webContents.send(&apos;distributeIds&apos;,&#123;</div><div class="line">    win1Id : win1.id</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p><a href="https://segmentfault.com/a/1190000009253100" target="_blank" rel="external">https://segmentfault.com/a/1190000009253100</a></p>
+<h6 id="4-渲染进程间的通信"><a href="#4-渲染进程间的通信" class="headerlink" title="4. 渲染进程间的通信"></a>4. 渲染进程间的通信</h6><p>&emsp;&emsp;使用 ipcRenderer.sendTo() 在渲染进程中互相发送通信，更加容易。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ipcRenderer.sendTo(windowId, &apos;ping&apos;, &apos;someThing&apos;)</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+<div id="wechat_subscriber" style="display: block； padding: 10px 0; margin: 20px auto; width: 100%; text-align: center">
+    <img id="wechat_subscriber_qcode" src="" alt="Miss Me wechat" style="width: 200px; max-width: 100%;"/>
+    <div>light</div>
+</div>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Electron/" rel="tag">#Electron</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/08/用Vuex管理websocket实时推送的数据，实现全局提示/" rel="next" title="用Vuex管理websocket实时推送的数据，实现全局提示">
+                <i class="fa fa-chevron-left"></i> 用Vuex管理websocket实时推送的数据，实现全局提示
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/img/smile.jpg"
+               alt="Miss Me" />
+          <p class="site-author-name" itemprop="name">Miss Me</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-name">posts</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/Miss-Me" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://weibo.com/u/3490792282" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#0x00-写在前面"><span class="nav-number">1.</span> <span class="nav-text">0x00 写在前面</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x01-主进程—ipcMain"><span class="nav-number">2.</span> <span class="nav-text">0x01 主进程—ipcMain</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-发送消息"><span class="nav-number">2.1.</span> <span class="nav-text">1. 发送消息</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-方法"><span class="nav-number">2.2.</span> <span class="nav-text">2. 方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-事件对象"><span class="nav-number">2.3.</span> <span class="nav-text">3. 事件对象</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x02-渲染进程—ipcRenderer"><span class="nav-number">3.</span> <span class="nav-text">0x02 渲染进程—ipcRenderer</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-方法"><span class="nav-number">3.1.</span> <span class="nav-text">1. 方法</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x03-渲染进程—remote"><span class="nav-number">4.</span> <span class="nav-text">0x03 渲染进程—remote</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-远程对象"><span class="nav-number">4.1.</span> <span class="nav-text">1. 远程对象</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-访问主进程中的内置模块"><span class="nav-number">4.2.</span> <span class="nav-text">2. 访问主进程中的内置模块</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-方法"><span class="nav-number">4.3.</span> <span class="nav-text">3. 方法</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-属性"><span class="nav-number">4.4.</span> <span class="nav-text">4. 属性</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x04-进程间通信"><span class="nav-number">5.</span> <span class="nav-text">0x04 进程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-同步消息"><span class="nav-number">5.1.</span> <span class="nav-text">1. 同步消息</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-异步消息"><span class="nav-number">5.2.</span> <span class="nav-text">2. 异步消息</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-使用remote通信"><span class="nav-number">5.3.</span> <span class="nav-text">3. 使用remote通信</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-渲染进程间的通信"><span class="nav-number">5.4.</span> <span class="nav-text">4. 渲染进程间的通信</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Miss Me</span>
+</div>
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="http://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';                
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+                            
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').mousedown(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+  
+
+  
+
+  
+
+</body>
+</html>
