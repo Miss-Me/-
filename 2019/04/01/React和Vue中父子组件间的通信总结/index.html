@@ -86,19 +86,16 @@
 
 
 
-<meta name="description" content="0x00 写在前面&amp;emsp;&amp;emsp;React的一个特性是组件化，组件化的目的是为了能够进行复用，减少代码的冗余。在项目中使用复杂组件不可避免得要涉及到父子组件间的通信。&amp;emsp;&amp;emsp;本文对目前前端比较流行的框架Vue和React中父子组件间通信的方法做一个总结。关于组件的声明与使用本文中不做详细说明。
-0x01 Vue&amp;emsp;&amp;emsp;这里父组件是Father，子组件是Ch">
+<meta name="description" content="0x00 写在前面&amp;emsp;&amp;emsp;React的一个特性是组件化，组件化的目的是为了能够进行复用，减少代码的冗余。在项目中使用复杂组件不可避免得要涉及到父子组件间的通信。&amp;emsp;&amp;emsp;本文对目前前端比较流行的框架Vue和React中父子组件间通信的方法做一个总结。关于组件的声明与使用本文中不做详细说明。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="React和Vue中父子组件间的通信总结">
 <meta property="og:url" content="http://yoursite.com/2019/04/01/React和Vue中父子组件间的通信总结/index.html">
 <meta property="og:site_name" content="Miss Me">
-<meta property="og:description" content="0x00 写在前面&amp;emsp;&amp;emsp;React的一个特性是组件化，组件化的目的是为了能够进行复用，减少代码的冗余。在项目中使用复杂组件不可避免得要涉及到父子组件间的通信。&amp;emsp;&amp;emsp;本文对目前前端比较流行的框架Vue和React中父子组件间通信的方法做一个总结。关于组件的声明与使用本文中不做详细说明。
-0x01 Vue&amp;emsp;&amp;emsp;这里父组件是Father，子组件是Ch">
-<meta property="og:updated_time" content="2019-04-01T08:07:44.781Z">
+<meta property="og:description" content="0x00 写在前面&amp;emsp;&amp;emsp;React的一个特性是组件化，组件化的目的是为了能够进行复用，减少代码的冗余。在项目中使用复杂组件不可避免得要涉及到父子组件间的通信。&amp;emsp;&amp;emsp;本文对目前前端比较流行的框架Vue和React中父子组件间通信的方法做一个总结。关于组件的声明与使用本文中不做详细说明。">
+<meta property="og:updated_time" content="2019-04-01T08:10:15.045Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="React和Vue中父子组件间的通信总结">
-<meta name="twitter:description" content="0x00 写在前面&amp;emsp;&amp;emsp;React的一个特性是组件化，组件化的目的是为了能够进行复用，减少代码的冗余。在项目中使用复杂组件不可避免得要涉及到父子组件间的通信。&amp;emsp;&amp;emsp;本文对目前前端比较流行的框架Vue和React中父子组件间通信的方法做一个总结。关于组件的声明与使用本文中不做详细说明。
-0x01 Vue&amp;emsp;&amp;emsp;这里父组件是Father，子组件是Ch">
+<meta name="twitter:description" content="0x00 写在前面&amp;emsp;&amp;emsp;React的一个特性是组件化，组件化的目的是为了能够进行复用，减少代码的冗余。在项目中使用复杂组件不可避免得要涉及到父子组件间的通信。&amp;emsp;&amp;emsp;本文对目前前端比较流行的框架Vue和React中父子组件间通信的方法做一个总结。关于组件的声明与使用本文中不做详细说明。">
 
 
 
@@ -320,6 +317,7 @@
 
       
         <h5 id="0x00-写在前面"><a href="#0x00-写在前面" class="headerlink" title="0x00 写在前面"></a>0x00 写在前面</h5><p>&emsp;&emsp;React的一个特性是组件化，组件化的目的是为了能够进行复用，减少代码的冗余。在项目中使用复杂组件不可避免得要涉及到父子组件间的通信。<br>&emsp;&emsp;本文对目前前端比较流行的框架Vue和React中父子组件间通信的方法做一个总结。关于组件的声明与使用本文中不做详细说明。</p>
+<a id="more"></a>
 <h5 id="0x01-Vue"><a href="#0x01-Vue" class="headerlink" title="0x01 Vue"></a>0x01 Vue</h5><p>&emsp;&emsp;这里父组件是Father，子组件是Child。</p>
 <h6 id="1-父组件向子组件通信"><a href="#1-父组件向子组件通信" class="headerlink" title="1.父组件向子组件通信"></a>1.父组件向子组件通信</h6><p>&emsp;&emsp;将父组件的值作为一个属性，绑定给子组件，在子组件中通过props进行接收。</p>
 <h6 id="Father-vue"><a href="#Father-vue" class="headerlink" title="Father.vue"></a>Father.vue</h6><p>&emsp;&emsp;在父组件中的子组件标签中使用v-bind指令绑定属性C，传入的”c”是父组件中的一个值。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">&lt;template&gt;</div><div class="line">    &lt;child v-bind:C=&quot;c&quot;&gt;&lt;/child&gt;//这里的&quot;c&quot;是父组件中的一个值。</div><div class="line">&lt;/template&gt;</div><div class="line">&lt;script&gt;</div><div class="line">import HomeChild from &apos;@/components/Child&apos;</div><div class="line">export default &#123;</div><div class="line">  name: &apos;father&apos;,</div><div class="line">  components: &#123;</div><div class="line">    child</div><div class="line">  &#125;,</div><div class="line">  data () &#123;</div><div class="line">    return &#123;</div><div class="line">      c:[1,2,3]</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">&lt;/script&gt;</div></pre></td></tr></table></figure></p>
@@ -387,8 +385,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/04/01/testtest/" rel="next" title="testtest">
-                <i class="fa fa-chevron-left"></i> testtest
+              <a href="/2019/01/02/论文分享：A-Proposed-Visualization-for-Vulnerability-Scan-Data/" rel="next" title="论文分享：A Proposed Visualization for Vulnerability Scan Data">
+                <i class="fa fa-chevron-left"></i> 论文分享：A Proposed Visualization for Vulnerability Scan Data
               </a>
             
           </div>
@@ -461,7 +459,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">16</span>
+              <span class="site-state-item-count">15</span>
               <span class="site-state-item-name">posts</span>
             </a>
           </div>
