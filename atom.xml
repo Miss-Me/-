@@ -246,9 +246,9 @@
     </summary>
     
     
-      <category term="Vue" scheme="http://yoursite.com/tags/Vue/"/>
-    
       <category term="Electron" scheme="http://yoursite.com/tags/Electron/"/>
+    
+      <category term="Vue" scheme="http://yoursite.com/tags/Vue/"/>
     
   </entry>
   
