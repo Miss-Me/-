@@ -91,7 +91,7 @@
 <meta property="og:url" content="http://yoursite.com/2019/04/01/关于npm-install-save和npm-install-save-dev的总结/index.html">
 <meta property="og:site_name" content="Miss Me">
 <meta property="og:image" content="http://yoursite.com/2019/04/01/关于npm-install-save和npm-install-save-dev的总结/npm.PNG">
-<meta property="og:updated_time" content="2019-04-01T13:11:16.512Z">
+<meta property="og:updated_time" content="2019-08-09T04:22:20.335Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于npm install --save和npm install --save-dev的总结">
 <meta name="twitter:image" content="http://yoursite.com/2019/04/01/关于npm-install-save和npm-install-save-dev的总结/npm.PNG">
@@ -316,8 +316,8 @@
 
       
         <p><img src="/2019/04/01/关于npm-install-save和npm-install-save-dev的总结/npm.PNG" alt="npm"><br><a id="more"></a></p>
-<h5 id="00x0-写在前面"><a href="#00x0-写在前面" class="headerlink" title="00x0 写在前面"></a>00x0 写在前面</h5><p>&emsp;&emsp; npm是JavaScript中的包管理工具，能解决NodeJS代码部署上的很多问题。通过npm安装的包在package.json文件下找到。经常进行前端开发的同学们应该可以发现，经过npm安装的包有的在devDependencies中，有的在dependencies中，这两者有什么区别呢？本文结合npm的安装命令来说明devDependencies和dependencies的区别。</p>
-<h5 id="00x1-npm-install-–save和npm-install-–save-dev"><a href="#00x1-npm-install-–save和npm-install-–save-dev" class="headerlink" title="00x1 npm install –save和npm install –save-dev"></a>00x1 npm install –save和npm install –save-dev</h5><h6 id="1-npm-install-–save命令"><a href="#1-npm-install-–save命令" class="headerlink" title="1.npm install –save命令"></a>1.npm install –save命令</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm install --save </div><div class="line"></div><div class="line">npm install -S</div></pre></td></tr></table></figure>
+<h2 id="00x0-写在前面"><a href="#00x0-写在前面" class="headerlink" title="00x0 写在前面"></a>00x0 写在前面</h2><p>&emsp;&emsp; npm是JavaScript中的包管理工具，能解决NodeJS代码部署上的很多问题。通过npm安装的包在package.json文件下找到。经常进行前端开发的同学们应该可以发现，经过npm安装的包有的在devDependencies中，有的在dependencies中，这两者有什么区别呢？本文结合npm的安装命令来说明devDependencies和dependencies的区别。</p>
+<h2 id="00x1-npm-install-–save和npm-install-–save-dev"><a href="#00x1-npm-install-–save和npm-install-–save-dev" class="headerlink" title="00x1 npm install –save和npm install –save-dev"></a>00x1 npm install –save和npm install –save-dev</h2><h3 id="1-1-npm-install-–save命令"><a href="#1-1-npm-install-–save命令" class="headerlink" title="1.1 npm install –save命令"></a>1.1 npm install –save命令</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">npm install --save </div><div class="line"></div><div class="line">npm install -S</div></pre></td></tr></table></figure>
 <p>&emsp;&emsp;&emsp;&emsp; 上面两条命令是等价的，都是在本地进行安装。执行以上命令后：</p>
 <ol>
 <li><p>模块被安装到本地项目的中node_modules目录下。如果没有 node_modules 目录，会在当前执行 npm 命令的目录下生成 node_modules 目录。</p>
@@ -331,8 +331,8 @@
 <li><p>可以通过 require() 来引入本地安装的包。</p>
 </li>
 </ol>
-<h6 id="2-dependencies"><a href="#2-dependencies" class="headerlink" title="2. dependencies"></a>2. dependencies</h6><p>&emsp;&emsp;&emsp;&emsp; dependencies是线上环境需要使用的依赖，只要线上环境要用用到这个依赖 ，这个依赖就必须使用上面两条命令安装到dependencies中。像 express 这些模块是项目运行必备的，应该安装在 dependencies 节点下。</p>
-<h5 id="00x2-dependencies和devDependencies"><a href="#00x2-dependencies和devDependencies" class="headerlink" title="00x2 dependencies和devDependencies"></a>00x2 dependencies和devDependencies</h5><h6 id="1-npm-install-–save-dev"><a href="#1-npm-install-–save-dev" class="headerlink" title="1.npm install –save-dev"></a>1.npm install –save-dev</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">npm install --save-dev</div><div class="line">npm install -D</div></pre></td></tr></table></figure>
+<h3 id="1-2-dependencies"><a href="#1-2-dependencies" class="headerlink" title="1.2 dependencies"></a>1.2 dependencies</h3><p>&emsp;&emsp;&emsp;&emsp; dependencies是线上环境需要使用的依赖，只要线上环境要用用到这个依赖 ，这个依赖就必须使用上面两条命令安装到dependencies中。像 express 这些模块是项目运行必备的，应该安装在 dependencies 节点下。</p>
+<h2 id="00x2-dependencies和devDependencies"><a href="#00x2-dependencies和devDependencies" class="headerlink" title="00x2 dependencies和devDependencies"></a>00x2 dependencies和devDependencies</h2><h3 id="2-1-npm-install-–save-dev"><a href="#2-1-npm-install-–save-dev" class="headerlink" title="2.1 npm install –save-dev"></a>2.1 npm install –save-dev</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">npm install --save-dev</div><div class="line">npm install -D</div></pre></td></tr></table></figure>
 <p>&emsp;&emsp;&emsp;&emsp; 上面两条命令是等价的，也是在本地进行安装。执行以上命令之后：</p>
 <ol>
 <li><p>模块安装到项目node_modules目录下。</p>
@@ -346,7 +346,7 @@
 <li><p>可以通过 require() 来引入本地安装的包。</p>
 </li>
 </ol>
-<h6 id="2-devDependencies"><a href="#2-devDependencies" class="headerlink" title="2. devDependencies"></a>2. devDependencies</h6><p>&emsp;&emsp;&emsp;devDependencies是开发中使用的依赖，区别于实际 的依赖。也就是说，<strong>在线上状态不需要使用的状态，就是开发状态</strong>。npm将其单独拆分出来，是为了减少 node_modules目录的大小以及npm install花费的时间。这是因为npm的 依赖是嵌套的，虽然在package.json中只有几个依赖，但实际上它又扩散到N个，而N个又被扩散到N平方个。如果能尽量减少不使用的依赖，那么就能节省线上机器 的硬盘资源，也可以节省部署上线的时间。</p>
+<h3 id="2-2-devDependencies"><a href="#2-2-devDependencies" class="headerlink" title="2.2 devDependencies"></a>2.2 devDependencies</h3><p>&emsp;&emsp;&emsp;devDependencies是开发中使用的依赖，区别于实际 的依赖。也就是说，<strong>在线上状态不需要使用的状态，就是开发状态</strong>。npm将其单独拆分出来，是为了减少 node_modules目录的大小以及npm install花费的时间。这是因为npm的 依赖是嵌套的，虽然在package.json中只有几个依赖，但实际上它又扩散到N个，而N个又被扩散到N平方个。如果能尽量减少不使用的依赖，那么就能节省线上机器 的硬盘资源，也可以节省部署上线的时间。</p>
 <p>&emsp;&emsp;在实际开发中，大概有下面几类可以归为开发依赖。</p>
 <ol>
 <li>构建工具</li>
@@ -367,7 +367,7 @@
 </ol>
 <p>&emsp;&emsp;开发时需要使用的，而实际上线时要么是已经打包成最终代码，要么就是不需要使用了。比如 <code>webpack-dev-server</code> 支持开发热加载，线上是不用的； <code>babel-register</code> 因为性能原因也不能用在线上。压缩css、js的模块，在项目部署之后也不再使用。其他还可能和具体业务相关，需要开发者自己识别。</p>
 <p>&emsp;&emsp;如果想达成刚才说的缩减安装包的目的，可以使用命令 <code>npm i--production</code> 忽略开发依赖，只安装依赖，这通常在线上机器（或者 QA 环境）上使用。</p>
-<h5 id="00x3-npm-install和npm-install-g"><a href="#00x3-npm-install和npm-install-g" class="headerlink" title="00x3 npm install和npm install -g"></a>00x3 npm install和npm install -g</h5><h6 id="1-npm-install"><a href="#1-npm-install" class="headerlink" title="1.npm install"></a>1.npm install</h6><p>&emsp;&emsp;npm也可以用于在本地安装模块，执行这条命令：</p>
+<h2 id="00x3-npm-install和npm-install-g"><a href="#00x3-npm-install和npm-install-g" class="headerlink" title="00x3 npm install和npm install -g"></a>00x3 npm install和npm install -g</h2><h3 id="3-1-npm-install"><a href="#3-1-npm-install" class="headerlink" title="3.1 npm install"></a>3.1 npm install</h3><p>&emsp;&emsp;npm也可以用于在本地安装模块，执行这条命令：</p>
 <ol>
 <li><p>模块安装到项目node_modules目录下。</p>
 </li>
@@ -376,7 +376,7 @@
 <li><p>如果删除node_modules目录，使用npm install 初始化项目时，运行 npm install 初始化项目时不会下载模块。</p>
 </li>
 </ol>
-<h6 id="2-npm-install-g"><a href="#2-npm-install-g" class="headerlink" title="2.npm install -g"></a>2.npm install -g</h6><p>&emsp;&emsp;npm install -g命令用于在全局安装模块，执行命令之后：</p>
+<h3 id="3-2-npm-install-g"><a href="#3-2-npm-install-g" class="headerlink" title="3.2 npm install -g"></a>3.2 npm install -g</h3><p>&emsp;&emsp;npm install -g命令用于在全局安装模块，执行命令之后：</p>
 <ol>
 <li><p>模块安装到全局，不会在项目node_modules目录中保存模块包。</p>
 </li>
@@ -553,7 +553,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#00x0-写在前面"><span class="nav-number">1.</span> <span class="nav-text">00x0 写在前面</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#00x1-npm-install-–save和npm-install-–save-dev"><span class="nav-number">2.</span> <span class="nav-text">00x1 npm install –save和npm install –save-dev</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-npm-install-–save命令"><span class="nav-number">2.1.</span> <span class="nav-text">1.npm install –save命令</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-dependencies"><span class="nav-number">2.2.</span> <span class="nav-text">2. dependencies</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#00x2-dependencies和devDependencies"><span class="nav-number">3.</span> <span class="nav-text">00x2 dependencies和devDependencies</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-npm-install-–save-dev"><span class="nav-number">3.1.</span> <span class="nav-text">1.npm install –save-dev</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-devDependencies"><span class="nav-number">3.2.</span> <span class="nav-text">2. devDependencies</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#00x3-npm-install和npm-install-g"><span class="nav-number">4.</span> <span class="nav-text">00x3 npm install和npm install -g</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-npm-install"><span class="nav-number">4.1.</span> <span class="nav-text">1.npm install</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-npm-install-g"><span class="nav-number">4.2.</span> <span class="nav-text">2.npm install -g</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#00x0-写在前面"><span class="nav-number">1.</span> <span class="nav-text">00x0 写在前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x1-npm-install-–save和npm-install-–save-dev"><span class="nav-number">2.</span> <span class="nav-text">00x1 npm install –save和npm install –save-dev</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-npm-install-–save命令"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 npm install –save命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-dependencies"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 dependencies</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x2-dependencies和devDependencies"><span class="nav-number">3.</span> <span class="nav-text">00x2 dependencies和devDependencies</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-npm-install-–save-dev"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 npm install –save-dev</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-devDependencies"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 devDependencies</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x3-npm-install和npm-install-g"><span class="nav-number">4.</span> <span class="nav-text">00x3 npm install和npm install -g</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-npm-install"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 npm install</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-npm-install-g"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 npm install -g</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
