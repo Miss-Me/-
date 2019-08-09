@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Vue,Electron," />
+  <meta name="keywords" content="JavaScript," />
 
 
 
@@ -86,20 +86,18 @@
 
 
 
-<meta name="description" content="00x0 写在前面&amp;emsp;&amp;emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。">
+<meta name="description" content="00x0 写在前面&amp;emsp;&amp;emsp;这是一篇总结博客。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Electron与vue实践初体验">
-<meta property="og:url" content="http://yoursite.com/2018/05/24/electron与vue实践初体验/index.html">
+<meta property="og:title" content="事件、事件代理、事件冒泡">
+<meta property="og:url" content="http://yoursite.com/2018/07/02/事件、事件代理、事件冒泡/index.html">
 <meta property="og:site_name" content="Miss Me">
-<meta property="og:description" content="00x0 写在前面&amp;emsp;&amp;emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。">
-<meta property="og:image" content="http://yoursite.com/2018/05/24/electron与vue实践初体验/electron.png">
-<meta property="og:image" content="http://yoursite.com/2018/05/24/electron与vue实践初体验/cnpm-install-g-electron.PNG">
-<meta property="og:image" content="http://yoursite.com/2018/05/24/electron与vue实践初体验/helloword.PNG">
-<meta property="og:updated_time" content="2019-08-09T04:09:22.079Z">
+<meta property="og:description" content="00x0 写在前面&amp;emsp;&amp;emsp;这是一篇总结博客。">
+<meta property="og:image" content="http://yoursite.com/2018/07/02/事件、事件代理、事件冒泡/eventflash.PNG">
+<meta property="og:updated_time" content="2019-08-09T07:10:20.472Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Electron与vue实践初体验">
-<meta name="twitter:description" content="00x0 写在前面&amp;emsp;&amp;emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。">
-<meta name="twitter:image" content="http://yoursite.com/2018/05/24/electron与vue实践初体验/electron.png">
+<meta name="twitter:title" content="事件、事件代理、事件冒泡">
+<meta name="twitter:description" content="00x0 写在前面&amp;emsp;&amp;emsp;这是一篇总结博客。">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/02/事件、事件代理、事件冒泡/eventflash.PNG">
 
 
 
@@ -117,7 +115,7 @@
   };
 </script>
 
-  <title> Electron与vue实践初体验 | Miss Me </title>
+  <title> 事件、事件代理、事件冒泡 | Miss Me </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="en">
@@ -280,7 +278,7 @@
             
             
               
-                Electron与vue实践初体验
+                事件、事件代理、事件冒泡
               
             
           </h1>
@@ -292,8 +290,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">Posted on</span>
-            <time itemprop="dateCreated" datetime="2018-05-24T17:40:08+08:00" content="2018-05-24">
-              2018-05-24
+            <time itemprop="dateCreated" datetime="2018-07-02T15:08:38+08:00" content="2018-07-02">
+              2018-07-02
             </time>
           </span>
 
@@ -320,56 +318,27 @@
       
 
       
-        <p><img src="/2018/05/24/electron与vue实践初体验/electron.png" alt="electron"></p>
-<h2 id="00x0-写在前面"><a href="#00x0-写在前面" class="headerlink" title="00x0 写在前面"></a>00x0 写在前面</h2><p>&emsp;&emsp;最近接触了electronjs，官方文档上描述介绍Electron 是一个使用 JavaScript, HTML 和 CSS 等 Web 技术创建原生程序的框架，用于构建桌面应用。在开始构建electron或vue之前，默认已经安装了nodejs和git。npm镜像资源索取代理地址在国外，安装速度很慢，这里使用了淘宝提供的镜像cnpm来进行安装。     </p>
+        <h2 id="00x0-写在前面"><a href="#00x0-写在前面" class="headerlink" title="00x0 写在前面"></a>00x0 写在前面</h2><p>&emsp;&emsp;这是一篇总结博客。</p>
 <a id="more"></a>
-<p>&emsp;&emsp;使用下面的命令来安装cnpm。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm install -g cnpm --registry=https://registry.npm.taobao.org//安装cnpm</div></pre></td></tr></table></figure></p>
-<h2 id="00x1-构建electron"><a href="#00x1-构建electron" class="headerlink" title="00x1 构建electron"></a>00x1 构建electron</h2><ul>
-<li>首先，打开命令行，使用cnpm安装electron。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cnpm install -g electron//在全局安装</div><div class="line">cnpm install --save-dev electron//在当前目录安装</div></pre></td></tr></table></figure>
-</li>
+<h2 id="00x1-事件与事件流"><a href="#00x1-事件与事件流" class="headerlink" title="00x1 事件与事件流"></a>00x1 事件与事件流</h2><ol>
+<li>事件：HTML中与javascript交互是通过事件驱动来实现的，例如鼠标点击事件、页面的滚动事件onscroll等等，可以向文档或者文档中的元素添加事件侦听器来预订事件。想要知道这些事件是在什么时候进行调用的，就需要了解一下“事件流”的概念。</li>
+<li>事件流：事件流描述的是从页面中接受事件的顺序。事件发生时会在元素节点与根节点之间按照特定的顺序传播，路径所经过的所有节点都会收到该事件，这个传播过程即DOM事件流。事件传播的顺序对应浏览器的两种事件流模型：捕获型事件流和冒泡型事件流。<ul>
+<li>冒泡型事件流：事件的传播是从最特定的事件目标到最不特定的事件目标。即从DOM树的叶子到根。</li>
+<li>捕获型事件流：事件的传播是从最不特定的事件目标到最特定的事件目标。即从DOM树的根到叶子。<br><img src="/2018/07/02/事件、事件代理、事件冒泡/eventflash.PNG" alt="image"></li>
 </ul>
-<p>&emsp;&emsp;这里使用了全局安装方式：<br><img src="/2018/05/24/electron与vue实践初体验/cnpm-install-g-electron.PNG" alt="mockjs"></p>
+</li>
+</ol>
+<p>&emsp;&emsp;“DOM2级事件”规定的事件流包括三个阶段：事件捕获阶段、处于目标阶段和事件冒泡阶段。首先发生的是事件捕获，然后处于目标阶段，最后才事件冒泡。</p>
+<h2 id="00x2-事件冒泡"><a href="#00x2-事件冒泡" class="headerlink" title="00x2 事件冒泡"></a>00x2 事件冒泡</h2><p>&emsp;&emsp;IE在处理事件流的时候，事件的传播是按照从最特定的事件目标到最不特定的事件目标(document对象，有的浏览器是window)的顺序触发。这就是事件冒泡。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html lang=&quot;en&quot;&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</div><div class="line">    &lt;title&gt;test&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">    &lt;div id=&quot;content&quot;&gt;</div><div class="line">        &lt;button id=&quot;btn&quot;&gt;&lt;/button&gt;</div><div class="line">    &lt;/div&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;在上面的代码中，如果点击了按钮“&lt; button &gt;”节点，那么接下来，“&lt; div &gt;”、“&lt; body &gt;”、“&lt; html &gt;”、document会按照先后顺序依次收到点击事件。<br>&emsp;&emsp;事件冒泡仅仅传递的是事件触发，也就是说，当点击按钮button的时候仅仅触发了div、body、html、document的点击事件，并没有把自己绑定的函数传递给父级。父级的执行情况，还是取决于自己所绑定的函数。在父级没有绑定函数的情况下，并没有什么影响。但是在父级绑定了函数的情况下，冒泡就会带来一些困扰。这个时候就需要取消事件冒泡。</p>
 <ul>
-<li>打开git，在github上下载electron-quick-start。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/electron/electron-quick-start</div><div class="line">cd electron-quick-start</div><div class="line">cnpm install //安装各种依赖</div><div class="line">cnpm run start //打开桌面应用</div></pre></td></tr></table></figure>
-</li>
+<li>event.stopPropagation()：阻止事件的冒泡，不让事件向documen上蔓延，但是默认事件仍然会执行，当使用这个方法的时候，如果点击一个连接，这个连接仍然会被打开。该方法只阻止一次事件冒泡并且IE不支持此方法。IE取消事件冒泡要用e.cancelBubble=true。</li>
+<li>event.preventDefault()方法：阻止默认事件，调用此方法时，链接不会被打开，但是会发生冒泡，冒泡会传递到上一层的父元素。</li>
+<li>return false ：这个方法比较暴力，会同时阻止事件冒泡和默认事件；写上此代码，连接不会被打开，事件也不会传递到上一层的父元素；可以理解为return false就等于同时调用了event.stopPropagation()和event.preventDefault()。</li>
 </ul>
-<p>&emsp;&emsp;可以看到一个桌面应用被打开。<br><img src="/2018/05/24/electron与vue实践初体验/helloword.PNG" alt="mockjs"></p>
-<h2 id="00x2-在electron中引入vue"><a href="#00x2-在electron中引入vue" class="headerlink" title="00x2 在electron中引入vue"></a>00x2 在electron中引入vue</h2><ul>
-<li><p>新建一个vue项目</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cnpm install -g vue-cli//全局安装vue-cli脚手架</div><div class="line">vue init webpack my-vue(项目名字)//初始化一个项目</div><div class="line">cd my-vue</div><div class="line">cnpm install //安装各种依赖</div><div class="line">npm run dev //打开这个项目</div></pre></td></tr></table></figure>
-</li>
-<li><p>vue打包<br>&emsp;&emsp;打开vue项目中config文件夹下的index.js文件，确认其中的assetsPublicPath修改为相对路径 ./。注意是build配置下的assetsPublicPath。</p>
-</li>
-</ul>
-<p>&emsp;&emsp;运行npm run build对vue项目进行打包，在dist文件夹中生成打包文件。将dist文件夹中生成的static文件夹和index.html放入electron-quick-start下，替换掉electron-quick-start的index.html。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm run build</div></pre></td></tr></table></figure></p>
-<p>&emsp;&emsp;再次在electron-quick-start目录中运行npm run start</p>
-<h2 id="00x3-打包"><a href="#00x3-打包" class="headerlink" title="00x3 打包"></a>00x3 打包</h2><ul>
-<li><p>在electron-quick-start下安装打包插件</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cnpm install -g electron-packager//采用全局安装</div></pre></td></tr></table></figure>
-</li>
-<li><p>使用electron-packager来进行打包，可以直接使用打包命令</p>
-</li>
-</ul>
-<p>electron-packager <location of="" project=""> <name of="" project=""> <platform> <architecture> <electronversion> <optional options=""></optional></electronversion></architecture></platform></name></location></p>
-<p>&emsp;&emsp;这里的参数:</p>
-<ul>
-<li>location of project：项目所在路径 </li>
-<li>name of project：打包的项目名字 </li>
-<li>platform：确定了你要构建哪个平台的应用（Windows、Mac 还是 Linux） </li>
-<li>architecture：决定了使用 x86 还是 x64 还是两个架构都用 </li>
-<li>electron version：electron 的版本 </li>
-<li>optional options：可选选项</li>
-</ul>
-<p>&emsp;&emsp;但是这个命令很长，每次都这样输入会比较麻烦；</p>
-<ul>
-<li><p>可以在package.json下的script下这样写</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&quot;electron_build&quot;: &quot;electron-packager ./ --platform=win32 --arch=x64 --icon=./app/img/electron.ico --overwrite&quot;</div></pre></td></tr></table></figure>
-</li>
-<li><p>打包</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">npm run electron_build</div></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>&emsp;&emsp;运行打包命令就会生成一个文件夹，在里面就能找到打包生成的.exe文件。双击就能运行</p>
+<h2 id="00x3-事件代理"><a href="#00x3-事件代理" class="headerlink" title="00x3 事件代理"></a>00x3 事件代理</h2><p>&emsp;&emsp;事件代理还可以叫事件委托，指的是利用事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。<br>&emsp;&emsp;比如在一个页面中，有100个button，每个button都有一个点击事件。那要怎么做呢，首先想到的是，我们可以给每个button onclick绑定点击事件，那这样就需要给每个button写一个onclick来进行绑定，增加了代码的重复度。再高级一点的方法呢，我们可以用dom来处理事件，使用for循环的方法，遍历所有的button，使用dom给他们添加点击事件。<br>&emsp;&emsp;但是这个方式也不是最完美的，因为在JavaScript中，添加到页面上的事件处理程序数量会直接关系到页面的整体运行性能。for循环中需要不断地与dom节点进行交互，访问dom的次数越多，引起浏览器重绘与重排的次数也越多，会延长整个页面的交互时间。性能优化的主要思想之一就是减少DOM操作。这个时候就可以利用事件代理，将所有操作放入js程序中，与DOM只交互一次，大大减少了与DOM的交互次数，提高了性能。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">&lt;!DOCTYPE html&gt;</div><div class="line">&lt;html lang=&quot;en&quot;&gt;</div><div class="line">&lt;head&gt;</div><div class="line">    &lt;meta charset=&quot;UTF-8&quot;&gt;</div><div class="line">    &lt;title&gt;test&lt;/title&gt;</div><div class="line">&lt;/head&gt;</div><div class="line">&lt;body&gt;</div><div class="line">    &lt;div id=&quot;content&quot;&gt;</div><div class="line">        &lt;button id=&quot;btn&quot;&gt;&lt;/button&gt;</div><div class="line">    &lt;/div&gt;</div><div class="line">&lt;/body&gt;</div><div class="line">&lt;/html&gt;</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;事件代理是利用事件冒泡实现的。上面我们已经讲过，事件冒泡就是事件从最深的节点开始，然后逐步向上传播事件。当我们给button添加一个点击事件，这个事件会一层一层往外执行，div、body、html、document会一次收到这个事件。事件代理就是采用父级的div来做事件处理，由于冒泡原理，点击button事件会被冒泡到button的父级元素div上，如果div上添加的有点击事件，这时点击事件就会被触发；当然，点击div的时候，事件也是会触发的。那如果我们想让事件代理的效果跟直接给节点绑定的效果一样，需要怎么做呢？<br>&emsp;&emsp;Event对象提供了一个target属性，可以返回事件的目标节点，成为事件源。我们可以将target理解为当前事件要操作的DOM，当然这并不是在真正地操作DOM。标准浏览器使用ev.target，IE浏览器用event.srcElement。此时只是获取了当前节点的位置，要想知道节点的名称，需要用nodeName来获取节点具体的标签名。需要注意的是，nodeName返回的值是大写的，习惯上把这个值转成小写的再使用。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">window.onload = function()&#123;</div><div class="line">　　var div = document.getElementById(&quot;content&quot;);</div><div class="line">　　div.onclick = function(ev)&#123;</div><div class="line">　　　　var ev = ev || window.event;</div><div class="line">　　　　var target = ev.target || ev.srcElement;</div><div class="line">　　　　if(target.nodeName.toLowerCase() == &apos;button&apos;)&#123;</div><div class="line">　 　　　　　　	alert(123);</div><div class="line">　　　　　　　  alert(target.innerHTML);</div><div class="line">　　　　&#125;</div><div class="line">　　&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;经过这样修改后就只有在点击button的时候才会触发事件了，且每次只用执行一次DOM操作。</p>
 
       
     </div>
@@ -396,9 +365,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Vue/" rel="tag">#Vue</a>
-          
-            <a href="/tags/Electron/" rel="tag">#Electron</a>
+            <a href="/tags/JavaScript/" rel="tag">#JavaScript</a>
           
         </div>
       
@@ -407,16 +374,16 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/03/03/mongoDB-数据聚合的三种方式/" rel="next" title="mongoDB-数据聚合的三种方式">
-                <i class="fa fa-chevron-left"></i> mongoDB-数据聚合的三种方式
+              <a href="/2018/05/24/electron与vue实践初体验/" rel="next" title="Electron与vue实践初体验">
+                <i class="fa fa-chevron-left"></i> Electron与vue实践初体验
               </a>
             
           </div>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2018/07/02/事件、事件代理、事件冒泡/" rel="prev" title="事件、事件代理、事件冒泡">
-                事件、事件代理、事件冒泡 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/09/01/用setTimeout实现for循环中的计时器/" rel="prev" title="用setTimeout实现for循环中的计时器">
+                用setTimeout实现for循环中的计时器 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -542,7 +509,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#00x0-写在前面"><span class="nav-number">1.</span> <span class="nav-text">00x0 写在前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x1-构建electron"><span class="nav-number">2.</span> <span class="nav-text">00x1 构建electron</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x2-在electron中引入vue"><span class="nav-number">3.</span> <span class="nav-text">00x2 在electron中引入vue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x3-打包"><span class="nav-number">4.</span> <span class="nav-text">00x3 打包</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#00x0-写在前面"><span class="nav-number">1.</span> <span class="nav-text">00x0 写在前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x1-事件与事件流"><span class="nav-number">2.</span> <span class="nav-text">00x1 事件与事件流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x2-事件冒泡"><span class="nav-number">3.</span> <span class="nav-text">00x2 事件冒泡</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#00x3-事件代理"><span class="nav-number">4.</span> <span class="nav-text">00x3 事件代理</span></a></li></ol></div>
             
           </div>
         </section>
